@@ -1,0 +1,53 @@
+:root {
+  /* Colors */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-text: #111111;
+  --color-text-secondary: #6f6f6f;
+  --color-border: #e8e8e8;
+  --color-card: #ffffff;
+  --color-card-hover: #fafafa;
+  --color-btn: #111111;
+  --color-btn-hover: #222222;
+  --color-btn-text: #ffffff;
+  --color-success: #27ae60;
+  --color-error: #eb5757;
+  --color-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Border radius */
+  --radius-card: 16px;
+  --radius-btn: 100px;
+  --radius-drawer: 0px;
+  --radius-input: 8px;
+  --radius-tag: 100px;
+
+  /* Spacing */
+  --space-content: 1200px;
+  --space-section: 100px;
+  --space-card-gap: 16px;
+
+  /* Typography */
+  --font: 'Manrope', 'Inter', sans-serif;
+  --text-h1: 56px;
+  --text-h2: 40px;
+  --text-h3: 28px;
+  --text-subtitle: 20px;
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-xs: 12px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-drawer: -4px 0 40px rgba(0, 0, 0, 0.12);
+
+  /* Transitions */
+  --duration: 250ms;
+  --easing: ease-out;
+
+  /* Components */
+  --btn-height: 52px;
+  --input-height: 48px;
+  --drawer-width: 480px;
+  --header-height: 64px;
+}

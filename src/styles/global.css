@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  max-width: var(--space-content);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Scroll reveal animation base */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--duration) var(--easing),
+              transform var(--duration) var(--easing);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Utility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

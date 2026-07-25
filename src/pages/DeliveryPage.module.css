@@ -1,0 +1,72 @@
+.page { padding-top: var(--header-height); padding-bottom: var(--space-section); }
+.container { max-width: var(--space-content); margin: 0 auto; padding: 0 32px; }
+.breadcrumbWrap { border-bottom: 1px solid var(--color-border); }
+.breadcrumb { display: flex; align-items: center; gap: 8px; padding: 14px 32px; font-size: 13px; color: var(--color-text-secondary); max-width: var(--space-content); margin: 0 auto; }
+.breadcrumb a { color: var(--color-text-secondary); text-decoration: none; }
+.breadcrumb a:hover { color: var(--color-text); }
+
+.hero { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: flex-start; padding: 48px 0 60px; }
+.heroLeft { display: flex; flex-direction: column; gap: 20px; }
+.heroTitle { font-size: clamp(32px, 4vw, 52px); font-weight: 800; line-height: 1.08; letter-spacing: -0.01em; }
+.heroDesc { font-size: var(--text-body); color: var(--color-text-secondary); line-height: 1.7; max-width: 480px; }
+.heroBtn { display: inline-flex; align-items: center; height: 52px; padding: 0 28px; background: var(--color-btn); color: white; border-radius: var(--radius-btn); font-size: var(--text-body); font-weight: 600; text-decoration: none; align-self: flex-start; transition: background var(--duration) var(--easing); }
+.heroBtn:hover { background: var(--color-btn-hover); }
+.heroPhoto { height: 200px; background: var(--color-bg-secondary); border-radius: var(--radius-card); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #bbb; letter-spacing: 0.05em; }
+
+.section { padding: 48px 0; border-top: 1px solid var(--color-border); }
+.sectionTitle { font-size: var(--text-h2); font-weight: 800; margin-bottom: 28px; }
+
+/* Steps */
+.steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; }
+.step { padding: 24px; border: 1px solid var(--color-border); border-right: none; display: flex; flex-direction: column; gap: 10px; }
+.step:last-child { border-right: 1px solid var(--color-border); }
+.stepTop { display: flex; align-items: center; justify-content: space-between; }
+.stepNum { width: 36px; height: 36px; border-radius: 50%; background: var(--color-text); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.stepArrow { color: var(--color-border); }
+.stepTitle { font-size: 14px; font-weight: 700; }
+.stepDesc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+/* Geography */
+.geoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.geoMap { background: var(--color-bg-secondary); border-radius: var(--radius-card); padding: 32px; }
+.mapSvg { width: 100%; height: auto; }
+.geoInfo { display: flex; flex-direction: column; gap: 24px; }
+.geoZone { display: flex; align-items: flex-start; gap: 16px; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-card); }
+.geoIcon { font-size: 24px; flex-shrink: 0; }
+.geoName { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.geoTime { font-size: 14px; color: var(--color-text-secondary); }
+
+/* FAQ */
+.faqGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-card-gap); }
+.faqCard { padding: 24px; border: 1px solid var(--color-border); border-radius: var(--radius-card); display: flex; flex-direction: column; gap: 10px; }
+.faqQ { font-size: 14px; font-weight: 700; background: none; border: none; text-align: left; padding: 0; font-family: var(--font); cursor: default; color: var(--color-text); }
+.faqA { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* CTA */
+.ctaBanner { display: grid; grid-template-columns: 1fr 280px; gap: 40px; align-items: center; background: var(--color-bg-secondary); border-radius: var(--radius-card); padding: 48px; margin-top: 48px; }
+.ctaLeft { display: flex; flex-direction: column; gap: 16px; }
+.ctaTitle { font-size: clamp(22px, 2.5vw, 32px); font-weight: 800; }
+.ctaDesc { font-size: var(--text-body); color: var(--color-text-secondary); }
+.ctaBtns { display: flex; gap: 12px; flex-wrap: wrap; }
+.ctaBtnPrimary { display: inline-flex; align-items: center; height: 52px; padding: 0 28px; background: var(--color-btn); color: white; border-radius: var(--radius-btn); font-size: var(--text-body); font-weight: 600; text-decoration: none; transition: background var(--duration) var(--easing); }
+.ctaBtnPrimary:hover { background: var(--color-btn-hover); }
+.ctaBtnSecondary { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 24px; border: 1.5px solid var(--color-border); border-radius: var(--radius-btn); font-size: var(--text-body); font-weight: 600; text-decoration: none; color: var(--color-text); transition: border-color var(--duration) var(--easing); }
+.ctaBtnSecondary:hover { border-color: var(--color-text); }
+.ctaPhoto { height: 180px; background: var(--color-border); border-radius: var(--radius-card); display: flex; align-items: center; justify-content: center; font-size: 14px; color: #bbb; }
+
+@media (max-width: 1024px) {
+  .steps { grid-template-columns: repeat(3, 1fr); }
+  .step:nth-child(3) { border-right: 1px solid var(--color-border); }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .hero { grid-template-columns: 1fr; }
+  .heroPhoto { display: none; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .step:nth-child(2) { border-right: 1px solid var(--color-border); }
+  .geoGrid { grid-template-columns: 1fr; }
+  .faqGrid { grid-template-columns: 1fr; }
+  .ctaBanner { grid-template-columns: 1fr; }
+  .ctaPhoto { display: none; }
+}

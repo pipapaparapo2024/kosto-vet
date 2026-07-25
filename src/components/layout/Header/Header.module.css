@@ -1,0 +1,128 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.inner {
+  max-width: var(--space-content);
+  margin: 0 auto;
+  padding: 0 32px;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+}
+
+.navLink {
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color var(--duration) var(--easing);
+}
+
+.navLink:hover,
+.active {
+  border-bottom-color: var(--color-text);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: var(--color-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background var(--duration) var(--easing);
+}
+
+.iconBtn:hover {
+  background: var(--color-bg-secondary);
+}
+
+/* Search bar */
+.searchBar {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.searchInner {
+  max-width: var(--space-content);
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text-secondary);
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: var(--font);
+  font-size: var(--text-body);
+  color: var(--color-text);
+  background: transparent;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.searchClose {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  transition: color var(--duration) var(--easing);
+}
+
+.searchClose:hover {
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .nav { display: none; }
+  .inner { gap: 16px; padding: 0 16px; }
+}
