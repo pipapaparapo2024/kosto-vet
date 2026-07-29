@@ -1,184 +1,207 @@
-/* ── HERO ────────────────────────────────────── */
+.page {}
+
+/* ── HERO ──────────────────────────────── */
 .hero {
-  background: var(--color-bg-secondary);
-  padding-top: calc(var(--header-height) + 48px);
-  padding-bottom: 0;
+  overflow: hidden;
 }
 
-.heroContent {
-  max-width: var(--space-content);
-  margin: 0 auto;
-  padding: 0 32px;
+.heroInner {
+  padding: 0 75px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: flex-end;
-  min-height: 440px;
+  grid-template-columns: 650px 1fr;
+  gap: 0;
 }
 
 .heroLeft {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-bottom: 48px;
+  gap: 16px;
+  padding-top: 72px;
+  padding-bottom: 40px;
 }
 
 .heroTitle {
-  font-size: clamp(36px, 4vw, 52px);
+  font-size: 65px;
   font-weight: 800;
-  line-height: 1.08;
+  line-height: 1.05;
   color: var(--color-text);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .heroDesc {
-  font-size: var(--text-body);
-  color: var(--color-text-secondary);
-  line-height: 1.6;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.5;
 }
 
 .heroBtn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  height: 52px;
-  padding: 0 28px;
+  gap: 33px;
+  height: 60px;
+  padding: 0 74px;
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: var(--radius-btn);
-  font-family: var(--font);
-  font-size: var(--text-body);
+  font-size: 22px;
   font-weight: 600;
   text-decoration: none;
-  transition: background var(--duration) var(--easing), transform 150ms var(--easing);
   align-self: flex-start;
+  transition: background var(--duration);
 }
 .heroBtn:hover { background: var(--color-btn-hover); }
-.heroBtn:active { transform: scale(0.98); }
 
 .heroRight {
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  height: 440px;
+  overflow: hidden;
 }
 
 .heroCat {
-  height: 100%;
-  width: auto;
+  display: block;
+  width: 807px;
+  height: calc(100vh - var(--header-height) - 112px);
+  max-height: 680px;
   object-fit: contain;
-  object-position: bottom;
-  max-width: 100%;
+  object-position: bottom left;
 }
 
-/* Benefits strip */
-.benefits {
-  max-width: var(--space-content);
-  margin: 0 auto;
-  padding: 28px 32px;
+/* Benefits */
+.benefits {}
+
+.benefitsInner {
+  padding: 32px var(--space-x);
   display: flex;
   align-items: center;
-  gap: 0;
-  border-top: 1px solid var(--color-border);
 }
 
 .benefit {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
   flex: 1;
-  color: var(--color-text);
+}
+
+.benefit svg {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
 }
 
 .benefitTitle {
   font-size: var(--text-body);
   font-weight: 700;
+  color: var(--color-text);
 }
 
 .benefitDesc {
   font-size: var(--text-small);
   color: var(--color-text-secondary);
   margin-top: 2px;
+  line-height: 1.4;
 }
 
 .sep {
-  width: 1px;
-  height: 40px;
-  background: var(--color-border);
-  margin: 0 40px;
+  width: 3px;
+  height: 48px;
+  background: #111111;
+  margin: 0 80px;
+  flex-shrink: 0;
 }
 
-/* ── CATALOG ─────────────────────────────────── */
+/* ── CATALOG ──────────────────────────── */
 .catalog {
-  max-width: var(--space-content);
-  margin: 0 auto;
-  padding: var(--space-section) 32px 0;
+  padding: var(--space-section) var(--space-x) 0;
 }
 
-.catalogInner {
+/* Общий контейнер: левая колонка | правая колонка */
+.catalogLayout {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 48px;
-  align-items: flex-start;
+  grid-template-columns: 430px 1fr;
+  gap: 36px;
+  align-items: stretch;
 }
 
+/* Левая колонка: кот сверху + карточка Пластины */
 .catalogLeft {
   display: flex;
-  align-items: flex-end;
-  height: 320px;
+  flex-direction: column;
 }
 
 .catalogCat {
-  width: 100%;
-  height: 100%;
+  width: 320px;
+  height: 340px;
   object-fit: contain;
-  object-position: bottom;
+  object-position: bottom left;
+  display: block;
+  margin-left: 16px;
 }
 
+/* Правая колонка */
 .catalogRight {
   display: flex;
   flex-direction: column;
+  gap: 24px;
+}
+
+.catalogTitleWrap {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+  padding-top: 24px;
 }
 
 .catalogTitle {
-  font-size: var(--text-h2);
+  font-size: clamp(28px, 2.8vw, 40px);
   font-weight: 800;
   letter-spacing: -0.01em;
+  color: var(--color-text);
 }
 
 .catalogSub {
-  font-size: var(--text-body);
+  font-size: 20px;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  margin-bottom: 16px;
 }
 
-.categoryGrid {
+/* 2×2 сетка правых карточек */
+.catalogGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-card-gap);
+  grid-template-rows: 239px 239px;
+  gap: 24px;
 }
 
+.cardPlastiny {
+  flex: 1;
+}
+
+.cardSmall {
+  /* высота задана grid-template-rows */
+}
+
+/* Базовая карточка */
 .categoryCard {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 24px;
-  background: var(--color-card);
+  background: #fff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   text-decoration: none;
   color: var(--color-text);
-  min-height: 160px;
-  transition: box-shadow var(--duration) var(--easing), transform var(--duration) var(--easing);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  transition: box-shadow var(--duration), transform var(--duration);
 }
 .categoryCard:hover {
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.13);
   transform: translateY(-2px);
 }
 
 .categoryName {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   margin-bottom: 6px;
 }
@@ -192,61 +215,66 @@
 .categoryCount {
   font-size: var(--text-small);
   color: var(--color-text-secondary);
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .categoryArrow {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--color-text);
-  color: var(--color-btn-text);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 12px;
   align-self: flex-start;
-  transition: background var(--duration) var(--easing);
-}
-.categoryCard:hover .categoryArrow {
-  background: #333;
+  flex-shrink: 0;
 }
 
-/* Stock banner */
 .stockBanner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: 16px;
+  padding: 0 28px;
   margin-top: 24px;
+  height: 100px;
   background: var(--color-bg-secondary);
   border-radius: var(--radius-card);
   font-size: var(--text-small);
-  color: var(--color-text);
 }
 
-.stockBanner svg { flex-shrink: 0; color: var(--color-text-secondary); }
-
-.stockBanner p { flex: 1; }
+.stockBanner svg { flex-shrink: 0; color: var(--color-text); width: 32px; height: 32px; }
+.stockBanner p { flex: 1; line-height: 1.5; font-size: 14px; }
+.stockBanner p strong { font-size: 16px; font-weight: 700; display: block; margin-bottom: 2px; }
 
 .stockLink {
   color: var(--color-text);
   font-weight: 600;
+  font-size: 16px;
   text-decoration: none;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .stockLink:hover { text-decoration: underline; }
 
-/* ── CTA ─────────────────────────────────────── */
+/* ── DIVIDER ─────────────────────────── */
+.divider {
+  height: 2px;
+  background: #111111;
+  margin: 0 var(--space-x);
+}
+
+/* ── CTA ─────────────────────────────── */
 .cta {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg);
   margin-top: var(--space-section);
 }
 
 .ctaInner {
-  max-width: var(--space-content);
-  margin: 0 auto;
-  padding: 64px 32px;
+  padding: 0 var(--space-x);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
@@ -256,52 +284,67 @@
 .ctaLeft {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  padding: 80px 0;
 }
 
 .ctaTitle {
-  font-size: clamp(28px, 3vw, 40px);
+  font-size: 65px;
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 25px;
 }
 
 .ctaDesc {
-  font-size: var(--text-body);
+  font-size: 24px;
+  font-weight: 400;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
+  margin-bottom: 48px;
 }
 
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 33px;
+  height: 60px;
+  padding: 0 74px;
+  background: var(--color-btn);
+  color: var(--color-btn-text);
+  border-radius: var(--radius-btn);
+  font-size: 22px;
+  font-weight: 600;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: background var(--duration);
+}
+.ctaBtn:hover { background: var(--color-btn-hover); }
+
 .ctaRight {
-  position: relative;
-  height: 300px;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-end;
+  overflow: hidden;
 }
 
 .ctaCat {
-  height: 100%;
-  width: auto;
+  width: 638px;
+  height: 900px;
   object-fit: contain;
-  object-position: bottom;
-  max-width: 100%;
+  object-position: bottom center;
+  flex-shrink: 0;
 }
 
-/* ── RESPONSIVE ──────────────────────────────── */
-@media (max-width: 1024px) {
-  .categoryGrid { grid-template-columns: 1fr; }
-  .catalogInner { grid-template-columns: 200px 1fr; }
-}
-
-@media (max-width: 768px) {
-  .heroContent { grid-template-columns: 1fr; min-height: auto; }
-  .heroRight { height: 260px; }
-  .heroImplants { width: 120px; }
-  .benefits { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .sep { width: 100%; height: 1px; margin: 0; }
+/* ── RESPONSIVE ─────────────────────── */
+@media (max-width: 900px) {
+  .heroInner, .ctaInner { grid-template-columns: 1fr; }
+  .heroRight, .ctaRight { display: none; }
   .catalogInner { grid-template-columns: 1fr; }
-  .catalogLeft { display: none; }
-  .ctaInner { grid-template-columns: 1fr; }
-  .ctaRight { display: none; }
-  .catalog, .benefits, .heroContent, .ctaInner { padding-left: 16px; padding-right: 16px; }
+  .catalogTop { grid-template-columns: 1fr; }
+  .catalogCatWrap { display: none; }
+  .catalogCards { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .cardPlastiny { grid-row: span 1; height: 240px; }
+  .benefitsInner { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .sep { width: 100%; height: 1px; margin: 0; }
+  .heroInner, .catalog, .ctaInner, .benefitsInner { padding-left: 16px !important; padding-right: 16px !important; }
 }

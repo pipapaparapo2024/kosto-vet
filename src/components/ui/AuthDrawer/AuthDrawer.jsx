@@ -1,10 +1,40 @@
 import { useState, useEffect } from 'react'
+import { X, Phone, Shield, Zap, FileText, ShoppingBag, Package, FileDown, UserPlus, ShoppingCart, Heart, CreditCard, MapPin, FolderOpen, User, LogOut, ChevronRight } from 'lucide-react'
 import styles from './AuthDrawer.module.css'
 
-const MOCK_USER = null // заменить на useAuth() когда будет бэкенд
+const FEATURES = [
+  { Icon: Shield,   title: 'Безопасность данных', desc: 'Мы не передаём Ваши данные третьим лицам и надёжно их защищаем' },
+  { Icon: Zap,      title: 'Быстрый доступ',      desc: 'Повторяйте заказы в один клик и экономьте время' },
+  { Icon: FileText, title: 'Документы под рукой', desc: 'Счета, накладные и сертификаты всегда доступны в кабинете' },
+]
+
+const QUICK_ACTIONS = [
+  { Icon: ShoppingBag, label: 'Повторить заказ' },
+  { Icon: Package,     label: 'Проверить наличие' },
+  { Icon: FileDown,    label: 'Скачать документы' },
+  { Icon: UserPlus,    label: 'Связаться с менеджером' },
+]
+
+const MENU_ITEMS = [
+  { Icon: ShoppingCart, label: 'Мои заказы',          count: 6 },
+  { Icon: Heart,        label: 'Избранное',            count: 12 },
+  { Icon: CreditCard,   label: 'Реквизиты',            count: null },
+  { Icon: MapPin,       label: 'Адрес доставки',       count: 3 },
+  { Icon: FolderOpen,   label: 'Документы',            count: null },
+  { Icon: User,         label: 'Контактный менеджер',  count: null },
+]
+
+const MOCK_USER = {
+  clinic: 'ВетПлюс',
+  city: 'Воронеж',
+  inn: '3661234567',
+  verified: true,
+}
 
 export default function AuthDrawer({ isOpen, onClose }) {
-  const [tab, setTab] = useState('login') // 'login' | 'register'
+  const [tab, setTab] = useState('login')
+  const [form, setForm] = useState({ name: '', phone: '', email: '', city: '', clinicName: '' })
+  const [loginForm, setLoginForm] = useState({ phone: '', password: '' })
   const [user] = useState(MOCK_USER)
 
   useEffect(() => {
@@ -19,166 +49,183 @@ export default function AuthDrawer({ isOpen, onClose }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  if (!isOpen) return null
+
   return (
     <>
-      <div className={[styles.overlay, isOpen ? styles.overlayVisible : ''].join(' ')} onClick={onClose} />
-      <aside className={[styles.drawer, isOpen ? styles.open : ''].join(' ')} role="dialog" aria-label="Личный кабинет">
-        <div className={styles.head}>
-          <h2 className={styles.title}>Личный кабинет</h2>
-          <button className={styles.close} onClick={onClose} aria-label="Закрыть">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
-        <div className={styles.body}>
-          {user ? <ProfileView user={user} onClose={onClose} /> : (
-            <>
-              <div className={styles.tabs}>
-                <button className={[styles.tab, tab === 'login' ? styles.tabActive : ''].join(' ')} onClick={() => setTab('login')}>Вход</button>
-                <button className={[styles.tab, tab === 'register' ? styles.tabActive : ''].join(' ')} onClick={() => setTab('register')}>Регистрация</button>
+      <div className={styles.overlay} onClick={onClose} />
+      <aside className={styles.drawer} role="dialog" aria-label="Личный кабинет">
+        {user ? (
+          <ProfileView user={user} onClose={onClose} />
+        ) : (
+          <div className={styles.authWrap}>
+            <div className={styles.head}>
+              <div>
+                <h2 className={styles.title}>Личный кабинет</h2>
+                <p className={styles.subtitle}>
+                  {tab === 'login'
+                    ? 'Войдите в кабинет, чтобы увидеть заказы, избранное и персональные условия'
+                    : 'Создайте кабинет, чтобы видеть заказы, сохранять избранное и ускорить оформление'}
+                </p>
               </div>
-              {tab === 'login' ? <LoginView onSwitch={() => setTab('register')} /> : <RegisterView onSwitch={() => setTab('login')} />}
-            </>
-          )}
-        </div>
+              <button className={styles.close} onClick={onClose} aria-label="Закрыть"><X size={18} strokeWidth={2} /></button>
+            </div>
+
+            <div className={styles.tabs}>
+              <button className={`${styles.tab} ${tab === 'login' ? styles.tabActive : ''}`} onClick={() => setTab('login')}>Вход</button>
+              <button className={`${styles.tab} ${tab === 'register' ? styles.tabActive : ''}`} onClick={() => setTab('register')}>Регистрация</button>
+            </div>
+
+            <div className={styles.body}>
+              {tab === 'login' ? (
+                <>
+                  <form className={styles.form} onSubmit={e => e.preventDefault()}>
+                    <Field label="Телефон или email" required>
+                      <input className={styles.input} type="text" placeholder="Телефон или email" value={loginForm.phone} onChange={e => setLoginForm(f => ({...f, phone: e.target.value}))} />
+                    </Field>
+                    <Field label="Пароль" required>
+                      <input className={styles.input} type="password" placeholder="Введите пароль" value={loginForm.password} onChange={e => setLoginForm(f => ({...f, password: e.target.value}))} />
+                    </Field>
+                    <button type="submit" className={styles.submitBtn}>Войти</button>
+                    <button type="button" className={styles.forgotBtn}>Забыли пароль?</button>
+                  </form>
+
+                  <div className={styles.features}>
+                    {FEATURES.map(({ Icon, title, desc }) => (
+                      <div key={title} className={styles.feature}>
+                        <div className={styles.featureIcon}><Icon size={18} strokeWidth={1.5} /></div>
+                        <div>
+                          <p className={styles.featureTitle}>{title}</p>
+                          <p className={styles.featureDesc}>{desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className={styles.switchNote}>
+                    Нет кабинета?{' '}
+                    <button className={styles.switchLink} onClick={() => setTab('register')}>Зарегистрироваться</button>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className={styles.formHint}>Заполните основные данные</p>
+                  <form className={styles.form} onSubmit={e => e.preventDefault()}>
+                    <Field label="ФИО" required>
+                      <input className={styles.input} type="text" placeholder="Иванов Иван Иванович" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} />
+                    </Field>
+                    <Field label="Телефон" required>
+                      <div className={styles.phoneWrap}>
+                        <Phone size={16} strokeWidth={1.5} className={styles.phoneIcon} />
+                        <input className={`${styles.input} ${styles.inputPhone}`} type="tel" placeholder="+7 (___) ___-__-__" value={form.phone} onChange={e => setForm(f => ({...f, phone: e.target.value}))} />
+                      </div>
+                    </Field>
+                    <Field label="Email" required>
+                      <input className={styles.input} type="email" placeholder="ivanov@mail.ru" value={form.email} onChange={e => setForm(f => ({...f, email: e.target.value}))} />
+                    </Field>
+                    <Field label="Город" required>
+                      <input className={styles.input} type="text" placeholder="Например, Воронеж" value={form.city} onChange={e => setForm(f => ({...f, city: e.target.value}))} />
+                    </Field>
+                    <Field label="Название клиники (если вы не физ. лицо)">
+                      <input className={styles.input} type="text" placeholder="Например, ВетПлюс" value={form.clinicName} onChange={e => setForm(f => ({...f, clinicName: e.target.value}))} />
+                    </Field>
+                    <button type="submit" className={styles.submitBtn}>Создать кабинет</button>
+                    <p className={styles.termsText}>
+                      Нажимая «Создать кабинет», вы соглашаетесь с{' '}
+                      <a href="#" className={styles.termsLink}>пользовательским соглашением</a> и{' '}
+                      <a href="#" className={styles.termsLink}>политикой конфиденциальности</a>
+                    </p>
+                  </form>
+
+                  <p className={styles.switchNote}>
+                    Уже есть кабинет?{' '}
+                    <button className={styles.switchLink} onClick={() => setTab('login')}>Войти</button>
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </aside>
     </>
   )
 }
 
-function LoginView({ onSwitch }) {
+function Field({ label, required, children }) {
   return (
-    <div className={styles.form}>
-      <p className={styles.formDesc}>Войдите в кабинет, чтобы увидеть заказы, избранное и персональные условия</p>
-      <Field label="Телефон или email" placeholder="Телефон или email" type="text" />
-      <Field label="Пароль" placeholder="Пароль" type="password" />
-      <button className={styles.btnPrimary}>Войти</button>
-      <div className={styles.divider}><span>или</span></div>
-      <button className={styles.btnSecondary}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
-        Получить код по телефону
-      </button>
-      <a href="#" className={styles.link}>Забыли пароль?</a>
-      <div className={styles.benefits}>
-        <Benefit icon="🔒" title="Безопасность данных" desc="Мы не передаём Ваши данные третьим лицам и надёжно их защищаем" />
-        <Benefit icon="⚡" title="Быстрый доступ" desc="Повторяйте заказы в один клик и экономьте время" />
-        <Benefit icon="📄" title="Документы под рукой" desc="Счета, накладные и сертификаты всегда доступны в кабинете" />
-      </div>
-      <p className={styles.switchText}>Нет кабинета? <button className={styles.switchBtn} onClick={onSwitch}>Зарегистрироваться</button></p>
-    </div>
-  )
-}
-
-function RegisterView({ onSwitch }) {
-  return (
-    <div className={styles.form}>
-      <p className={styles.formDesc}>Создайте кабинет, чтобы видеть заказы, сохранять избранное и ускорить оформление</p>
-      <Field label="ФИО*" placeholder="Иванов Иван Иванович" />
-      <Field label="Телефон*" placeholder="+7 (___) ___-__-__" type="tel" />
-      <Field label="Email*" placeholder="ivanov@mail.ru" type="email" />
-      <Field label="Город*" placeholder="Например, Воронеж" />
-      <Field label="Название клиники (если вы не физ. лицо)" placeholder="Например, ВетПлюс" />
-      <button className={styles.btnPrimary}>Создать кабинет</button>
-      <p className={styles.legal}>Нажимая «Создать кабинет», вы соглашаетесь с <a href="/documents/agreement">пользовательским соглашением</a> и <a href="/documents/privacy">политикой конфиденциальности</a></p>
-      <p className={styles.switchText}>Уже есть кабинет? <button className={styles.switchBtn} onClick={onSwitch}>Войти</button></p>
+    <div className={styles.field}>
+      <label className={styles.fieldLabel}>{label}{required && <span className={styles.req}>*</span>}</label>
+      {children}
     </div>
   )
 }
 
 function ProfileView({ user, onClose }) {
   return (
-    <div className={styles.profile}>
-      <div className={styles.profileInfo}>
+    <div className={styles.profileWrap}>
+      {/* Header */}
+      <div className={styles.profileHead}>
+        <h2 className={styles.title}>Личный кабинет</h2>
+        <button className={styles.close} onClick={onClose} aria-label="Закрыть"><X size={18} strokeWidth={2} /></button>
+      </div>
+
+      {/* Profile info */}
+      <div className={styles.profileCard}>
         <div className={styles.profileAvatar}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
+          <User size={28} strokeWidth={1.5} />
         </div>
-        <div>
-          <p className={styles.profileName}>{user.clinic || user.name}</p>
-          <p className={styles.profileSub}>{user.city && `Клиника, г. ${user.city}`}</p>
-          {user.inn && <p className={styles.profileSub}>ИНН {user.inn}</p>}
-          {user.verified && <span className={styles.badge}>✓ Подтверждён</span>}
-        </div>
-      </div>
-
-      <div className={styles.quickActions}>
-        <p className={styles.sectionLabel}>Быстрые действия</p>
-        <div className={styles.quickGrid}>
-          <QuickAction icon="🔄" label="Повторить заказ" />
-          <QuickAction icon="📦" label="Проверить наличие" />
-          <QuickAction icon="📄" label="Скачать документы" />
-          <QuickAction icon="👤" label="Связаться с менеджером" />
-        </div>
-      </div>
-
-      <div className={styles.menu}>
-        <MenuItem label="Мои заказы" count={user.ordersCount} />
-        <MenuItem label="Избранное" count={user.favCount} />
-        <MenuItem label="Реквизиты" />
-        <MenuItem label="Адрес доставки" count={user.addressCount} />
-        <MenuItem label="Документы" />
-        <MenuItem label="Контактный менеджер" />
-      </div>
-
-      <button className={styles.logout}>Выйти из кабинета</button>
-
-      {user.manager && (
-        <div className={styles.manager}>
-          <div className={styles.managerPhoto}>Фото</div>
-          <div>
-            <p className={styles.managerLabel}>Ваш персональный менеджер</p>
-            <p className={styles.managerName}>{user.manager.name}</p>
-            <a href={`tel:${user.manager.phone}`} className={styles.managerPhone}>{user.manager.phone}</a>
+        <div className={styles.profileInfo}>
+          <div className={styles.profileNameRow}>
+            <span className={styles.profileName}>{user.clinic}</span>
+            {user.verified && <span className={styles.badge}>✓ Подтвержден</span>}
           </div>
-          <a href={`tel:${user.manager.phone}`} className={styles.callBtn}>Позвонить</a>
+          <p className={styles.profileCity}>Клиника, г. {user.city}</p>
+          <p className={styles.profileInn}>ИНН {user.inn}</p>
         </div>
-      )}
-    </div>
-  )
-}
-
-function Field({ label, placeholder, type = 'text' }) {
-  return (
-    <div className={styles.field}>
-      {label && <label className={styles.label}>{label}</label>}
-      <input type={type} placeholder={placeholder} className={styles.input} />
-    </div>
-  )
-}
-
-function Benefit({ icon, title, desc }) {
-  return (
-    <div className={styles.benefit}>
-      <span>{icon}</span>
-      <div>
-        <p className={styles.benefitTitle}>{title}</p>
-        <p className={styles.benefitDesc}>{desc}</p>
       </div>
-    </div>
-  )
-}
 
-function QuickAction({ icon, label }) {
-  return (
-    <button className={styles.quickAction}>
-      <span className={styles.quickIcon}>{icon}</span>
-      <span>{label}</span>
-    </button>
-  )
-}
+      {/* Quick actions */}
+      <div className={styles.quickBlock}>
+        <p className={styles.quickTitle}>Быстрые действия</p>
+        <div className={styles.quickGrid}>
+          {QUICK_ACTIONS.map(({ Icon, label }) => (
+            <button key={label} className={styles.quickItem}>
+              <Icon size={22} strokeWidth={1.5} />
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-function MenuItem({ label, count }) {
-  return (
-    <div className={styles.menuItem}>
-      <span>{label}</span>
-      <div className={styles.menuRight}>
-        {count !== undefined && <span className={styles.count}>{count}</span>}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
+      {/* Menu */}
+      <div className={styles.menuBlock}>
+        {MENU_ITEMS.map(({ Icon, label, count }) => (
+          <button key={label} className={styles.menuItem}>
+            <Icon size={18} strokeWidth={1.5} className={styles.menuIcon} />
+            <span className={styles.menuLabel}>{label}</span>
+            {count !== null && <span className={styles.menuCount}>{count}</span>}
+            <ChevronRight size={16} strokeWidth={2} className={styles.menuChevron} />
+          </button>
+        ))}
+      </div>
+
+      {/* Logout */}
+      <div className={styles.logoutBlock}>
+        <button className={styles.logoutBtn}>
+          <LogOut size={18} strokeWidth={1.5} />
+          Выйти из кабинета
+        </button>
+      </div>
+
+      {/* Manager card */}
+      <div className={styles.managerCard}>
+        <div className={styles.managerPhoto}>Сток фото</div>
+        <div className={styles.managerInfo}>
+          <p className={styles.managerTitle}>Ваш персональный менеджер</p>
+          <p className={styles.managerName}>Мария Смирнова</p>
+          <p className={styles.managerPhone}>+7 (961) 189-89-33</p>
+          <button className={styles.managerBtn}>Позвонить</button>
+        </div>
       </div>
     </div>
   )

@@ -45,3 +45,11 @@ input, textarea, select {
   font-family: inherit;
   outline: none;
 }
+
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: none;
+}

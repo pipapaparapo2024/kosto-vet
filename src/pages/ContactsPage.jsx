@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Phone, MessageCircle, Mail, MapPin, Clock, ArrowRight, ChevronDown, Lock, Package, Truck } from 'lucide-react'
+import { Phone, MessageCircle, Mail, MapPin, Clock, ArrowRight, ChevronDown, Package, Truck, SquareArrowOutUpRight, Timer } from 'lucide-react'
+import { img } from '../utils/assetUrl'
 import styles from './ContactsPage.module.css'
 
 const FAQ = [
@@ -24,49 +25,46 @@ export default function ContactsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.breadcrumbWrap}>
-        <div className={styles.container}>
+      {/* Hero — breadcrumb внутри, чтобы картинка выровнялась по верху */}
+      <div className={styles.hero}>
+        <div className={styles.heroLeft}>
           <nav className={styles.breadcrumb}>
-            <Link to="/">Главная</Link><span>/</span>
+            <Link to="/">Главная</Link><span>›</span>
             <span>Контакты</span>
           </nav>
+          <h1 className={styles.heroTitle}>Всегда на связи, когда это действительно важно</h1>
+          <p className={styles.heroDesc}>Если импланты нужны срочно — свяжитесь с нами любым удобным способом. Мы быстро проверим наличие, поможем подобрать изделия и организуем доставку.</p>
         </div>
+        <img src={img('images/cat-contacts.png')} alt="" className={styles.heroPhoto} aria-hidden="true" />
       </div>
 
       <div className={styles.container}>
-        {/* Hero */}
-        <div className={styles.hero}>
-          <div className={styles.heroLeft}>
-            <h1 className={styles.heroTitle}>Всегда на связи,<br/>когда это действительно<br/>важно</h1>
-            <p className={styles.heroDesc}>Если импланты нужны срочно — свяжитесь с нами любым удобным способом. Мы быстро проверим наличие, поможем подобрать изделия и организуем доставку.</p>
-          </div>
-          <div className={styles.heroPhoto}>ГРАФИКА</div>
-        </div>
 
         {/* Способы связи */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Способы связи</h2>
           <div className={styles.contactCards}>
-            <div className={styles.contactCard}>
-              <div className={styles.contactIcon}><Phone size={28} strokeWidth={1.5} /></div>
-              <p className={styles.contactMethod}>Телефон</p>
-              <a href="tel:+79611898933" className={styles.contactValue}>+7 (961) 189-89-33</a>
-              <a href="tel:+79611898933" className={styles.contactBtn}>Позвонить</a>
-            </div>
-
-            <div className={styles.contactCard}>
-              <div className={styles.contactIcon}><MessageCircle size={28} strokeWidth={1.5} /></div>
-              <p className={styles.contactMethod}>ВКонтакте</p>
-              <p className={styles.contactValue}>быстрые ответы</p>
-              <a href="#" className={styles.contactBtn}>Написать</a>
-            </div>
-
-            <div className={styles.contactCard}>
-              <div className={styles.contactIcon}><Mail size={28} strokeWidth={1.5} /></div>
-              <p className={styles.contactMethod}>Email</p>
-              <a href="mailto:Kosto-Vet@yandex.ru" className={styles.contactValue}>Kosto-Vet@yandex.ru</a>
-              <a href="mailto:Kosto-Vet@yandex.ru" className={styles.contactBtn}>Написать письмо</a>
-            </div>
+            <ContactCard
+              Icon={Phone}
+              method="Телефон"
+              value="+7 (961) 189-89-33"
+              href="tel:+79611898933"
+              btnLabel="Позвонить"
+            />
+            <ContactCard
+              Icon={MessageCircle}
+              method="ВКонтакте"
+              value="Быстрые ответы"
+              href="#"
+              btnLabel="Написать"
+            />
+            <ContactCard
+              Icon={Mail}
+              method="Email"
+              value="Kosto-Vet@yandex.ru"
+              href="mailto:Kosto-Vet@yandex.ru"
+              btnLabel="Написать письмо"
+            />
           </div>
         </section>
 
@@ -88,8 +86,8 @@ export default function ContactsPage() {
                   <textarea className={styles.textarea} placeholder="Комментарий" value={form.comment} onChange={e => setForm(f => ({...f, comment: e.target.value}))} />
                   <button type="submit" className={styles.submitBtn}>Связаться с нами</button>
                   <p className={styles.privacy}>
-                    <Lock size={12} strokeWidth={2} />
-                    Обрабатываем в рамках политики конфиденциальности
+                    <Timer size={18} strokeWidth={1.8} />
+                    Обычно отвечаем в течение нескольких минут.
                   </p>
                 </form>
               )}
@@ -97,81 +95,95 @@ export default function ContactsPage() {
 
             <div className={styles.mapCol}>
               <h2 className={styles.sectionTitle}>Где мы находимся</h2>
-              <div className={styles.mapPlaceholder}>ТУТ БУДЕТ Яндекс.КАРТА</div>
-              <div className={styles.mapInfo}>
-                <div className={styles.mapInfoItem}>
-                  <MapPin size={16} strokeWidth={1.5} />
-                  <div>
-                    <p className={styles.mapInfoLabel}>Адрес</p>
-                    <p>Россия, г. Воронеж,<br/>ул. Димитрова 56а</p>
+              <div className={styles.mapBlock}>
+                <div className={styles.mapPlaceholder}>ТУТ БУДЕТ Яндекс.КАРТА</div>
+                <div className={styles.mapDivider} />
+                <div className={styles.mapInfo}>
+                  <div className={styles.mapInfoItem}>
+                    <MapPin size={29} strokeWidth={2} className={styles.mapIcon} />
+                    <div>
+                      <p className={styles.mapInfoLabel}>Адрес</p>
+                      <p className={styles.mapInfoText}>Россия, г. Воронеж, ул. Димитрова 56а</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.mapInfoItem}>
-                  <Clock size={16} strokeWidth={1.5} />
-                  <div>
-                    <p className={styles.mapInfoLabel}>Режим работы</p>
-                    <p>Ежедневно<br/>09:00–18:00</p>
+                  <div className={styles.mapInfoItem}>
+                    <Clock size={29} strokeWidth={2} className={styles.mapIcon} />
+                    <div>
+                      <p className={styles.mapInfoLabel}>Режим работы</p>
+                      <p className={styles.mapInfoText}>Ежедневно 09:00–18:00</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.mapInfoItem}>
-                  <MapPin size={16} strokeWidth={1.5} />
-                  <div>
-                    <p className={styles.mapInfoLabel}>Самовывоз</p>
-                    <p>По предварительной договорённости</p>
+                  <div className={styles.mapInfoItem}>
+                    <Package size={29} strokeWidth={2} className={styles.mapIcon} />
+                    <div>
+                      <p className={styles.mapInfoLabel}>Самовывоз</p>
+                      <p className={styles.mapInfoText}>По предварительному согласованию</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.mapInfoItem}>
-                  <Truck size={16} strokeWidth={1.5} />
-                  <div>
-                    <p className={styles.mapInfoLabel}>Доставка</p>
-                    <p>По Воронежу — 2–4 часа.<br/>По России — 1–3 рабочих дня.</p>
+                  <div className={styles.mapInfoItem}>
+                    <Truck size={29} strokeWidth={2} className={`${styles.mapIcon} ${styles.mapIconTruck}`} />
+                    <div>
+                      <p className={styles.mapInfoLabel}>Доставка</p>
+                      <p className={styles.mapInfoText}>По Воронежу — 2–4 часа. По России — транспортными компаниями</p>
+                    </div>
                   </div>
+                  <a href="#" className={styles.mapRouteBtn}>
+                    Открыть в Яндекс.Картах
+                    <SquareArrowOutUpRight size={16} strokeWidth={1.8} />
+                  </a>
                 </div>
-                <a href="#" className={styles.mapRouteBtn}>Открыть в Яндекс.Картах →</a>
               </div>
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section className={styles.section}>
+        <section className={styles.faqSection}>
           <h2 className={styles.sectionTitle}>Часто задаваемые вопросы</h2>
-          <div className={styles.faqGrid}>
-            {[FAQ.slice(0, 3), FAQ.slice(3)].map((col, ci) => (
-              <div key={ci}>
-                {col.map((item, i) => {
-                  const idx = ci * 3 + i
-                  return (
-                    <div key={idx} className={`${styles.faqItem} ${faqOpen === idx ? styles.faqOpen : ''}`}>
-                      <button className={styles.faqQ} onClick={() => setFaqOpen(faqOpen === idx ? null : idx)}>
-                        {item.q}
-                        <ChevronDown size={14} strokeWidth={2} style={{ transform: faqOpen === idx ? 'rotate(180deg)' : 'none', transition: '200ms', flexShrink: 0 }} />
-                      </button>
-                      {faqOpen === idx && <p className={styles.faqA}>{item.a}</p>}
-                    </div>
-                  )
-                })}
+          <div className={styles.faqList}>
+            {FAQ.map((item, i) => (
+              <div key={i} className={`${styles.faqItem} ${faqOpen === i ? styles.faqOpen : ''}`}>
+                <button className={styles.faqQ} onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
+                  {item.q}
+                  <ChevronDown size={14} strokeWidth={2} style={{ transform: faqOpen === i ? 'rotate(180deg)' : 'none', transition: '200ms', flexShrink: 0 }} />
+                </button>
+                {faqOpen === i && <p className={styles.faqA}>{item.a}</p>}
               </div>
             ))}
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <div className={styles.ctaBanner}>
+        {/* CTA */}
+        <div className={styles.cta}>
           <div className={styles.ctaLeft}>
             <h2 className={styles.ctaTitle}>Нужен имплант сегодня?</h2>
-            <p className={styles.ctaDesc}>Мы проверим наличие, подберём совместно нужное изделие и подготовим заказ к отправке.</p>
+            <p className={styles.ctaDesc}>Мы проверим наличие, подберём совместимое изделие и подготовим заказ к отправке.</p>
             <div className={styles.ctaBtns}>
-              <Link to="/catalog" className={styles.ctaBtnPrimary}>Проверить наличие <ArrowRight size={16} /></Link>
+              <Link to="/catalog" className={styles.ctaBtnPrimary}>
+                Проверить наличие <ArrowRight size={20} strokeWidth={1.8} />
+              </Link>
               <a href="tel:+79611898933" className={styles.ctaBtnSecondary}>
-                <Phone size={16} strokeWidth={1.5} />
-                Позвонить сейчас
+                Позвонить сейчас <Phone size={20} strokeWidth={1.5} />
               </a>
             </div>
           </div>
-          <div className={styles.ctaPhoto}>Графика</div>
+          <div className={styles.ctaRight}>
+            <img src={img('images/contacts-cta.png')} alt="" className={styles.ctaImg} aria-hidden="true" />
+          </div>
         </div>
+
       </div>
+    </div>
+  )
+}
+
+function ContactCard({ Icon, method, value, href, btnLabel }) {
+  return (
+    <div className={styles.contactCard}>
+      <div className={styles.contactIcon}><Icon size={28} strokeWidth={1.5} /></div>
+      <p className={styles.contactMethod}>{method}</p>
+      <p className={styles.contactValue}>{value}</p>
+      <a href={href} className={styles.contactBtn}>{btnLabel}</a>
     </div>
   )
 }
