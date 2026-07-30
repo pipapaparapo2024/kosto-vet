@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Phone, MessageCircle, Mail, MapPin, Clock, ArrowRight, ChevronDown, Package, Truck, SquareArrowOutUpRight, Timer } from 'lucide-react'
+import { Phone, MessageCircle, Mail, MapPin, Clock, ArrowRight, ChevronDown, Package, Truck, SquareArrowOutUpRight, Timer, AlertCircle } from 'lucide-react'
 import { img } from '../utils/assetUrl'
+import { createLead } from '../lib/api/leads'
+import { useSettings } from '../context/SettingsContext'
+import { formatFieldErrors } from '../lib/payment'
+import { ApiError } from '../lib/apiClient'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './ContactsPage.module.css'
 
 const FAQ = [
@@ -14,13 +19,39 @@ const FAQ = [
 ]
 
 export default function ContactsPage() {
-  const [form, setForm] = useState({ name: '', phone: '', clinic: '', comment: '' })
-  const [sent, setSent] = useState(false)
-  const [faqOpen, setFaqOpen] = useState(null)
+  const { settings } = useSettings()
+  const phone = settings?.manager?.phone || settings?.emergency_phone || '+7 (961) 189-89-33'
+  const email = settings?.manager?.email || 'Kosto-Vet@yandex.ru'
+  const phoneHref = `tel:${String(phone).replace(/\D/g, '')}`
 
-  const handleSubmit = e => {
+  const [form, setForm] = useState({ name: '', phone: '', clinic: '', comment: '', consent: false, website: '' })
+  const [sent, setSent] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState(null)
+  const [faqOpen, setFaqOpen] = useState(null)
+  useDocumentTitle('Контакты', 'Свяжитесь с KOSTO-VET: телефон, email или заявка на сайте.')
+
+  const handleSubmit = async e => {
     e.preventDefault()
-    setSent(true)
+    if (!form.consent || submitting) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      await createLead({
+        name: form.name,
+        phone: form.phone,
+        company: form.clinic,
+        message: form.comment,
+        source: 'contact',
+        website: form.website,
+      })
+      setSent(true)
+    } catch (err) {
+      const fields = formatFieldErrors(err instanceof ApiError ? err.fieldErrors : null)
+      setError(fields ? `${err.message}. ${fields}` : err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -47,8 +78,8 @@ export default function ContactsPage() {
             <ContactCard
               Icon={Phone}
               method="Телефон"
-              value="+7 (961) 189-89-33"
-              href="tel:+79611898933"
+              value={phone}
+              href={phoneHref}
               btnLabel="Позвонить"
             />
             <ContactCard
@@ -61,8 +92,8 @@ export default function ContactsPage() {
             <ContactCard
               Icon={Mail}
               method="Email"
-              value="Kosto-Vet@yandex.ru"
-              href="mailto:Kosto-Vet@yandex.ru"
+              value={email}
+              href={`mailto:${email}`}
               btnLabel="Написать письмо"
             />
           </div>
@@ -84,7 +115,37 @@ export default function ContactsPage() {
                   <input className={styles.input} type="tel" placeholder="Телефон*" required value={form.phone} onChange={e => setForm(f => ({...f, phone: e.target.value}))} />
                   <input className={styles.input} type="text" placeholder="Клиника" value={form.clinic} onChange={e => setForm(f => ({...f, clinic: e.target.value}))} />
                   <textarea className={styles.textarea} placeholder="Комментарий" value={form.comment} onChange={e => setForm(f => ({...f, comment: e.target.value}))} />
-                  <button type="submit" className={styles.submitBtn}>Связаться с нами</button>
+                  <input
+                    type="text"
+                    name="website"
+                    autoComplete="off"
+                    tabIndex={-1}
+                    value={form.website}
+                    onChange={e => setForm(f => ({...f, website: e.target.value}))}
+                    style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+                    aria-hidden="true"
+                  />
+                  <label className={styles.consentRow}>
+                    <input
+                      type="checkbox"
+                      required
+                      checked={form.consent}
+                      onChange={e => setForm(f => ({...f, consent: e.target.checked}))}
+                    />
+                    <span>
+                      Согласен на{' '}
+                      <Link to="/documents/obrabotka-personalnyh-dannyh" target="_blank">обработку персональных данных</Link>
+                    </span>
+                  </label>
+                  {error && (
+                    <p className={styles.formError}>
+                      <AlertCircle size={16} strokeWidth={2} />
+                      {error}
+                    </p>
+                  )}
+                  <button type="submit" className={styles.submitBtn} disabled={submitting}>
+                    {submitting ? 'Отправляем…' : 'Связаться с нами'}
+                  </button>
                   <p className={styles.privacy}>
                     <Timer size={18} strokeWidth={1.8} />
                     Обычно отвечаем в течение нескольких минут.

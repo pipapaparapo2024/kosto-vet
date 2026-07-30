@@ -3,51 +3,55 @@
   display: flex;
   align-items: center;
 }
+.page + :global(footer) { margin-top: 0; }
 
 .inner {
-  max-width: var(--space-content);
+  max-width: 1600px;
   margin: 0 auto;
   padding: 60px var(--space-x);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr auto;
   gap: 40px;
   align-items: center;
   width: 100%;
 }
 
-.left { display: flex; flex-direction: column; gap: 16px; }
+.left { display: flex; flex-direction: column; }
 
 .code {
-  font-size: clamp(100px, 15vw, 180px);
-  font-weight: 800;
-  line-height: 1;
+  font-size: 300px;
+  font-weight: 900;
+  line-height: 1.1;
   color: var(--color-text);
   letter-spacing: -0.04em;
 }
 
 .title {
-  font-size: clamp(24px, 3vw, 36px);
-  font-weight: 800;
+  font-size: 48px;
+  font-weight: 700;
   line-height: 1.2;
+  margin-bottom: 19px;
 }
 
 .desc {
-  font-size: var(--text-body);
+  font-size: 24px;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
+  margin-bottom: 40px;
 }
 
-.btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.btns { display: flex; gap: 29px; flex-wrap: wrap; }
 
 .btnPrimary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 75px;
   height: 52px;
   padding: 0 24px;
   background: var(--color-btn);
   color: var(--color-btn-text);
-  border-radius: var(--radius-btn);
+  border-radius: 10px;
   font-weight: 600;
   font-size: var(--text-body);
   text-decoration: none;
@@ -58,13 +62,13 @@
 .btnSecondary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 50px;
   height: 52px;
   padding: 0 24px;
   background: transparent;
   color: var(--color-text);
   border: 1.5px solid var(--color-text);
-  border-radius: var(--radius-btn);
+  border-radius: 10px;
   font-weight: 600;
   font-size: var(--text-body);
   text-decoration: none;
@@ -76,12 +80,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 500px;
 }
 
 .cat {
-  width: 336px;
-  height: 359px;
+  width: 680px;
+  height: 1015px;
   object-fit: contain;
 }
 

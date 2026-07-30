@@ -1,7 +1,11 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { Search, User, Menu, X } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Search, User, Menu, X, ShoppingCart } from 'lucide-react'
 import AuthDrawer from '../../ui/AuthDrawer/AuthDrawer'
+import CartDrawer from '../../ui/CartDrawer/CartDrawer'
+import { useAuth } from '../../../context/AuthContext'
+import { useCart } from '../../../context/CartContext'
+import { getSearchSuggestions } from '../../../lib/api/catalog'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -13,9 +17,38 @@ const NAV_LINKS = [
 ]
 
 export default function Header() {
+  const { isAuth, customer } = useAuth()
+  const { count, setOpen: setCartOpen } = useCart()
+  const navigate = useNavigate()
   const [authOpen, setAuthOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const debounceRef = useRef(null)
+
+  useEffect(() => {
+    if (!searchOpen) return
+    if (query.trim().length < 2) {
+      setSuggestions([])
+      return
+    }
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      getSearchSuggestions(query.trim())
+        .then(res => setSuggestions(res.items || []))
+        .catch(() => setSuggestions([]))
+    }, 250)
+    return () => clearTimeout(debounceRef.current)
+  }, [query, searchOpen])
+
+  const submitSearch = (e) => {
+    e?.preventDefault()
+    const q = query.trim()
+    if (!q) return
+    setSearchOpen(false)
+    navigate(`/catalog?q=${encodeURIComponent(q)}`)
+  }
 
   return (
     <>
@@ -35,13 +68,27 @@ export default function Header() {
           </nav>
 
           <div className={styles.actions}>
-            <button className={styles.iconBtn} onClick={() => setSearchOpen(v => !v)} aria-label="Поиск">
+            <button type="button" className={styles.iconBtn} onClick={() => setSearchOpen(v => !v)} aria-label="Поиск">
               <Search size={22} strokeWidth={1.8} />
             </button>
-            <button className={styles.iconBtn} onClick={() => setAuthOpen(true)} aria-label="Личный кабинет">
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={() => setCartOpen(true)}
+              aria-label={`Корзина${count ? `, ${count}` : ''}`}
+            >
+              <ShoppingCart size={22} strokeWidth={1.8} />
+              {count > 0 && <span className={styles.badge}>{count > 99 ? '99+' : count}</span>}
+            </button>
+            <button
+              type="button"
+              className={styles.iconBtn}
+              onClick={() => setAuthOpen(true)}
+              aria-label={isAuth ? `Кабинет ${customer?.name || ''}` : 'Личный кабинет'}
+            >
               <User size={22} strokeWidth={1.8} />
             </button>
-            <button className={styles.iconBtn} onClick={() => setMenuOpen(v => !v)} aria-label="Меню">
+            <button type="button" className={styles.iconBtn} onClick={() => setMenuOpen(v => !v)} aria-label="Меню">
               {menuOpen ? <X size={22} strokeWidth={1.8} /> : <Menu size={22} strokeWidth={1.8} />}
             </button>
           </div>
@@ -51,18 +98,36 @@ export default function Header() {
 
         {searchOpen && (
           <div className={styles.searchBar}>
-            <div className={styles.searchInner}>
+            <form className={styles.searchInner} onSubmit={submitSearch}>
               <Search size={18} strokeWidth={2} className={styles.searchIcon} />
               <input
                 autoFocus
                 type="search"
                 placeholder="Поиск по каталогу..."
                 className={styles.searchInput}
+                value={query}
+                onChange={e => setQuery(e.target.value)}
               />
-              <button className={styles.searchClose} onClick={() => setSearchOpen(false)}>
+              <button type="button" className={styles.searchClose} onClick={() => setSearchOpen(false)}>
                 <X size={18} strokeWidth={2} />
               </button>
-            </div>
+            </form>
+            {suggestions.length > 0 && (
+              <ul className={styles.suggestList}>
+                {suggestions.map((item, i) => (
+                  <li key={`${item.type}-${item.label}-${i}`}>
+                    <Link
+                      to={normalizeSuggestionUrl(item.url)}
+                      className={styles.suggestItem}
+                      onClick={() => setSearchOpen(false)}
+                    >
+                      <span className={styles.suggestType}>{item.type}</span>
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </header>
@@ -73,7 +138,7 @@ export default function Header() {
           <nav className={styles.menuPanel}>
             <div className={styles.menuHead}>
               <span className={styles.menuTitle}>Навигация</span>
-              <button className={styles.iconBtn} onClick={() => setMenuOpen(false)} aria-label="Закрыть">
+              <button type="button" className={styles.iconBtn} onClick={() => setMenuOpen(false)} aria-label="Закрыть">
                 <X size={22} strokeWidth={1.8} />
               </button>
             </div>
@@ -88,6 +153,13 @@ export default function Header() {
                   {label}
                 </NavLink>
               ))}
+              <button
+                type="button"
+                className={styles.menuLink}
+                onClick={() => { setMenuOpen(false); setCartOpen(true) }}
+              >
+                Корзина{count ? ` (${count})` : ''}
+              </button>
             </div>
             <div className={styles.menuFooter}>
               <a href="tel:+79611898933" className={styles.menuContact}>+7 (961) 189-89-33</a>
@@ -98,6 +170,19 @@ export default function Header() {
       )}
 
       <AuthDrawer isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      <CartDrawer />
     </>
   )
+}
+
+function normalizeSuggestionUrl(url) {
+  if (!url) return '/catalog'
+  if (url.startsWith('http')) {
+    try {
+      return new URL(url).pathname.replace(/^\/kosto-vet/, '') || '/catalog'
+    } catch {
+      return '/catalog'
+    }
+  }
+  return url.replace(/^\/kosto-vet/, '') || url
 }

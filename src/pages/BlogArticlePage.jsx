@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { PRODUCTS, minPrice } from '../data/catalog'
-import { img } from '../utils/assetUrl'
+import { listProducts } from '../lib/api/catalog'
+import { formatMoney, productImageUrl, stockLabel } from '../lib/money'
 import styles from './BlogArticlePage.module.css'
 
 const ARTICLES = [
@@ -108,10 +109,13 @@ export default function BlogArticlePage() {
   const { slug } = useParams()
   const article = ARTICLES.find(a => a.slug === slug) || ARTICLES[0]
   const otherArticles = ARTICLES.filter(a => a.slug !== article.slug).slice(0, 3)
+  const [featuredProduct, setFeaturedProduct] = useState(null)
 
-  // Featured product for sidebar
-  const featuredProduct = PRODUCTS.find(p => p.category === 'plastiny') || PRODUCTS[0]
-  const featuredPrice = minPrice(featuredProduct)
+  useEffect(() => {
+    listProducts({ sort: 'popular', limit: 1 })
+      .then(res => setFeaturedProduct(res.items?.[0] || null))
+      .catch(() => setFeaturedProduct(null))
+  }, [])
 
   return (
     <div className={styles.page}>
@@ -190,16 +194,22 @@ export default function BlogArticlePage() {
                 <p className={styles.widgetDesc}>Проверьте наличие или получите помощь в подборе</p>
                 <div className={styles.widgetProduct}>
                   <div className={styles.widgetPhoto}>
-                    <img src={img(featuredProduct.image)} alt={featuredProduct.shortName} onError={e => { e.currentTarget.style.opacity = '0.3' }} />
+                    {productImageUrl(featuredProduct.image, 'thumb') && (
+                      <img
+                        src={productImageUrl(featuredProduct.image, 'thumb')}
+                        alt={featuredProduct.name}
+                        onError={e => { e.currentTarget.style.opacity = '0.3' }}
+                      />
+                    )}
                   </div>
                   <div>
-                    <p className={styles.widgetProductName}>{featuredProduct.shortName || featuredProduct.name}</p>
-                    <p className={styles.widgetSku}>Арт. {featuredProduct.variants?.[0]?.sku}</p>
-                    <p className={styles.widgetStock}>● В наличии</p>
-                    {featuredPrice && <p className={styles.widgetPrice}>{featuredPrice.toLocaleString('ru')} ₽</p>}
+                    <p className={styles.widgetProductName}>{featuredProduct.subtitle || featuredProduct.name}</p>
+                    <p className={styles.widgetSku}>Арт. {featuredProduct.article}</p>
+                    <p className={styles.widgetStock}>{stockLabel(featuredProduct.stock)}</p>
+                    <p className={styles.widgetPrice}>{formatMoney(featuredProduct.price)}</p>
                   </div>
                 </div>
-                <Link to={`/catalog/${featuredProduct.category}/${featuredProduct.slug}`} className={styles.widgetBtn}>
+                <Link to={`/catalog/${featuredProduct.category_slug}/${featuredProduct.slug}`} className={styles.widgetBtn}>
                   Проверить наличие
                 </Link>
                 <Link to="/contacts" className={styles.widgetBtnSecondary}>

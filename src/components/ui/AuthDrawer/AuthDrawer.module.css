@@ -415,6 +415,8 @@
   font-weight: 500;
   color: var(--color-text);
   text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
   border-bottom: 1px solid var(--color-border);
   transition: background var(--duration);
 }
@@ -501,6 +503,9 @@
 }
 
 .managerBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 40px;
   background: #111111;
@@ -511,6 +516,7 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   transition: opacity var(--duration);
 }
 .managerBtn:hover { opacity: 0.8; }
@@ -519,3 +525,125 @@
   .drawer { width: 100%; }
   .quickGrid { grid-template-columns: repeat(2, 1fr); }
 }
+
+.formError {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #eb5757;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.forgotHint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.yandexBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  margin-top: 16px;
+  border: none;
+  border-radius: var(--radius-btn);
+  background: #fc3f1d;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.yandexBtn:hover { background: #e8381a; }
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+.consentRow {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.consentRow input { margin-top: 3px; flex-shrink: 0; }
+
+.backBtn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--color-text);
+  display: flex;
+}
+
+.panelBody { padding: 0 40px 40px 30px; }
+
+.panelMuted {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.listTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.listMeta {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.linkBtn {
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.profileFields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.profileFields a { color: var(--color-text); }

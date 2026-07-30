@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { ChevronDown } from 'lucide-react'
+import { img } from '../utils/assetUrl'
 import styles from './DocumentsPage.module.css'
 
 const DOCS = [
@@ -12,6 +14,7 @@ const DOCS = [
   { id: 'sterilizaciya',                label: 'Рекомендации по стерилизации', group: 'Технические' },
   { id: 'kontrol-kachestva',            label: 'Контроль качества продукции', group: 'Технические' },
   { id: 'politika-konfidencialnosti',   label: 'Политика конфиденциальности', group: 'Юридические' },
+  { id: 'obrabotka-personalnyh-dannyh', label: 'Обработка персональных данных', group: 'Юридические' },
   { id: 'oferta',                       label: 'Договор-оферта', group: 'Юридические' },
   { id: 'vozvrat',                      label: 'Порядок возврата', group: 'Юридические' },
   { id: 'licenziya',                    label: 'Лицензия на деятельность', group: 'Юридические' },
@@ -40,8 +43,182 @@ const DOC_CONTENT = {
   },
 }
 
+const AGREEMENT_ID = 'polzovatelskoe-soglashenie'
+
+const AGREEMENT = {
+  title: 'Пользовательское соглашение',
+  updated: 'Редакция от 01 мая 2024 г.',
+  pdfVersion: 'Версия от 01.05.2024',
+  intro: 'Настоящее пользовательское соглашение (далее — «Соглашение») регулирует отношения между интернет-магазином Kosto-Vet (далее — «Сайт», «Мы», «Наш») и пользователем (далее — «Вы», «Пользователь») при использовании Сайта и оформлении заказов.',
+  sections: [
+    {
+      id: 'obshchie-polozheniya', num: 1, title: 'Общие положения',
+      paragraphs: [
+        '1.1. Используя Сайт, Вы подтверждаете, что ознакомлены с настоящим Соглашением и соглашаетесь с его условиями в полном объеме. Если Вы не согласны с условиями Соглашения, пожалуйста, не используйте Сайт.',
+        '1.2. Мы оставляем за собой право вносить изменения в Соглашение. Актуальная версия всегда размещена на данной странице.',
+      ],
+    },
+    {
+      id: 'terminy-i-opredeleniya', num: 2, title: 'Термины и определения',
+      paragraphs: [
+        '2.1. Сайт — интернет-сайт, расположенный по адресу kosto-vet.ru, а также его поддомены.',
+        '2.2. Товар — продукция, представленная на Сайте.',
+        '2.3. Заказ — оформленный Пользователем запрос на покупку Товара.',
+        '2.4. Покупатель — физическое или юридическое лицо, оформившее Заказ.',
+      ],
+    },
+    {
+      id: 'predmet-soglasheniya', num: 3, title: 'Предмет соглашения',
+      paragraphs: [
+        '3.1. Настоящее Соглашение определяет условия использования Сайта, а также порядок приобретения Товаров через интернет-магазин.',
+        '3.2. Оформляя Заказ на Сайте, Вы подтверждаете, что ознакомлены с характеристиками Товара, условиями оплаты и доставки.',
+      ],
+    },
+    {
+      id: 'prava-i-obyazannosti-storon', num: 4, title: 'Права и обязанности сторон',
+      blocks: [
+        {
+          subtitle: '4.1. Пользователь обязуется:',
+          items: [
+            'Предоставлять достоверные данные при оформлении Заказа.',
+            'Использовать Сайт исключительно в законных целях.',
+            'Не нарушать работоспособность Сайта и не предпринимать действий, направленных на его некорректное использование.',
+          ],
+        },
+        {
+          subtitle: '4.2. Магазин обязуется:',
+          items: [
+            'Предоставлять актуальную информацию о Товаре.',
+            'Обрабатывать Заказы в установленные сроки.',
+            'Обеспечивать конфиденциальность персональных данных Пользователя.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'oformlenie-zakaza', num: 5, title: 'Оформление заказа',
+      paragraphs: [
+        '5.1. Заказ оформляется через форму на Сайте или иным способом, доступным на Сайте.',
+        '5.2. После оформления Заказа с Вами свяжется наш менеджер для подтверждения и уточнения деталей.',
+        '5.3. Магазин оставляет за собой право отменить Заказ в случае недоступности Товара.',
+      ],
+    },
+    {
+      id: 'oplata-i-ceny', num: 6, title: 'Оплата и цены',
+      paragraphs: [
+        '6.1. Цены на Товары указаны в рублях Российской Федерации.',
+        '6.2. Оплата производится способами, указанными на Сайте.',
+        '6.3. Мы оставляем за собой право изменять цены без предварительного уведомления. Актуальная цена отображается на странице Товара.',
+      ],
+    },
+    {
+      id: 'dostavka-i-peredacha-tovara', num: 7, title: 'Доставка и передача товара',
+      paragraphs: [
+        '7.1. Доставка осуществляется способами, указанными на Сайте.',
+        '7.2. Сроки доставки зависят от региона и выбранного способа доставки.',
+        '7.3. Риск случайной гибели или повреждения Товара переходит к Покупателю с момента передачи Товара курьеру или в пункте выдачи.',
+      ],
+    },
+    {
+      id: 'vozvrat-i-obmen-tovara', num: 8, title: 'Возврат и обмен товара', pending: true,
+      paragraphs: ['Текст раздела уточняется и будет добавлен после согласования с юристом.'],
+    },
+    {
+      id: 'otvetstvennost-storon', num: 9, title: 'Ответственность сторон', pending: true,
+      paragraphs: ['Текст раздела уточняется и будет добавлен после согласования с юристом.'],
+    },
+    {
+      id: 'intellektualnaya-sobstvennost', num: 10, title: 'Интеллектуальная собственность', pending: true,
+      paragraphs: ['Текст раздела уточняется и будет добавлен после согласования с юристом.'],
+    },
+    {
+      id: 'personalnye-dannye', num: 11, title: 'Персональные данные', pending: true,
+      paragraphs: ['Текст раздела уточняется и будет добавлен после согласования с юристом.'],
+    },
+    {
+      id: 'zaklyuchitelnye-polozheniya', num: 12, title: 'Заключительные положения', pending: true,
+      paragraphs: ['Текст раздела уточняется и будет добавлен после согласования с юристом.'],
+    },
+  ],
+}
+
 export default function DocumentsPage() {
-  const [activeDoc, setActiveDoc] = useState(DOCS[0].id)
+  const { doc: docParam } = useParams()
+  const isAgreement = !docParam || docParam === AGREEMENT_ID
+  const [expanded, setExpanded] = useState(false)
+
+  const [activeDoc, setActiveDoc] = useState(() =>
+    docParam && DOCS.some(d => d.id === docParam) ? docParam : DOCS[0].id
+  )
+
+  if (isAgreement) {
+    const visibleSections = expanded ? AGREEMENT.sections : AGREEMENT.sections.slice(0, 7)
+
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <nav className={styles.breadcrumbTop}>
+            <Link to="/">Главная</Link><span>›</span>
+            <Link to="/documents">Документы</Link><span>›</span>
+            <span>{AGREEMENT.title}</span>
+          </nav>
+
+          <div className={styles.agreementLayout}>
+            <aside className={styles.toc}>
+              <p className={styles.tocTitle}>Содержание</p>
+              <nav className={styles.tocList}>
+                {AGREEMENT.sections.map(s => (
+                  <a key={s.id} href={`#${s.id}`} className={styles.tocItem}>{s.num}. {s.title}</a>
+                ))}
+              </nav>
+              <a
+                className={styles.pdfBtn}
+                href={img('documents/polzovatelskoe-soglashenie.pdf')}
+                download="Kosto-Vet — Пользовательское соглашение.pdf"
+              >
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>
+                  <span className={styles.pdfBtnTitle}>Скачать PDF</span>
+                  <span className={styles.pdfBtnSub}>{AGREEMENT.pdfVersion}</span>
+                </span>
+              </a>
+            </aside>
+
+            <article className={styles.agreementBody}>
+              <h1 className={styles.agreementTitle}>{AGREEMENT.title}</h1>
+              <p className={styles.agreementUpdated}>{AGREEMENT.updated}</p>
+              <p className={styles.agreementIntro}>{AGREEMENT.intro}</p>
+
+              {visibleSections.map(s => (
+                <section key={s.id} id={s.id} className={styles.section}>
+                  <h2 className={styles.sectionTitle}>{s.num}. {s.title}</h2>
+                  {s.paragraphs?.map((p, i) => <p key={i} className={styles.sectionP}>{p}</p>)}
+                  {s.blocks?.map((b, i) => (
+                    <div key={i} className={styles.sectionBlock}>
+                      <p className={styles.sectionSubtitle}>{b.subtitle}</p>
+                      <ul className={styles.sectionList}>
+                        {b.items.map((it, j) => <li key={j}>{it}</li>)}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+              ))}
+
+              {!expanded && (
+                <button className={styles.readMoreBtn} onClick={() => setExpanded(true)}>
+                  Читать далее <ChevronDown size={18} strokeWidth={2} />
+                </button>
+              )}
+            </article>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const doc = DOCS.find(d => d.id === activeDoc)
   const content = DOC_CONTENT[activeDoc] || { ...DOC_CONTENT.default, title: doc?.label }

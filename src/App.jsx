@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from './components/layout/Header/Header'
 import Footer from './components/layout/Footer/Footer'
 import HomePage from './pages/HomePage'
@@ -10,7 +11,8 @@ import ContactsPage from './pages/ContactsPage'
 import BlogPage from './pages/BlogPage'
 import BlogArticlePage from './pages/BlogArticlePage'
 import DocumentsPage from './pages/DocumentsPage'
-import AuthCallback from './pages/AuthCallback'
+import OrderStatusPage from './pages/OrderStatusPage'
+import CheckoutPage from './pages/CheckoutPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function Layout({ children }) {
@@ -23,15 +25,23 @@ function Layout({ children }) {
   )
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  return null
+}
+
 export default function App() {
   return (
+    <>
+    <ScrollToTop />
     <Routes>
-      <Route path="/auth/callback" element={<AuthCallback />} />
-
       <Route path="/" element={<Layout><HomePage /></Layout>} />
       <Route path="/catalog" element={<Layout><CatalogPage /></Layout>} />
       <Route path="/catalog/:category" element={<Layout><CatalogPage /></Layout>} />
       <Route path="/catalog/:category/:id" element={<Layout><ProductPage /></Layout>} />
+      <Route path="/orders/:publicId" element={<Layout><OrderStatusPage /></Layout>} />
+      <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
       <Route path="/delivery" element={<Layout><DeliveryPage /></Layout>} />
       <Route path="/about" element={<Layout><AboutPage /></Layout>} />
       <Route path="/contacts" element={<Layout><ContactsPage /></Layout>} />
@@ -42,5 +52,6 @@ export default function App() {
 
       <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
     </Routes>
+    </>
   )
 }

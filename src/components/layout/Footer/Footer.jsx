@@ -61,8 +61,8 @@ export default function Footer() {
         <div className={styles.container}>
           <div className={styles.bottomInner}>
             <span>© 2026 Kosto-Vet</span>
-            <Link to="/documents/privacy" className={styles.bottomPolicy}>Политика конфиденциальности</Link>
-            <Link to="/documents/personal-data" className={styles.bottomPersonal}>Обработка персональных данных</Link>
+            <Link to="/documents/politika-konfidencialnosti" className={styles.bottomPolicy}>Политика конфиденциальности</Link>
+            <Link to="/documents/obrabotka-personalnyh-dannyh" className={styles.bottomPersonal}>Обработка персональных данных</Link>
           </div>
         </div>
       </div>

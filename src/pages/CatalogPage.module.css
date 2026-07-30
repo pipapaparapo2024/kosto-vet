@@ -46,10 +46,10 @@
 }
 
 .heroImg {
-  width: 700px;
-  height: 480px;
+  width: 635px;
+  height: 255px;
   object-fit: contain;
-  object-position: bottom right;
+  object-position: top right;
   mix-blend-mode: multiply;
   flex-shrink: 0;
 }
@@ -106,8 +106,8 @@
   height: 172px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  border: 1.5px solid var(--color-border);
+  align-items: stretch;
+  border: 1.5px solid #111111;
   border-radius: 12px;
   text-decoration: none;
   color: var(--color-text);
@@ -127,15 +127,16 @@
 .subcatName {
   font-size: 13px;
   font-weight: 600;
-  padding: 7px 8px 3px;
-  text-align: center;
+  padding: 7px 12px 3px;
+  text-align: left;
   line-height: 1.3;
 }
 
 .subcatCount {
   font-size: 11px;
   color: var(--color-text-secondary);
-  padding-bottom: 8px;
+  padding: 0 12px 8px;
+  text-align: left;
 }
 
 /* ── Основной layout ──────────────────── */
@@ -188,7 +189,7 @@
 /* Белое тело — накладывается поверх хедера */
 .filterBody {
   background: #ffffff;
-  border: 1px solid var(--color-border);
+  border: 1px solid #111111;
   border-radius: 16px;
   margin-top: -34px;
   position: relative;
@@ -198,9 +199,17 @@
 
 /* ── Группы фильтра ───────────────────── */
 .filterGroup {
-  border-bottom: 1px solid var(--color-border);
+  position: relative;
 }
-.filterGroup:last-child { border-bottom: none; }
+.filterGroup:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  bottom: 0;
+  height: 1px;
+  background: #111111;
+}
 
 .filterGroupBtn {
   display: flex;
@@ -449,11 +458,10 @@
 
 .cardFooter {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
   margin-top: auto;
   padding-top: 10px;
-  flex-wrap: wrap;
   gap: 4px;
 }
 
@@ -475,7 +483,7 @@
   gap: 5px;
   font-size: 11px;
   font-weight: 600;
-  color: #27ae60;
+  color: var(--color-text);
 }
 
 .outOfStock {
@@ -569,8 +577,8 @@
 
 .ctaImg {
   display: block;
-  width: 300px;
-  height: 260px;
+  width: 562px;
+  height: 201px;
   object-fit: contain;
   object-position: bottom right;
   mix-blend-mode: multiply;

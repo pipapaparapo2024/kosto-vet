@@ -1,6 +1,6 @@
 .page { padding-bottom: 80px; }
 .breadcrumbWrap { border-bottom: 1px solid #e8e8e8; padding: 12px 0; }
-.container { max-width: var(--space-content); margin: 0 auto; padding: 0 var(--space-x); }
+.container { padding: 0 var(--space-x); }
 
 .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #888; }
 .breadcrumb a { color: #888; text-decoration: none; }
@@ -130,4 +130,127 @@
   .layout { grid-template-columns: 1fr; }
   .nav { position: static; }
   .docPreviewInner { padding: 24px; }
+}
+
+/* ── Пользовательское соглашение ──────── */
+.breadcrumbTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 42px 0;
+  font-size: 13px;
+  color: #888;
+}
+.breadcrumbTop a { color: #888; text-decoration: none; }
+.breadcrumbTop a:hover { color: #111; }
+
+.agreementLayout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  padding-bottom: 60px;
+}
+
+.toc {
+  position: sticky;
+  top: calc(var(--header-height) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 48px;
+  border-right: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.tocTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.tocList { display: flex; flex-direction: column; }
+
+.tocItem {
+  font-size: 14px;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 10px 0;
+  line-height: 1.4;
+  transition: opacity var(--duration);
+}
+.tocItem:hover { opacity: 0.6; }
+
+.pdfBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 32px 20px 32px 24px;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
+  font-family: var(--font);
+  color: var(--color-text);
+  transition: border-color var(--duration);
+}
+.pdfBtn:hover { border-color: var(--color-text); }
+
+.pdfBtnTitle { display: block; font-size: 14px; font-weight: 700; color: var(--color-text); }
+.pdfBtnSub { display: block; font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.agreementBody { max-width: 760px; }
+
+.agreementTitle {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+.agreementUpdated { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 20px; }
+
+.agreementIntro {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--color-border); }
+.section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.sectionTitle { font-size: 22px; font-weight: 700; color: var(--color-text); margin-bottom: 14px; }
+.sectionP { font-size: 15px; color: var(--color-text); line-height: 1.7; margin-bottom: 8px; }
+.sectionP:last-child { margin-bottom: 0; }
+
+.sectionBlock { margin-bottom: 16px; }
+.sectionBlock:last-child { margin-bottom: 0; }
+.sectionSubtitle { font-size: 15px; font-weight: 600; color: var(--color-text); margin-bottom: 8px; }
+.sectionList { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.sectionList li { font-size: 15px; color: var(--color-text); line-height: 1.6; }
+
+.readMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 20px;
+  border: 1.5px solid var(--color-text);
+  border-radius: 100px;
+  background: none;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background var(--duration);
+}
+.readMoreBtn:hover { background: var(--color-bg-secondary); }
+
+@media (max-width: 1024px) {
+  .agreementLayout { grid-template-columns: 1fr; }
+  .toc { position: static; }
 }

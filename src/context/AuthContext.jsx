@@ -1,74 +1,136 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import {
+  getCustomerMe,
+  loginCustomer,
+  registerCustomer,
+  logoutCustomer,
+  refreshCustomerSession,
+  updateCustomerMe,
+} from '../lib/api/auth'
+import { ApiError } from '../lib/apiClient'
+import { formatFieldErrors } from '../lib/payment'
 
 const AuthContext = createContext(null)
 
-const TOKEN_KEY = 'kv_token'
-const USER_KEY = 'kv_user'
+function toAuthError(e, fallback) {
+  const message = e.message || fallback
+  const fields = formatFieldErrors(e instanceof ApiError ? e.fieldErrors : null)
+  return fields ? `${message}. ${fields}` : message
+}
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(USER_KEY)) } catch { return null }
-  })
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
-  const [loading, setLoading] = useState(false)
+  const [customer, setCustomer] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Проверяем сессию при старте
-  useEffect(() => {
-    if (token && !user) fetchMe(token)
+  const applySession = (data) => {
+    setCustomer(data?.customer ?? null)
+    return data?.customer ?? null
+  }
+
+  const refreshSession = useCallback(async () => {
+    try {
+      const data = await getCustomerMe()
+      return applySession(data)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
+        try {
+          const refreshed = await refreshCustomerSession()
+          return applySession(refreshed)
+        } catch {
+          setCustomer(null)
+          return null
+        }
+      }
+      setCustomer(null)
+      return null
+    }
   }, [])
 
-  const fetchMe = async (t) => {
-    try {
-      const res = await fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${t}` },
-      })
-      if (!res.ok) throw new Error()
-      const data = await res.json()
-      saveUser(data, t)
-    } catch {
-      logout()
-    }
-  }
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      setLoading(true)
+      try {
+        await refreshSession()
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [refreshSession])
 
-  const saveUser = (userData, jwt) => {
-    setUser(userData)
-    setToken(jwt)
-    localStorage.setItem(USER_KEY, JSON.stringify(userData))
-    localStorage.setItem(TOKEN_KEY, jwt)
-  }
-
-  // Вызывается со страницы /auth/callback после получения code от Яндекса
-  const loginWithCode = useCallback(async (code) => {
-    setLoading(true)
+  const login = useCallback(async ({ email, password }) => {
     setError(null)
+    setLoading(true)
     try {
-      const res = await fetch('/api/auth/yandex', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-      })
-      if (!res.ok) throw new Error('Ошибка авторизации')
-      const { token: jwt, user: userData } = await res.json()
-      saveUser(userData, jwt)
-      return true
+      const data = await loginCustomer({ email, password })
+      applySession(data)
+      return { ok: true }
     } catch (e) {
-      setError(e.message)
-      return false
+      const message = toAuthError(e, 'Ошибка входа')
+      setError(message)
+      return { ok: false, error: message }
     } finally {
       setLoading(false)
     }
   }, [])
 
-  const logout = useCallback(() => {
-    setUser(null)
-    setToken(null)
-    localStorage.removeItem(TOKEN_KEY)
-    localStorage.removeItem(USER_KEY)
+  const register = useCallback(async (payload) => {
+    setError(null)
+    setLoading(true)
+    try {
+      const data = await registerCustomer(payload)
+      applySession(data)
+      return { ok: true }
+    } catch (e) {
+      const message = toAuthError(e, 'Ошибка регистрации')
+      setError(message)
+      return { ok: false, error: message }
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const logout = useCallback(async () => {
+    setError(null)
+    try {
+      await logoutCustomer()
+    } catch {
+      // clear local session anyway
+    }
+    setCustomer(null)
+  }, [])
+
+  const updateProfile = useCallback(async (payload) => {
+    setError(null)
+    try {
+      const data = await updateCustomerMe(payload)
+      applySession(data)
+      return { ok: true, customer: data?.customer }
+    } catch (e) {
+      const message = toAuthError(e, 'Не удалось обновить профиль')
+      setError(message)
+      return { ok: false, error: message }
+    }
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, error, loginWithCode, logout, isAuth: !!user }}>
+    <AuthContext.Provider
+      value={{
+        customer,
+        user: customer,
+        loading,
+        error,
+        setError,
+        isAuth: !!customer,
+        login,
+        register,
+        logout,
+        refreshSession,
+        updateProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

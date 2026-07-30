@@ -1,299 +1,217 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getProductBySlug, minPrice, CATEGORIES, PRODUCTS } from '../data/catalog'
-import { img } from '../utils/assetUrl'
+import { Heart } from 'lucide-react'
+import { getProduct } from '../lib/api/catalog'
+import { createQuoteOrder, saveOrderAccess } from '../lib/api/orders'
+import { createLead, createStockSubscription } from '../lib/api/leads'
+import { addFavorite, removeFavorite, listFavorites } from '../lib/api/account'
+import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
+import { useSettings } from '../context/SettingsContext'
+import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './ProductPage.module.css'
 import orderStyles from './OrderDrawer.module.css'
 
-function parseLength(dim) {
-  if (!dim) return null
-  return dim.split('/')[0]
-}
-function parseWidth(dim) {
-  if (!dim) return null
-  const parts = dim.split('/')
-  return parts[1] || null
-}
-function unique(arr) {
-  return [...new Set(arr.filter(Boolean))]
-}
-
 export default function ProductPage() {
-  const { category, id } = useParams()
-  const product = getProductBySlug(id)
-
+  const { id } = useParams()
+  const { isAuth } = useAuth()
+  const { addItem, busy: cartBusy } = useCart()
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [orderOpen, setOrderOpen] = useState(false)
-
-  // Derive unique param values
-  const lengths = unique((product?.variants || []).map(v => parseLength(v.dimensions)))
-  const holes   = unique((product?.variants || []).map(v => v.holes != null ? String(v.holes) : null))
-  const widths  = unique((product?.variants || []).map(v => parseWidth(v.dimensions)))
-
-  const firstVariant = product?.variants?.[0]
-  const [selLength, setSelLength] = useState(parseLength(firstVariant?.dimensions))
-  const [selHoles,  setSelHoles]  = useState(firstVariant?.holes != null ? String(firstVariant.holes) : null)
-  const [selWidth,  setSelWidth]  = useState(parseWidth(firstVariant?.dimensions))
+  const [favorited, setFavorited] = useState(false)
+  const [favBusy, setFavBusy] = useState(false)
+  const [cartMsg, setCartMsg] = useState(null)
 
   useEffect(() => {
-    if (product?.variants?.length > 0) {
-      const v = product.variants[0]
-      setSelLength(parseLength(v.dimensions))
-      setSelHoles(v.holes != null ? String(v.holes) : null)
-      setSelWidth(parseWidth(v.dimensions))
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    getProduct(id)
+      .then(data => { if (!cancelled) setProduct(data) })
+      .catch(e => { if (!cancelled) { setProduct(null); setError(e.message) } })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [id])
+
+  useEffect(() => {
+    if (!isAuth || !product?.id) {
+      setFavorited(false)
+      return
     }
-  }, [product])
+    listFavorites()
+      .then(res => setFavorited((res.items || []).some(f => f.product?.id === product.id)))
+      .catch(() => {})
+  }, [isAuth, product?.id])
+
+  useDocumentTitle(
+    product?.seo?.title || product?.name,
+    product?.seo?.description || product?.description || product?.subtitle,
+  )
+
+  const toggleFavorite = async () => {
+    if (!isAuth || !product || favBusy) return
+    setFavBusy(true)
+    try {
+      if (favorited) {
+        await removeFavorite(product.id)
+        setFavorited(false)
+      } else {
+        await addFavorite(product.id)
+        setFavorited(true)
+      }
+    } catch {
+      // ignore
+    } finally {
+      setFavBusy(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.notFound}>
+        <div className={styles.container}><p>Загрузка товара…</p></div>
+      </div>
+    )
+  }
 
   if (!product) {
     return (
       <div className={styles.notFound}>
         <div className={styles.container}>
           <h1>Товар не найден</h1>
-          <p>Возможно, он был удалён или вы перешли по устаревшей ссылке.</p>
+          <p>{error || 'Возможно, он был удалён или вы перешли по устаревшей ссылке.'}</p>
           <Link to="/catalog" className={styles.backLink}>← Вернуться в каталог</Link>
         </div>
       </div>
     )
   }
 
-  // Find matching variant
-  const selectedVariant = product.variants?.find(v => {
-    const lMatch = lengths.length === 0 || parseLength(v.dimensions) === selLength
-    const hMatch = holes.length   === 0 || v.holes == null || String(v.holes) === selHoles
-    const wMatch = widths.length  === 0 || parseWidth(v.dimensions) === selWidth
-    return lMatch && hMatch && wMatch
-  }) || product.variants?.[0]
-
-  const catName = CATEGORIES.find(c => c.slug === product.category)?.name || 'Каталог'
-  const activePrice = selectedVariant?.price || minPrice(product)
-
-  // Related: installation products (from Винты), similar (same category, different product)
-  const installProducts = PRODUCTS.filter(p => p.category === 'vinty').slice(0, 7)
-  const similarProducts = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 7)
-
-  const hasVariantGroups = lengths.length > 1 || holes.length > 1 || widths.length > 1
+  const inStock = isInStock(product.stock)
+  const mainImage = productImageUrl(product.image, 'detail') || productImageUrl(product.images?.[0], 'detail')
+  const related = product.related || []
 
   return (
     <>
       <div className={styles.page}>
-        {/* Breadcrumb */}
         <div className={styles.breadcrumbWrap}>
           <div className={styles.container}>
             <nav className={styles.breadcrumb}>
               <Link to="/">Главная</Link><span>›</span>
               <Link to="/catalog">Каталог</Link><span>›</span>
-              <Link to={`/catalog/${product.category}`}>{catName}</Link><span>›</span>
-              <span>{product.shortName || product.name}</span>
+              <Link to={`/catalog/${product.category_slug}`}>{product.category_slug}</Link><span>›</span>
+              <span>{product.subtitle || product.name}</span>
             </nav>
           </div>
         </div>
 
         <div className={styles.container}>
           <div className={styles.grid}>
-            {/* Фото */}
             <div className={styles.photoCol}>
               <div className={styles.mainPhoto}>
-                <img
-                  src={img(product.image)}
-                  alt={product.name}
-                  onError={e => { e.currentTarget.style.opacity = '0.3' }}
-                />
+                {mainImage && (
+                  <img
+                    src={mainImage}
+                    alt={product.image?.alt || product.name}
+                    onError={e => { e.currentTarget.style.opacity = '0.3' }}
+                  />
+                )}
               </div>
             </div>
 
-            {/* Инфо */}
             <div className={styles.infoCol}>
               <div className={styles.stockRow}>
-                <span className={product.inStock ? styles.inStock : styles.outOfStock}>
-                  <span className={product.inStock ? styles.dot : styles.dotGrey} />
-                  {product.inStock ? `В наличии${selectedVariant?.stock ? ` ${selectedVariant.stock} шт.` : ''}` : 'Нет в наличии'}
+                <span className={inStock ? styles.inStock : styles.outOfStock}>
+                  <span className={inStock ? styles.dot : styles.dotGrey} />
+                  {stockLabel(product.stock)}
                 </span>
-                {selectedVariant?.sku && (
-                  <span className={styles.article}>Артикул: {selectedVariant.sku}</span>
+                {product.article && (
+                  <span className={styles.article}>Артикул: {product.article}</span>
                 )}
               </div>
 
               <h1 className={styles.name}>{product.name}</h1>
+              {product.subtitle && <p className={styles.desc}>{product.subtitle}</p>}
+              {product.description && <p className={styles.desc}>{product.description}</p>}
 
-              {product.description && (
-                <p className={styles.desc}>{product.description}</p>
-              )}
-
-              {/* Specs */}
-              {selectedVariant && (
+              {product.specs?.length > 0 && (
                 <div className={styles.specs}>
-                  {selectedVariant.dimensions && (
-                    <div className={styles.spec}>
-                      <span className={styles.specVal}>{parseLength(selectedVariant.dimensions)} мм</span>
-                      <span className={styles.specLabel}>длина</span>
+                  {product.specs.map(spec => (
+                    <div key={`${spec.name}-${spec.value}`} className={styles.spec}>
+                      <span className={styles.specVal}>
+                        {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
+                      </span>
+                      <span className={styles.specLabel}>{spec.name}</span>
                     </div>
-                  )}
-                  {selectedVariant.holes != null && (
-                    <div className={styles.spec}>
-                      <span className={styles.specVal}>{selectedVariant.holes}</span>
-                      <span className={styles.specLabel}>отверстий</span>
-                    </div>
-                  )}
-                  {selectedVariant.dimensions && parseWidth(selectedVariant.dimensions) && (
-                    <div className={styles.spec}>
-                      <span className={styles.specVal}>{parseWidth(selectedVariant.dimensions)} мм</span>
-                      <span className={styles.specLabel}>ширина</span>
-                    </div>
-                  )}
-                  {selectedVariant.thickness != null && (
-                    <div className={styles.spec}>
-                      <span className={styles.specVal}>{selectedVariant.thickness} мм</span>
-                      <span className={styles.specLabel}>толщина</span>
-                    </div>
-                  )}
-                  {product.material && (
-                    <div className={styles.spec}>
-                      <span className={styles.specVal}>{product.material}</span>
-                      <span className={styles.specLabel}>материал</span>
-                    </div>
-                  )}
+                  ))}
                 </div>
               )}
 
-              {activePrice
-                ? <p className={styles.price}>{activePrice.toLocaleString('ru')} <span className={styles.currency}>₽</span></p>
-                : <p className={styles.priceOnRequest}>Цена по запросу</p>
-              }
+              <p className={styles.price}>
+                {formatMoney(product.price)}
+              </p>
 
               <p className={styles.deliveryNote}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <rect x="1" y="3" width="15" height="13" rx="1"/>
-                  <path d="M16 8h4l3 3v5h-7V8z"/>
-                  <circle cx="5.5" cy="18.5" r="2.5"/>
-                  <circle cx="18.5" cy="18.5" r="2.5"/>
-                </svg>
                 Доставим по Воронежу сегодня за 2–4 часа.
               </p>
 
-              <button className={styles.orderBtn} onClick={() => setOrderOpen(true)}>
-                Заказать
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                {inStock && (
+                  <button
+                    type="button"
+                    className={styles.orderBtn}
+                    style={{ background: '#fff', color: '#111', border: '1px solid #111' }}
+                    disabled={cartBusy}
+                    onClick={async () => {
+                      try {
+                        await addItem(product, 1)
+                        setCartMsg('Добавлено в корзину')
+                      } catch (e) {
+                        setCartMsg(e.message || 'Не удалось добавить')
+                      }
+                    }}
+                  >
+                    В корзину
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={styles.orderBtn}
+                  onClick={() => setOrderOpen(true)}
+                >
+                  {inStock ? 'B2B-заявка' : 'Оставить заявку'}
+                </button>
+                {isAuth && (
+                  <button
+                    type="button"
+                    className={styles.orderBtn}
+                    style={{ background: favorited ? '#111' : '#fff', color: favorited ? '#fff' : '#111', border: '1px solid #111', minWidth: 56 }}
+                    onClick={toggleFavorite}
+                    disabled={favBusy}
+                    aria-label="Избранное"
+                  >
+                    <Heart size={20} fill={favorited ? 'currentColor' : 'none'} />
+                  </button>
+                )}
+              </div>
+              {cartMsg && <p className={styles.deliveryNote}>{cartMsg}</p>}
 
               <a href="tel:+79611898933" className={styles.phoneLink}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.81-.81a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
                 +7 (961) 189-89-33
               </a>
             </div>
           </div>
 
-          {/* Выберите вариант */}
-          {hasVariantGroups && (
-            <div className={styles.variants}>
-              <h2 className={styles.variantsTitle}>Выберите вариант</h2>
-              <div className={styles.variantGroups}>
-                {lengths.length > 1 && (
-                  <div className={styles.variantGroup}>
-                    <p className={styles.variantLabel}>Длина</p>
-                    <div className={styles.variantOptions}>
-                      {lengths.map(l => (
-                        <button
-                          key={l}
-                          className={`${styles.variantOption} ${selLength === l ? styles.variantSelected : ''}`}
-                          onClick={() => setSelLength(l)}
-                        >{l} мм</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {holes.length > 1 && (
-                  <div className={styles.variantGroup}>
-                    <p className={styles.variantLabel}>Кол-во отверстий</p>
-                    <div className={styles.variantOptions}>
-                      {holes.map(h => (
-                        <button
-                          key={h}
-                          className={`${styles.variantOption} ${selHoles === h ? styles.variantSelected : ''}`}
-                          onClick={() => setSelHoles(h)}
-                        >{h}</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {widths.length > 1 && (
-                  <div className={styles.variantGroup}>
-                    <p className={styles.variantLabel}>Ширина</p>
-                    <div className={styles.variantOptions}>
-                      {widths.map(w => (
-                        <button
-                          key={w}
-                          className={`${styles.variantOption} ${selWidth === w ? styles.variantSelected : ''}`}
-                          onClick={() => setSelWidth(w)}
-                        >{w} мм</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Преимущества */}
-          <div className={styles.benefits}>
-            <div className={styles.benefit}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              <div>
-                <p className={styles.benefitTitle}>Нужно сегодня?</p>
-                <p className={styles.benefitDesc}>Оформите заказ до 18:00 — доставим по Воронежу за 2–4 часа</p>
-              </div>
-            </div>
-            <div className={styles.benefit}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-              </svg>
-              <div>
-                <p className={styles.benefitTitle}>Актуальный остаток на складе</p>
-                <p className={styles.benefitDesc}>Вы видите точное наличие до оформления заказа</p>
-              </div>
-            </div>
-            <div className={styles.benefit}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              <div>
-                <p className={styles.benefitTitle}>Помощь с подбором от специалиста</p>
-                <p className={styles.benefitDesc}>Позвоните нам — поможем выбрать нужный имплант</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Для установки */}
-          {installProducts.length > 0 && (
+          {related.length > 0 && (
             <div className={styles.related}>
               <div className={styles.relatedHead}>
-                <p className={styles.relatedTitle}>Для установки этой пластины</p>
-                <Link to="/catalog/vinty" className={styles.relatedLink}>Смотреть все →</Link>
+                <p className={styles.relatedTitle}>Совместимые и похожие товары</p>
+                <Link to={`/catalog/${product.category_slug}`} className={styles.relatedLink}>Смотреть все →</Link>
               </div>
               <div className={styles.relatedScroll}>
-                {installProducts.map(p => (
-                  <SmallCard key={p.id} product={p} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Похожие */}
-          {similarProducts.length > 0 && (
-            <div className={styles.related}>
-              <div className={styles.relatedHead}>
-                <p className={styles.relatedTitle}>Похожие пластины</p>
-                <Link to={`/catalog/${product.category}`} className={styles.relatedLink}>Смотреть все →</Link>
-              </div>
-              <div className={styles.relatedScroll}>
-                {similarProducts.map(p => (
-                  <SmallCard key={p.id} product={p} />
-                ))}
+                {related.map(p => <SmallCard key={p.id} product={p} />)}
               </div>
             </div>
           )}
@@ -304,41 +222,59 @@ export default function ProductPage() {
         open={orderOpen}
         onClose={() => setOrderOpen(false)}
         product={product}
-        variant={selectedVariant}
+        inStock={inStock}
       />
     </>
   )
 }
 
 function SmallCard({ product }) {
-  const price = minPrice(product)
+  const image = productImageUrl(product.image, 'thumb')
   return (
-    <Link to={`/catalog/${product.category}/${product.slug}`} className={styles.smallCard}>
+    <Link to={`/catalog/${product.category_slug}/${product.slug}`} className={styles.smallCard}>
       <div className={styles.smallCardImg}>
-        <img
-          src={img(product.image)}
-          alt={product.name}
-          loading="lazy"
-          onError={e => { e.currentTarget.style.opacity = '0.3' }}
-        />
+        {image && (
+          <img
+            src={image}
+            alt={product.name}
+            loading="lazy"
+            onError={e => { e.currentTarget.style.opacity = '0.3' }}
+          />
+        )}
       </div>
       <div className={styles.smallCardBody}>
-        <p className={styles.smallCardName}>{product.shortName || product.name}</p>
-        {product.description && <p className={styles.smallCardDesc}>{product.description}</p>}
-        {price && <p className={styles.smallCardPrice}>от {price.toLocaleString('ru')} ₽</p>}
-        <button className={styles.smallCardBtn}>Подробнее →</button>
+        <p className={styles.smallCardName}>{product.subtitle || product.name}</p>
+        <p className={styles.smallCardPrice}>{formatMoney(product.price)}</p>
+        <span className={styles.smallCardBtn}>Подробнее →</span>
       </div>
     </Link>
   )
 }
 
-/* ===== OrderDrawer ===== */
-function OrderDrawer({ open, onClose, product, variant }) {
-  const [qty,       setQty]       = useState(1)
-  const [delivery,  setDelivery]  = useState('voronezh')
-  const [form,      setForm]      = useState({ name: '', phone: '', clinic: '', comment: '' })
-  const [submitted, setSubmitted] = useState(false)
+function OrderDrawer({ open, onClose, product, inStock }) {
+  const { settings } = useSettings()
   const overlayRef = useRef(null)
+  const [mode, setMode] = useState(inStock ? 'quote' : 'notify')
+  const [qty, setQty] = useState(1)
+  const [destination, setDestination] = useState('voronezh')
+  const [form, setForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    companyName: '',
+    inn: '',
+    kpp: '',
+    documentsEmail: '',
+    city: 'Воронеж',
+    addressLine: '',
+    comment: '',
+    contact: '',
+    consent: false,
+    website: '',
+  })
+  const [submitted, setSubmitted] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -346,19 +282,84 @@ function OrderDrawer({ open, onClose, product, variant }) {
   }, [open])
 
   useEffect(() => {
+    if (open) {
+      setMode(inStock ? 'quote' : 'notify')
+      setSubmitted(null)
+      setError(null)
+    }
+  }, [open, inStock])
+
+  useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const handleSubmit = e => {
-    e.preventDefault()
-    setSubmitted(true)
-  }
-
   if (!open) return null
 
-  const priceToShow = variant?.price || minPrice(product)
+  const image = productImageUrl(product.image, 'thumb')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!form.consent || submitting) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      if (mode === 'notify') {
+        await createStockSubscription({
+          productSlug: product.slug,
+          name: form.name,
+          contact: form.contact || form.phone || form.email,
+          website: form.website,
+        })
+        setSubmitted({ type: 'notify' })
+      } else if (mode === 'lead') {
+        await createLead({
+          name: form.name,
+          phone: form.phone,
+          email: form.email || undefined,
+          company: form.companyName || undefined,
+          message: form.comment || undefined,
+          productSlug: product.slug,
+          source: 'product',
+          website: form.website,
+        })
+        setSubmitted({ type: 'lead' })
+      } else {
+        const res = await createQuoteOrder({
+          customer: {
+            name: form.name,
+            phone: form.phone,
+            email: form.email || undefined,
+          },
+          legal_entity: {
+            company_name: form.companyName,
+            inn: form.inn,
+            kpp: form.kpp || undefined,
+            documents_email: form.documentsEmail || form.email,
+          },
+          delivery: {
+            destination,
+            city: form.city,
+            address_line: form.addressLine,
+            comment: form.comment || null,
+          },
+          items: [{ product_id: product.id, quantity: qty }],
+          comment: form.comment || undefined,
+          consent: true,
+          website: form.website,
+        })
+        if (res?.public_id && res?.order_access_token) {
+          saveOrderAccess(res.public_id, res.order_access_token)
+        }
+        setSubmitted({ type: 'quote', publicId: res.public_id, status: res.status })
+      }
+    } catch (err) {
+      setError(err.message || 'Не удалось отправить заявку')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div
@@ -368,93 +369,145 @@ function OrderDrawer({ open, onClose, product, variant }) {
     >
       <div className={orderStyles.drawer}>
         <div className={orderStyles.header}>
-          <h2 className={orderStyles.title}>Ваш заказ</h2>
-          <button className={orderStyles.close} onClick={onClose} aria-label="Закрыть">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
+          <h2 className={orderStyles.title}>
+            {mode === 'notify' ? 'Уведомить о наличии' : mode === 'lead' ? 'Заявка' : 'B2B-заявка'}
+          </h2>
+          <button type="button" className={orderStyles.close} onClick={onClose} aria-label="Закрыть">×</button>
         </div>
 
         {submitted ? (
           <div className={orderStyles.success}>
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#27ae60" strokeWidth="1.5" strokeLinecap="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
-            </svg>
-            <h3>Заказ принят!</h3>
-            <p>Наш специалист свяжется с Вами в течение нескольких минут.</p>
-            <button className={orderStyles.submitBtn} onClick={onClose}>Закрыть</button>
+            <h3>{submitted.type === 'quote' ? 'Заявка принята' : 'Запрос отправлен'}</h3>
+            <p>
+              {submitted.type === 'quote'
+                ? `Номер: ${submitted.publicId}. Статус: ${submitted.status}. Менеджер свяжется с вами.`
+                : 'Мы сохранили запрос. Когда товар появится или менеджер обработает заявку — свяжемся с вами.'}
+            </p>
+            {submitted.type === 'quote' && submitted.publicId && (
+              <Link to={`/orders/${submitted.publicId}`} className={orderStyles.submitBtn} onClick={onClose} style={{ display: 'inline-flex', textDecoration: 'none', marginBottom: 8 }}>
+                Статус заказа
+              </Link>
+            )}
+            {settings?.manager?.phone && (
+              <p>Менеджер: {settings.manager.name}, {settings.manager.phone}</p>
+            )}
+            <button type="button" className={orderStyles.submitBtn} onClick={onClose}>Закрыть</button>
           </div>
         ) : (
           <>
             <div className={orderStyles.productRow}>
               <div className={orderStyles.productPhoto}>
-                <img
-                  src={img(product.image)}
-                  alt={product.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 4 }}
-                  onError={e => { e.currentTarget.style.opacity = '0.3' }}
-                />
+                {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 4 }} />}
               </div>
               <div className={orderStyles.productInfo}>
-                <p className={orderStyles.productName}>{product.shortName || product.name}</p>
-                {variant?.sku && (
-                  <p className={orderStyles.productArticle}>Артикул: {variant.sku}</p>
-                )}
+                <p className={orderStyles.productName}>{product.name}</p>
+                {product.article && <p className={orderStyles.productArticle}>Артикул: {product.article}</p>}
               </div>
-              {priceToShow && (
-                <p className={orderStyles.productPrice}>{priceToShow.toLocaleString('ru')} ₽</p>
+              <p className={orderStyles.productPrice}>{formatMoney(product.price)}</p>
+            </div>
+
+            <div className={orderStyles.radioGroup} style={{ padding: '0 24px', marginBottom: 8 }}>
+              {inStock && (
+                <label className={`${orderStyles.radio} ${mode === 'quote' ? orderStyles.radioActive : ''}`}>
+                  <input type="radio" checked={mode === 'quote'} onChange={() => setMode('quote')} />
+                  <span>Оформить B2B-заявку</span>
+                </label>
+              )}
+              <label className={`${orderStyles.radio} ${mode === 'lead' ? orderStyles.radioActive : ''}`}>
+                <input type="radio" checked={mode === 'lead'} onChange={() => setMode('lead')} />
+                <span>Перезвоните мне</span>
+              </label>
+              {!inStock && (
+                <label className={`${orderStyles.radio} ${mode === 'notify' ? orderStyles.radioActive : ''}`}>
+                  <input type="radio" checked={mode === 'notify'} onChange={() => setMode('notify')} />
+                  <span>Сообщить о поступлении</span>
+                </label>
               )}
             </div>
 
             <form className={orderStyles.form} onSubmit={handleSubmit}>
-              <div className={orderStyles.field}>
-                <label className={orderStyles.label}>Количество</label>
-                <div className={orderStyles.qtyRow}>
-                  <button type="button" className={orderStyles.qtyBtn} onClick={() => setQty(q => Math.max(1, q - 1))}>-</button>
-                  <span className={orderStyles.qtyVal}>{qty}</span>
-                  <button type="button" className={orderStyles.qtyBtn} onClick={() => setQty(q => q + 1)}>+</button>
-                </div>
-              </div>
+              <input
+                type="text"
+                name="website"
+                value={form.website}
+                onChange={e => setForm(f => ({ ...f, website: e.target.value }))}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: 'absolute', left: -9999, opacity: 0, height: 0, width: 0 }}
+              />
 
-              <div className={orderStyles.field}>
-                <label className={orderStyles.label}>Способ получения</label>
-                <div className={orderStyles.radioGroup}>
-                  {[
-                    { value: 'voronezh', label: 'Доставка по Воронежу (2–4 часа)' },
-                    { value: 'pickup',   label: 'Самовывоз' },
-                    { value: 'russia',   label: 'Доставка по России (1–3 дня)' },
-                  ].map(opt => (
-                    <label key={opt.value} className={`${orderStyles.radio} ${delivery === opt.value ? orderStyles.radioActive : ''}`}>
-                      <input type="radio" name="delivery" value={opt.value} checked={delivery === opt.value} onChange={() => setDelivery(opt.value)} />
-                      <span>{opt.label}</span>
-                    </label>
-                  ))}
+              {mode === 'quote' && (
+                <div className={orderStyles.field}>
+                  <label className={orderStyles.label}>Количество</label>
+                  <div className={orderStyles.qtyRow}>
+                    <button type="button" className={orderStyles.qtyBtn} onClick={() => setQty(q => Math.max(1, q - 1))}>-</button>
+                    <span className={orderStyles.qtyVal}>{qty}</span>
+                    <button type="button" className={orderStyles.qtyBtn} onClick={() => setQty(q => q + 1)}>+</button>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {mode === 'quote' && (
+                <div className={orderStyles.field}>
+                  <label className={orderStyles.label}>Доставка</label>
+                  <div className={orderStyles.radioGroup}>
+                    {[
+                      { value: 'voronezh', label: 'По Воронежу' },
+                      { value: 'intercity', label: 'В другой город' },
+                    ].map(opt => (
+                      <label key={opt.value} className={`${orderStyles.radio} ${destination === opt.value ? orderStyles.radioActive : ''}`}>
+                        <input type="radio" name="destination" value={opt.value} checked={destination === opt.value} onChange={() => setDestination(opt.value)} />
+                        <span>{opt.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className={orderStyles.field}>
                 <label className={orderStyles.label}>Контактные данные</label>
-                <input className={orderStyles.input} type="text" placeholder="Ваше имя*" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
-                <input className={orderStyles.input} type="tel" placeholder="Телефон*" required value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
-                <input className={orderStyles.input} type="text" placeholder="Клиника" value={form.clinic} onChange={e => setForm(f => ({ ...f, clinic: e.target.value }))} />
+                <input className={orderStyles.input} type="text" placeholder="Ваше имя*" required minLength={2} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                {mode !== 'notify' && (
+                  <input className={orderStyles.input} type="tel" placeholder="Телефон*" required minLength={7} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                )}
+                {mode === 'notify' && (
+                  <input className={orderStyles.input} type="text" placeholder="Телефон или email*" required minLength={7} value={form.contact} onChange={e => setForm(f => ({ ...f, contact: e.target.value }))} />
+                )}
+                {mode !== 'notify' && (
+                  <input className={orderStyles.input} type="email" placeholder={mode === 'quote' ? 'Email для документов*' : 'Email'} required={mode === 'quote'} value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value, documentsEmail: e.target.value }))} />
+                )}
               </div>
 
-              <div className={orderStyles.field}>
-                <label className={orderStyles.label}>Комментарий к заказу</label>
-                <textarea className={orderStyles.textarea} placeholder="Например: нужно сегодня до 17:00" value={form.comment} onChange={e => setForm(f => ({ ...f, comment: e.target.value }))} />
-              </div>
+              {mode === 'quote' && (
+                <div className={orderStyles.field}>
+                  <label className={orderStyles.label}>Юрлицо</label>
+                  <input className={orderStyles.input} type="text" placeholder="Название клиники / компании*" required minLength={2} value={form.companyName} onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))} />
+                  <input className={orderStyles.input} type="text" placeholder="ИНН*" required minLength={10} maxLength={12} value={form.inn} onChange={e => setForm(f => ({ ...f, inn: e.target.value }))} />
+                  <input className={orderStyles.input} type="text" placeholder="КПП" maxLength={9} value={form.kpp} onChange={e => setForm(f => ({ ...f, kpp: e.target.value }))} />
+                  <input className={orderStyles.input} type="text" placeholder="Город*" required minLength={2} value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
+                  <input className={orderStyles.input} type="text" placeholder="Адрес доставки*" required minLength={5} value={form.addressLine} onChange={e => setForm(f => ({ ...f, addressLine: e.target.value }))} />
+                </div>
+              )}
 
-              <button type="submit" className={orderStyles.submitBtn}>Оформить заказ</button>
-              <p className={orderStyles.privacy}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-                Мы не передаём ваши данные третьим лицам
-              </p>
+              {mode !== 'notify' && (
+                <div className={orderStyles.field}>
+                  <label className={orderStyles.label}>Комментарий</label>
+                  <textarea className={orderStyles.textarea} placeholder="Например: нужно сегодня до 17:00" value={form.comment} onChange={e => setForm(f => ({ ...f, comment: e.target.value }))} />
+                </div>
+              )}
+
+              <label className={orderStyles.privacy} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer' }}>
+                <input type="checkbox" checked={form.consent} onChange={e => setForm(f => ({ ...f, consent: e.target.checked }))} required />
+                <span>Согласен на обработку персональных данных</span>
+              </label>
+
+              {error && <p style={{ color: '#eb5757', fontSize: 13 }}>{error}</p>}
+
+              <button type="submit" className={orderStyles.submitBtn} disabled={!form.consent || submitting}>
+                {submitting ? 'Отправка…' : mode === 'quote' ? 'Отправить заявку' : 'Отправить'}
+              </button>
             </form>
-
-            <p className={orderStyles.callbackNote}>Наш специалист свяжется с Вами<br/>в течение нескольких минут.</p>
           </>
         )}
       </div>

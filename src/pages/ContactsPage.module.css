@@ -186,6 +186,28 @@
   margin-bottom: 27px;
 }
 .submitBtn:hover { opacity: 0.8; }
+.submitBtn:disabled { opacity: 0.5; cursor: default; }
+
+.consentRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  line-height: 1.4;
+}
+.consentRow input { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; accent-color: #111111; cursor: pointer; }
+.consentRow a { color: var(--color-text); }
+
+.formError {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #eb5757;
+  margin: 0;
+}
 
 .privacy {
   display: flex;

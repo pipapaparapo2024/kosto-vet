@@ -1,20 +1,36 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Clock, Truck, Package, ArrowRight } from 'lucide-react'
+import { listCategories } from '../lib/api/catalog'
 import { img } from '../utils/assetUrl'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './HomePage.module.css'
 
-const CATEGORIES = [
-  { slug: 'plastiny',    name: 'Пластины',        desc: 'Для фиксации переломов длинных и плоских костей', count: 127, featured: true },
-  { slug: 'vinty',       name: 'Винты',            desc: 'Для остеосинтеза и фиксации пластин',             count: 82 },
-  { slug: 'instrumenty', name: 'Инструменты',      desc: 'Специализированные инструменты для операций',     count: 31 },
-  { slug: 'shvovny',     name: 'Шовный материал',  desc: 'Для мягкотканых и кожных швов',                  count: 58 },
-  { slug: 'nabory',      name: 'Наборы',            desc: 'Готовые наборы для остеосинтеза',                count: 16 },
+const FALLBACK_CATEGORIES = [
+  { slug: 'plastiny', title: 'Пластины', description: 'Для фиксации переломов длинных и плоских костей', subtree_product_count: null },
+  { slug: 'vinty', title: 'Винты', description: 'Для остеосинтеза и фиксации пластин', subtree_product_count: null },
+  { slug: 'instrumenty', title: 'Инструменты', description: 'Специализированные инструменты для операций', subtree_product_count: null },
+  { slug: 'shvovny', title: 'Шовный материал', description: 'Для мягкотканых и кожных швов', subtree_product_count: null },
+  { slug: 'nabory', title: 'Наборы', description: 'Готовые наборы для остеосинтеза', subtree_product_count: null },
 ]
 
 export default function HomePage() {
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES)
+  useDocumentTitle('Импланты для остеосинтеза', 'Ветеринарные импланты со склада в Воронеже. Доставка за 2–4 часа.')
+
+  useEffect(() => {
+    listCategories()
+      .then(res => {
+        if (res.items?.length) setCategories(res.items)
+      })
+      .catch(() => {})
+  }, [])
+
+  const featured = categories[0]
+  const rest = categories.slice(1, 5)
+
   return (
     <div className={styles.page}>
-      {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
           <div className={styles.heroLeft}>
@@ -33,7 +49,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Benefits */}
         <div className={styles.benefits}>
           <div className={styles.benefitsInner}>
             <div className={styles.benefit}>
@@ -63,35 +78,38 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CATALOG */}
       <section className={styles.catalog}>
         <div className={styles.catalogLayout}>
-          {/* Левая колонка: кот сверху + карточка Пластины снизу */}
           <div className={styles.catalogLeft}>
             <img src={img('images/cat-catalog.png')} alt="" className={styles.catalogCat} aria-hidden="true" />
-            <Link to="/catalog/plastiny" className={`${styles.categoryCard} ${styles.cardPlastiny}`}>
-              <div>
-                <p className={styles.categoryName}>Пластины</p>
-                <p className={styles.categoryDesc}>Для фиксации переломов<br/>длинных и плоских костей</p>
-                <p className={styles.categoryCount}>127 товаров</p>
-              </div>
-              <div className={styles.categoryArrow}><ArrowRight size={20} /></div>
-            </Link>
+            {featured && (
+              <Link to={`/catalog/${featured.slug}`} className={`${styles.categoryCard} ${styles.cardPlastiny}`}>
+                <div>
+                  <p className={styles.categoryName}>{featured.title}</p>
+                  <p className={styles.categoryDesc}>{featured.description}</p>
+                  {featured.subtree_product_count != null && (
+                    <p className={styles.categoryCount}>{featured.subtree_product_count} товаров</p>
+                  )}
+                </div>
+                <div className={styles.categoryArrow}><ArrowRight size={20} /></div>
+              </Link>
+            )}
           </div>
 
-          {/* Правая колонка: заголовок + 2×2 сетка */}
           <div className={styles.catalogRight}>
             <div className={styles.catalogTitleWrap}>
               <h2 className={styles.catalogTitle}>Каталог продукции</h2>
               <p className={styles.catalogSub}>Всё необходимое для остеосинтеза животных</p>
             </div>
             <div className={styles.catalogGrid}>
-              {CATEGORIES.slice(1).map(cat => (
+              {rest.map(cat => (
                 <Link key={cat.slug} to={`/catalog/${cat.slug}`} className={`${styles.categoryCard} ${styles.cardSmall}`}>
                   <div>
-                    <p className={styles.categoryName}>{cat.name}</p>
-                    <p className={styles.categoryDesc}>{cat.desc}</p>
-                    <p className={styles.categoryCount}>{cat.count} {cat.count === 16 ? 'наборов' : 'товаров'}</p>
+                    <p className={styles.categoryName}>{cat.title}</p>
+                    <p className={styles.categoryDesc}>{cat.description}</p>
+                    {cat.subtree_product_count != null && (
+                      <p className={styles.categoryCount}>{cat.subtree_product_count} товаров</p>
+                    )}
                   </div>
                   <div className={styles.categoryArrow}><ArrowRight size={20} /></div>
                 </Link>
@@ -100,7 +118,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Остаток — отдельная строка */}
         <div className={styles.stockBanner}>
           <Package size={20} strokeWidth={1.5} />
           <p><strong>Остаток в реальном времени</strong> — Вы видите, что товар точно есть, до оформления заказа</p>
@@ -108,7 +125,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className={styles.cta}>
         <div className={styles.ctaInner}>
           <div className={styles.ctaLeft}>

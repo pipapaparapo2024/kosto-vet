@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Phone, Clock, Star, MapPin, Truck, ClipboardList, Package, PackageCheck, Flag } from 'lucide-react'
 import { img } from '../utils/assetUrl'
+import { useSettings } from '../context/SettingsContext'
+import { formatMoney } from '../lib/money'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './DeliveryPage.module.css'
 
 const STEPS = [
@@ -34,6 +37,10 @@ const MAP_CITIES = [
 ]
 
 export default function DeliveryPage() {
+  const { settings } = useSettings()
+  const deliveryPrice = formatMoney(settings?.fixed_delivery_price, { empty: null })
+  useDocumentTitle('Доставка', 'Доставка имплантов по Воронежу за 2–4 часа и в регионы ЦЧР.')
+
   return (
     <div className={styles.page}>
       {/* Breadcrumb */}
@@ -47,7 +54,10 @@ export default function DeliveryPage() {
       <div className={styles.hero}>
         <div className={styles.heroLeft}>
           <h1 className={styles.heroTitle}>Когда операция не может ждать — доставка тоже.</h1>
-          <p className={styles.heroDesc}>По Воронежу доставляем за 2–4 часа. В другие города Центрально-Черноземного региона — уже на следующий день. Работаем без выходных и праздников.</p>
+          <p className={styles.heroDesc}>
+            По Воронежу доставляем за 2–4 часа. В другие города Центрально-Черноземного региона — уже на следующий день. Работаем без выходных и праздников.
+            {deliveryPrice ? ` Фиксированная стоимость доставки в demo: ${deliveryPrice}.` : ''}
+          </p>
           <Link to="/catalog" className={styles.heroBtn}>
             Проверить наличие <ArrowRight size={20} strokeWidth={1.8} />
           </Link>

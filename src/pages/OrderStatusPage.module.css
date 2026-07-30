@@ -1,0 +1,92 @@
+.page {
+  padding: 48px 0 80px;
+}
+
+.container {
+  max-width: var(--space-content);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+
+.breadcrumb a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.error {
+  color: #eb5757;
+}
+
+.items {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.manager a {
+  color: var(--color-text);
+}
+
+.payBox {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.payRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.payRow select,
+.payRow button {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  padding: 0 14px;
+  font: inherit;
+}
+
+.payRow button {
+  background: #111;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.payRow button:disabled {
+  opacity: 0.5;
+}
