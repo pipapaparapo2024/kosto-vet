@@ -163,14 +163,20 @@
 
 .menuLink {
   display: block;
+  width: 100%;
   padding: 14px 16px;
   min-height: 44px;
   box-sizing: border-box;
+  font-family: var(--font);
   font-size: 20px;
   font-weight: 600;
   color: var(--color-text);
+  text-align: left;
   text-decoration: none;
+  border: none;
   border-radius: 10px;
+  background: none;
+  cursor: pointer;
   transition: background var(--duration);
 }
 .menuLink:hover { background: var(--color-bg-secondary); }

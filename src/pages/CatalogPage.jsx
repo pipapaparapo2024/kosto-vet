@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { Clock, Box, ChevronDown, ChevronLeft, ChevronRight, ArrowRight, LayoutGrid, X, SlidersHorizontal } from 'lucide-react'
+import { Clock, Box, ChevronDown, ArrowRight, LayoutGrid, X, SlidersHorizontal } from 'lucide-react'
 import { listCategories, listProducts, getCategory } from '../lib/api/catalog'
-import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
+import { formatMoney, isInStock, stockLabel, productImageUrl, productSpecsLine } from '../lib/money'
 import { categoryTitle } from '../lib/labels'
 import { img } from '../utils/assetUrl'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { CatalogProductsSkeleton } from '../components/ui/Skeleton/Skeleton'
 import styles from './CatalogPage.module.css'
 
 const SORT_OPTIONS = [
@@ -191,6 +192,11 @@ export default function CatalogPage() {
     document.getElementById('catalog-filters')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const goToPage = (next) => {
+    setPage(next)
+    window.scrollTo(0, 0)
+  }
+
   const rootCats = categories
   const showPlateSubcats = !category || category === 'plastiny'
   const subcats = showPlateSubcats
@@ -272,7 +278,7 @@ export default function CatalogPage() {
                 >
                   <div className={styles.subcatPhoto}>
                     {isAll
-                      ? <LayoutGrid size={28} strokeWidth={1.6} aria-hidden="true" />
+                      ? <LayoutGrid size={60} strokeWidth={1.4} className={styles.subcatAllIcon} aria-hidden="true" />
                       : 'Фото товара'}
                   </div>
                   <p className={styles.subcatName}>{s.title || categoryTitle(s)}</p>
@@ -404,15 +410,7 @@ export default function CatalogPage() {
                   onChange={e => setSearch(e.target.value)}
                 />
                 <div className={styles.sortWrap}>
-                  <select
-                    className={styles.sortSelect}
-                    value={sort}
-                    onChange={e => setSort(e.target.value)}
-                    aria-label="Сортировка"
-                  >
-                    {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                  </select>
-                  <ChevronDown size={16} strokeWidth={2} className={styles.sortChevron} aria-hidden="true" />
+                  <SortSelect value={sort} onChange={setSort} options={SORT_OPTIONS} />
                 </div>
                 <button type="button" className={styles.filterBtn} onClick={scrollToFilters}>
                   <SlidersHorizontal size={16} strokeWidth={2} aria-hidden="true" />
@@ -454,7 +452,7 @@ export default function CatalogPage() {
                 </button>
               </div>
             )}
-            {!error && loading && <div className={styles.empty}>Загрузка каталога…</div>}
+            {!error && loading && <CatalogProductsSkeleton count={8} />}
             {!error && !loading && items.length === 0 && (
               <div className={styles.empty}>Ничего не нашли. Попробуйте изменить параметры поиска.</div>
             )}
@@ -481,17 +479,17 @@ export default function CatalogPage() {
           <button
             type="button"
             className={styles.pageBtn}
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+            onClick={() => goToPage(Math.max(1, page - 1))}
             disabled={page === 1 || loading}
           >
-            <ChevronLeft size={16} strokeWidth={2} />
+            <ArrowRight size={16} strokeWidth={2} className={styles.pageArrowPrev} aria-hidden="true" />
           </button>
           {Array.from({ length: Math.min(totalPages, 8) }, (_, i) => i + 1).map(p => (
             <button
               key={p}
               type="button"
               className={`${styles.pageNum} ${p === page ? styles.pageNumActive : ''}`}
-              onClick={() => setPage(p)}
+              onClick={() => goToPage(p)}
             >
               {p}
             </button>
@@ -499,10 +497,10 @@ export default function CatalogPage() {
           <button
             type="button"
             className={styles.pageBtn}
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            onClick={() => goToPage(Math.min(totalPages, page + 1))}
             disabled={page === totalPages || totalPages === 0 || loading}
           >
-            <ChevronRight size={16} strokeWidth={2} />
+            <ArrowRight size={16} strokeWidth={2} />
           </button>
         </div>
       </div>
@@ -510,9 +508,71 @@ export default function CatalogPage() {
   )
 }
 
+function SortSelect({ value, onChange, options }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  const current = options.find(o => o.value === value) || options[0]
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onDoc = (e) => {
+      if (!ref.current?.contains(e.target)) setOpen(false)
+    }
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDoc)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div className={styles.sortSelect} ref={ref}>
+      <button
+        type="button"
+        className={styles.sortBtn}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label="Сортировка"
+        onClick={() => setOpen(v => !v)}
+      >
+        <span>{current.label}</span>
+        <ChevronDown
+          size={16}
+          strokeWidth={2}
+          className={`${styles.sortChevron}${open ? ` ${styles.sortChevronOpen}` : ''}`}
+          aria-hidden="true"
+        />
+      </button>
+      {open && (
+        <ul className={styles.sortMenu} role="listbox">
+          {options.map(o => (
+            <li key={o.value} role="option" aria-selected={o.value === value}>
+              <button
+                type="button"
+                className={`${styles.sortOption}${o.value === value ? ` ${styles.sortOptionActive}` : ''}`}
+                onClick={() => {
+                  onChange(o.value)
+                  setOpen(false)
+                }}
+              >
+                {o.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function ProductCard({ product }) {
   const image = productImageUrl(product.image, 'card')
   const inStock = isInStock(product.stock)
+  const specs = productSpecsLine(product)
 
   return (
     <Link to={`/catalog/${product.category_slug}/${product.slug}`} className={styles.card}>
@@ -529,6 +589,7 @@ function ProductCard({ product }) {
       <div className={styles.cardBody}>
         <p className={styles.cardName}>{product.subtitle || product.name}</p>
         <p className={styles.cardSku}>{product.name !== product.subtitle ? product.name : (product.article || '')}</p>
+        {specs && <p className={styles.cardSpecs}>{specs}</p>}
         <div className={styles.cardFooter}>
           <span className={styles.cardPrice}>{formatMoney(product.price)}</span>
           <span className={inStock ? styles.inStock : styles.outOfStock}>
@@ -536,7 +597,10 @@ function ProductCard({ product }) {
             {stockLabel(product.stock)}
           </span>
         </div>
-        <div className={styles.cardBtn}>Подробнее →</div>
+        <div className={styles.cardBtn}>
+          <span>Подробнее</span>
+          <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+        </div>
       </div>
     </Link>
   )

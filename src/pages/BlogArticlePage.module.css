@@ -446,7 +446,12 @@
   }
   .sidebar,
   .widgetCol { position: static; margin: 0; }
-  .article { margin-right: 0; }
+  .article {
+    order: 1;
+    margin-right: 0;
+  }
+  .sidebar { order: 0; }
+  .widgetCol { order: 2; }
   .widgetCol,
   .productWidget,
   .otherArticles { width: 100%; max-width: 400px; }

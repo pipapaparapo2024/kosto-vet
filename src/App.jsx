@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from './components/layout/Header/Header'
 import Footer from './components/layout/Footer/Footer'
+import CookieConsent from './components/ui/CookieConsent/CookieConsent'
 import HomePage from './pages/HomePage'
 import CatalogPage from './pages/CatalogPage'
 import ProductPage from './pages/ProductPage'
@@ -21,6 +22,7 @@ function Layout({ children }) {
       <Header />
       {children}
       <Footer />
+      <CookieConsent />
     </>
   )
 }

@@ -590,6 +590,9 @@
   color: var(--color-text);
   display: flex;
 }
+.backBtnArrow {
+  transform: rotate(180deg);
+}
 
 .panelBody { padding: 0 40px 40px 30px; }
 
@@ -629,12 +632,18 @@
 }
 
 .linkBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: none;
   background: none;
   color: var(--color-text-secondary);
   cursor: pointer;
   font-size: 13px;
-  text-decoration: underline;
+  text-decoration: none;
+}
+.linkBtnArrowBack {
+  transform: rotate(180deg);
 }
 
 .profileFields {

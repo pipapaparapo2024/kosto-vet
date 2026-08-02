@@ -503,27 +503,13 @@
   }
 }
 
-@media (max-width: 1100px) {
-  .formMapGrid { grid-template-columns: 1fr; }
-  .formCol,
-  .form { max-width: 442px; }
-  .mapBlock {
-    flex-direction: row;
-    height: 580px;
-  }
-  .mapPlaceholder { flex: 1 1 50%; width: auto; }
-  .mapInfo {
-    flex: 0 0 368px;
-    width: 368px;
-    max-width: 45%;
-  }
-}
-
 @media (max-width: 1024px) {
   .hero { min-height: 0; }
   .heroPhoto { display: none; }
   .heroLeft { width: 100%; max-width: none; }
   .formMapGrid { grid-template-columns: 1fr; }
+  .formCol,
+  .form { max-width: 442px; }
   .mapBlock {
     flex-direction: column;
     height: auto;
@@ -555,18 +541,50 @@
   .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
   .heroTitle { font-size: clamp(28px, 8vw, 36px); }
   .heroDesc { font-size: 15px; }
+  .section { padding: 28px 0; }
+  .sectionTitle { margin-bottom: 14px; font-size: 20px; }
   .contactCards { flex-direction: column; gap: 12px; }
-  .contactCard { width: 100%; flex: none; padding: 16px; }
+  .contactCard {
+    width: 100%;
+    flex: none;
+    height: auto;
+    min-height: 0;
+    padding: 16px;
+  }
   .contactValue { font-size: 16px; }
+  .formMapGrid { gap: 20px; }
+  .formCol,
+  .form { max-width: none; }
   .mapInfo { padding: 16px; gap: 16px; }
   .faqList { margin-top: 12px; gap: 10px; }
   .faqItem { padding: 14px; }
   .faqQ { font-size: 15px; }
   .faqA { font-size: 13px; }
-  .ctaTitle { font-size: clamp(22px, 6vw, 28px); white-space: normal; }
-  .ctaBtns { flex-direction: column; }
+  .cta {
+    padding: 28px 20px;
+    gap: 20px;
+  }
+  .ctaTitle {
+    font-size: clamp(22px, 6vw, 28px);
+    white-space: normal;
+    margin-bottom: 12px;
+  }
+  .ctaDesc { margin-bottom: 16px; font-size: 14px; }
+  .ctaBtns {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
   .ctaBtnPrimary,
-  .ctaBtnSecondary { width: 100%; justify-content: center; box-sizing: border-box; }
+  .ctaBtnSecondary {
+    width: 100%;
+    max-width: none;
+    height: 48px;
+    font-size: 15px;
+    padding: 0 20px;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
 }
 
 @media (max-width: 390px) {

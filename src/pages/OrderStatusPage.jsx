@@ -6,6 +6,7 @@ import { formatMoney, stockLabel } from '../lib/money'
 import { orderStatusLabel, paymentStatusLabel } from '../lib/labels'
 import { ApiError } from '../lib/apiClient'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { OrderStatusSkeleton } from '../components/ui/Skeleton/Skeleton'
 import styles from './OrderStatusPage.module.css'
 
 export default function OrderStatusPage() {
@@ -74,9 +75,9 @@ export default function OrderStatusPage() {
           <span>Статус заказа</span>
         </nav>
         <h1 className={styles.title}>Заказ {publicId}</h1>
-        {loading && <p>Загрузка…</p>}
+        {loading && <OrderStatusSkeleton />}
         {error && <p className={styles.error}>{error}</p>}
-        {order && (
+        {!loading && order && (
           <div className={styles.card}>
             <p><strong>Статус:</strong> {orderStatusLabel(order.status)}</p>
             <p><strong>Оплата:</strong> {paymentStatusLabel(order.payment_status)}</p>

@@ -1,10 +1,16 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { img } from '../../../utils/assetUrl'
 import styles from './Footer.module.css'
 
 export default function Footer() {
+  const { pathname } = useLocation()
+  const isHome = pathname === '/' || pathname === ''
+  // Карточка товара: /catalog/:category/:slug
+  const isProduct = /^\/catalog\/[^/]+\/[^/]+\/?$/.test(pathname)
+  const tightTop = isHome || isProduct
+
   return (
-    <footer className={styles.footer}>
+    <footer className={`${styles.footer}${tightTop ? ` ${styles.footerTight}` : ''}`}>
       <div className={styles.divider} />
 
       <div className={styles.top}>

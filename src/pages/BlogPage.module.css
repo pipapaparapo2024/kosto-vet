@@ -200,6 +200,7 @@
 }
 .pageBtn:hover:not(:disabled) { background: #111111; color: #fff; }
 .pageBtn:disabled { opacity: 0.3; cursor: default; }
+.pageArrowPrev { transform: rotate(180deg); }
 
 .pageNum {
   width: 47px;
@@ -229,10 +230,16 @@
 }
 
 @media (max-width: 768px) {
-  .heroTitle { font-size: clamp(26px, 7vw, 32px); }
+  .hero {
+    margin-bottom: 16px;
+  }
+  .heroLeft {
+    padding: 0 var(--space-x) 12px;
+  }
+  .heroTitle { font-size: clamp(26px, 7vw, 32px); margin-bottom: 12px; }
   .heroDesc { font-size: 15px; }
   .grid { grid-template-columns: 1fr; row-gap: 24px; }
-  .tags { gap: 8px; margin-bottom: 24px; }
+  .tags { gap: 8px; margin-bottom: 20px; }
   .tag { height: 40px; padding: 0 14px; font-size: 13px; }
   .cardTitle { font-size: 18px; }
   .cardDesc { font-size: 13px; margin-bottom: 24px; }

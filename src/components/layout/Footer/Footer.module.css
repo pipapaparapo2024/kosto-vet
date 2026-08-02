@@ -2,6 +2,11 @@
   margin-top: var(--space-section);
 }
 
+/* Меньший отступ сверху: главная и страница товара */
+.footerTight {
+  margin-top: 20px;
+}
+
 /* Padded divider — same style as header border */
 .divider {
   height: 2px;

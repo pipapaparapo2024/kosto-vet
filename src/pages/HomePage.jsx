@@ -21,7 +21,14 @@ export default function HomePage() {
   useEffect(() => {
     listCategories()
       .then(res => {
-        if (res.items?.length) setCategories(res.items)
+        if (!res.items?.length) return
+        const bySlug = Object.fromEntries(FALLBACK_CATEGORIES.map(c => [c.slug, c]))
+        setCategories(
+          res.items.map(c => ({
+            ...c,
+            description: c.description || bySlug[c.slug]?.description || '',
+          })),
+        )
       })
       .catch(() => {})
   }, [])
@@ -119,9 +126,14 @@ export default function HomePage() {
         </div>
 
         <div className={styles.stockBanner}>
-          <Package size={20} strokeWidth={1.5} />
+          <span className={styles.stockIcon} aria-hidden="true">
+            <Package size={28} strokeWidth={1.5} />
+          </span>
           <p><strong>Остаток в реальном времени</strong> — Вы видите, что товар точно есть, до оформления заказа</p>
-          <Link to="/about" className={styles.stockLink}>Как это работает? →</Link>
+          <Link to="/about" className={styles.stockLink}>
+            Как это работает?
+            <ArrowRight size={16} strokeWidth={2} />
+          </Link>
         </div>
       </section>
 

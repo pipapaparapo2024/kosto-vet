@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { img } from '../utils/assetUrl'
 import { ARTICLES, BLOG_TAGS } from '../data/blogArticles'
 import styles from './BlogPage.module.css'
@@ -14,6 +14,15 @@ export default function BlogPage() {
   const filtered = activeTag === 'Все статьи' ? ARTICLES : ARTICLES.filter(a => a.tag === activeTag)
   const totalPages = Math.ceil(filtered.length / PER_PAGE)
   const visible = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
+  const scrollTop = () => {
+    window.scrollTo(0, 0)
+  }
+
+  const goToPage = (next) => {
+    setPage(next)
+    scrollTop()
+  }
 
   return (
     <div className={styles.page}>
@@ -35,7 +44,7 @@ export default function BlogPage() {
             <button
               key={t}
               className={`${styles.tag} ${activeTag === t ? styles.tagActive : ''}`}
-              onClick={() => { setActiveTag(t); setPage(1) }}
+              onClick={() => { setActiveTag(t); setPage(1); scrollTop() }}
             >
               {t}
             </button>
@@ -49,20 +58,28 @@ export default function BlogPage() {
         </div>
 
         <div className={styles.pagination}>
-          <button className={styles.pageBtn} onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
-            <ChevronLeft size={16} strokeWidth={2} />
+          <button
+            className={styles.pageBtn}
+            onClick={() => goToPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+          >
+            <ArrowRight size={16} strokeWidth={2} className={styles.pageArrowPrev} aria-hidden="true" />
           </button>
           {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map(p => (
             <button
               key={p}
               className={`${styles.pageNum} ${p === page ? styles.pageNumActive : ''}`}
-              onClick={() => setPage(p)}
+              onClick={() => goToPage(p)}
             >
               {p}
             </button>
           ))}
-          <button className={styles.pageBtn} onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages || totalPages === 0}>
-            <ChevronRight size={16} strokeWidth={2} />
+          <button
+            className={styles.pageBtn}
+            onClick={() => goToPage(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages || totalPages === 0}
+          >
+            <ArrowRight size={16} strokeWidth={2} />
           </button>
         </div>
       </div>

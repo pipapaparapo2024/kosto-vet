@@ -4,6 +4,7 @@ import { X, Minus, Plus, Trash2 } from 'lucide-react'
 import { useCart } from '../../../context/CartContext'
 import { formatMoney, productImageUrl, stockLabel } from '../../../lib/money'
 import { cartConflictLabel } from '../../../lib/labels'
+import { CartItemsSkeleton } from '../Skeleton/Skeleton'
 import styles from './CartDrawer.module.css'
 
 export default function CartDrawer() {
@@ -46,7 +47,8 @@ export default function CartDrawer() {
         )}
 
         <div className={styles.body}>
-          {!items.length && <p className={styles.empty}>Корзина пуста</p>}
+          {busy && !items.length && <CartItemsSkeleton rows={3} />}
+          {!busy && !items.length && <p className={styles.empty}>Корзина пуста</p>}
           {items.map(item => {
             const product = item.product
             const img = productImageUrl(product?.image, 'thumb')

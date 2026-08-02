@@ -350,7 +350,7 @@
   top: 27px;
   bottom: 27px;
   width: 1px;
-  background: #111111;
+  background: #EAEAEA;
 }
 
 .variantLabel {
@@ -533,7 +533,7 @@
   flex-shrink: 0;
   width: 165px;
   height: 290px;
-  border: 1.5px solid #111111;
+  border: 2px solid #111111;
   border-radius: 10px;
   overflow: hidden;
   text-decoration: none;
@@ -611,17 +611,20 @@
 
 .smallCardBtn {
   margin-top: 8px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 34px;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 20px;
+  height: auto;
   background: #111111;
   color: #fff;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
+  box-sizing: border-box;
 }
+.smallCardBtn svg { flex-shrink: 0; }
 
 /* Not found */
 .notFound {
@@ -634,6 +637,7 @@
 .backLink {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   height: 44px;
   padding: 0 24px;
   background: var(--color-text);
@@ -641,6 +645,9 @@
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
+}
+.backArrow {
+  transform: rotate(180deg);
 }
 
 .dot      { width: 8px; height: 8px; border-radius: 50%; background: #27ae60; flex-shrink: 0; }
@@ -677,10 +684,13 @@
   .variantGroup::before {
     top: 0;
     bottom: auto;
-    left: 27px;
-    right: 27px;
+    left: 20px;
+    right: 20px;
     width: auto;
     height: 1px;
+    background: #EAEAEA;
+    box-shadow: none;
+    border: none;
   }
   .benefits { flex-direction: column; align-items: stretch; }
   .benefit { justify-content: flex-start; }
@@ -726,5 +736,13 @@
   .relatedScroll { gap: 12px; }
   .smallCard { width: 160px; min-width: 160px; }
   .phoneLink { margin-bottom: 20px; font-size: 14px; }
+}
+
+@media (max-width: 390px) {
+  .container { padding: 0 var(--space-x); }
+  .name { font-size: clamp(20px, 7vw, 24px); }
+  .price { font-size: clamp(24px, 8vw, 30px); }
+  .smallCard { width: 100%; min-width: 0; }
+  .relatedScroll { gap: 10px; }
 }
 

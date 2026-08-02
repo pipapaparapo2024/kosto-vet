@@ -6,10 +6,39 @@ function money(rubles) {
   return { amount: Math.round(Number(rubles) * 100), currency: 'RUB' }
 }
 
-function stock(inStock) {
-  return inStock
-    ? { state: 'available', quantity: 10, label: 'В наличии' }
-    : { state: 'out', quantity: 0, label: 'Нет в наличии' }
+function stock(inStock, seed = 0) {
+  if (!inStock) return { state: 'out', quantity: 0, label: 'Нет в наличии' }
+  const quantity = 4 + (Math.abs(seed) % 20)
+  return { state: 'available', quantity, label: 'В наличии' }
+}
+
+function shortMaterial(material) {
+  if (!material) return 'сталь'
+  const s = String(material).toLowerCase()
+  if (s.includes('титан')) return 'титан'
+  if (s.includes('сталь')) return 'сталь'
+  return s.split(/\s+/).pop()
+}
+
+function buildLengthLabel(product) {
+  const variants = product.variants || []
+  const lengths = variants
+    .map(v => v.length)
+    .filter(v => v != null && v !== '')
+    .map(v => Number(String(v).replace(',', '.')))
+    .filter(n => !Number.isNaN(n))
+
+  if (lengths.length) {
+    const min = Math.min(...lengths)
+    const max = Math.max(...lengths)
+    const fmt = (n) => String(n).replace('.', ',')
+    if (min === max) return `Длина: ${fmt(min)} мм`
+    return `Длина: ${fmt(min)}–${fmt(max)} мм`
+  }
+
+  const { length } = parseDimensions(variants[0]?.dimensions)
+  if (length) return `Длина: ${length} мм`
+  return 'Длина: —'
 }
 
 function parseDimensions(dim) {
@@ -19,6 +48,19 @@ function parseDimensions(dim) {
     length: length?.replace(/[^\d,.]/g, '').trim() || null,
     width: width?.replace(/[^\d,.]/g, '').trim() || null,
   }
+}
+
+function buildSpecsLine(product) {
+  const v = product.variants?.[0]
+  const { length, width } = parseDimensions(v?.dimensions)
+  const mm = width || length || v?.screws || v?.length
+  const holes = v?.holes
+  const parts = []
+  if (mm != null && mm !== '') parts.push(`${mm} мм`)
+  if (holes != null && holes !== '') parts.push(`${holes} отв.`)
+  const mat = shortMaterial(product.material)
+  if (mat) parts.push(mat)
+  return parts.join(' · ')
 }
 
 function buildSpecs(product) {
@@ -67,6 +109,8 @@ function matchesQuery(product, q) {
 function toSummary(product) {
   const image = toImage(product)
   const article = product.variants?.[0]?.sku || product.slug
+  const seed = String(product.id || product.slug || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+  const specsLine = buildSpecsLine(product)
   return {
     id: product.id,
     slug: product.slug,
@@ -77,7 +121,9 @@ function toSummary(product) {
     article,
     price: money(product.price ?? product.variants?.[0]?.price),
     image,
-    stock: stock(product.inStock !== false),
+    stock: stock(product.inStock !== false, seed),
+    specs_line: specsLine,
+    length_label: buildLengthLabel(product),
     specs_preview: product.material
       ? [{ name: 'Материал', value: product.material }]
       : [],

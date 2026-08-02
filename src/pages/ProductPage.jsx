@@ -10,6 +10,7 @@ import { useSettings } from '../context/SettingsContext'
 import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
 import { categoryTitleFromProduct, orderStatusLabel } from '../lib/labels'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { ProductPageSkeleton } from '../components/ui/Skeleton/Skeleton'
 import styles from './ProductPage.module.css'
 import orderStyles from './OrderDrawer.module.css'
 
@@ -110,11 +111,7 @@ export default function ProductPage() {
   }
 
   if (loading) {
-    return (
-      <div className={styles.notFound}>
-        <div className={styles.container}><p>Загрузка товара…</p></div>
-      </div>
-    )
+    return <ProductPageSkeleton />
   }
 
   if (!product) {
@@ -123,7 +120,10 @@ export default function ProductPage() {
         <div className={styles.container}>
           <h1>Товар не найден</h1>
           <p>{error || 'Возможно, он был удалён или вы перешли по устаревшей ссылке.'}</p>
-          <Link to="/catalog" className={styles.backLink}>← Вернуться в каталог</Link>
+          <Link to="/catalog" className={styles.backLink}>
+            <ArrowRight size={18} strokeWidth={2} className={styles.backArrow} aria-hidden="true" />
+            Вернуться в каталог
+          </Link>
         </div>
       </div>
     )
@@ -199,7 +199,7 @@ export default function ProductPage() {
               <div className={styles.stockRow}>
                 <span className={inStock ? styles.inStock : styles.outOfStock}>
                   <span className={inStock ? styles.dot : styles.dotGrey} />
-                  <span className={styles.stockText}>{stockLabel(product.stock)}</span>
+                  <span className={styles.stockText}>{stockLabel(product.stock, { withQuantity: false })}</span>
                   {inStock && <span className={styles.stockQty}>{qty} шт</span>}
                 </span>
                 {displayArticle && (
@@ -362,8 +362,21 @@ export default function ProductPage() {
   )
 }
 
+function getLengthLabel(product) {
+  if (product.length_label) return product.length_label
+  const lengthSpec = Array.isArray(product.specs)
+    ? product.specs.find(s => /длин/i.test(s.name || ''))
+    : null
+  if (lengthSpec?.value != null && lengthSpec.value !== '') {
+    return `Длина: ${lengthSpec.value}${lengthSpec.unit ? ` ${lengthSpec.unit}` : ''}`
+  }
+  return 'Длина: —'
+}
+
 function SmallCard({ product }) {
   const image = productImageUrl(product.image, 'thumb')
+  const lengthLabel = getLengthLabel(product)
+
   return (
     <Link to={`/catalog/${product.category_slug}/${product.slug}`} className={styles.smallCard}>
       <div className={styles.smallCardImg}>
@@ -379,15 +392,16 @@ function SmallCard({ product }) {
       </div>
       <div className={styles.smallCardBody}>
         <p className={styles.smallCardName}>{product.subtitle || product.name}</p>
-        <p className={styles.smallCardDesc}>
-          {product.article ? product.article : 'Длина: 6–22 мм'}
-        </p>
+        <p className={styles.smallCardDesc}>{lengthLabel}</p>
         <p className={styles.smallCardPrice}>
           {product.price?.amount != null
             ? `от ${(product.price.amount / 100).toLocaleString('ru-RU')} ₽`
             : 'от · ₽'}
         </p>
-        <span className={styles.smallCardBtn}>Подробнее <ArrowRight size={14} strokeWidth={1.8} /></span>
+        <span className={styles.smallCardBtn}>
+          <span>Подробнее</span>
+          <ArrowRight size={14} strokeWidth={1.8} aria-hidden="true" />
+        </span>
       </div>
     </Link>
   )

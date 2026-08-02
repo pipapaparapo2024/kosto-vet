@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ChevronDown } from 'lucide-react'
+import { ArrowRight, ChevronDown } from 'lucide-react'
 import { img } from '../utils/assetUrl'
 import styles from './DocumentsPage.module.css'
 
@@ -298,7 +298,10 @@ export default function DocumentsPage() {
               <p className={styles.docActionsNote}>
                 Нужен оригинал или нотариально заверенная копия?
               </p>
-              <Link to="/contacts" className={styles.docContactBtn}>Связаться с нами →</Link>
+              <Link to="/contacts" className={styles.docContactBtn}>
+                Связаться с нами
+                <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>

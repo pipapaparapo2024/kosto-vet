@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   X, Phone, Shield, Zap, FileText, ShoppingBag, Package, FileDown, UserPlus,
-  ShoppingCart, Heart, CreditCard, MapPin, FolderOpen, User, LogOut, ChevronRight, ChevronLeft,
+  ShoppingCart, Heart, CreditCard, MapPin, FolderOpen, User, LogOut, ArrowRight,
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { listCustomerOrders, listFavorites, removeFavorite, getCustomerOrder } from '../../../lib/api/account'
 import { getCustomerManager } from '../../../lib/api/auth'
 import { formatMoney } from '../../../lib/money'
 import { orderStatusLabel, paymentStatusLabel } from '../../../lib/labels'
+import { AuthListSkeleton, AuthProfileSkeleton } from '../Skeleton/Skeleton'
 import styles from './AuthDrawer.module.css'
 
 const FEATURES = [
@@ -328,7 +329,7 @@ function ProfileView({ customer, onClose, onLogout, onOpenPanel }) {
             <>
               <Icon size={18} strokeWidth={1.5} className={styles.menuIcon} />
               <span className={styles.menuLabel}>{label}</span>
-              <ChevronRight size={16} strokeWidth={2} className={styles.menuChevron} />
+              <ArrowRight size={16} strokeWidth={2} className={styles.menuChevron} />
             </>
           )
           if (to) {
@@ -380,7 +381,7 @@ function AccountPanel({ panel, customer, onBack, onClose }) {
     <div className={styles.profileWrap}>
       <div className={styles.profileHead}>
         <button type="button" className={styles.backBtn} onClick={onBack} aria-label="Назад">
-          <ChevronLeft size={20} strokeWidth={2} />
+          <ArrowRight size={20} strokeWidth={2} className={styles.backBtnArrow} />
         </button>
         <h2 className={styles.title}>{titles[panel] || 'Кабинет'}</h2>
         <button className={styles.close} onClick={onClose} aria-label="Закрыть"><X size={18} strokeWidth={2} /></button>
@@ -418,13 +419,16 @@ function OrdersPanel() {
   }
 
   if (error) return <p className={styles.formError}>{error}</p>
-  if (!data) return <p className={styles.panelMuted}>Загрузка…</p>
+  if (!data) return <AuthListSkeleton rows={4} />
   if (!data.items?.length) return <p className={styles.panelMuted}>Заказов пока нет</p>
 
   if (detail) {
     return (
       <div className={styles.profileFields}>
-        <button type="button" className={styles.linkBtn} onClick={() => setDetail(null)}>← К списку</button>
+        <button type="button" className={styles.linkBtn} onClick={() => setDetail(null)}>
+          <ArrowRight size={14} strokeWidth={2} className={styles.linkBtnArrowBack} aria-hidden="true" />
+          К списку
+        </button>
         <p><strong>Заказ {detail.public_id}</strong></p>
         <p>Статус: {orderStatusLabel(detail.status)}</p>
         <p>Оплата: {paymentStatusLabel(detail.payment_status)}</p>
@@ -478,7 +482,7 @@ function FavoritesPanel() {
   }
 
   if (error) return <p className={styles.formError}>{error}</p>
-  if (!data) return <p className={styles.panelMuted}>Загрузка…</p>
+  if (!data) return <AuthListSkeleton rows={4} />
   if (!data.items?.length) return <p className={styles.panelMuted}>В избранном пусто</p>
 
   return (
@@ -601,7 +605,7 @@ function ManagerPanel({ manager: initialManager }) {
   }, [initialManager])
 
   if (error && !manager) return <p className={styles.formError}>{error}</p>
-  if (!manager) return <p className={styles.panelMuted}>Загрузка…</p>
+  if (!manager) return <AuthProfileSkeleton />
   return (
     <div className={styles.profileFields}>
       <p><strong>{manager.name}</strong></p>
