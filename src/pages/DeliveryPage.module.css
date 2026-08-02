@@ -410,35 +410,97 @@
 /* ── Responsive ─────────────────────────── */
 @media (max-width: 1280px) {
   .faqGrid { grid-template-columns: repeat(2, 1fr); }
+  .heroLeft { width: 100%; max-width: 100%; }
+  .heroTitle { max-width: 100%; }
 }
 
 @media (max-width: 1024px) {
-  .hero { grid-template-columns: 1fr; }
+  .hero {
+    grid-template-columns: 1fr;
+    padding-bottom: 48px;
+  }
   .heroRight { display: none; }
+  .heroLeft { width: 100%; }
   .steps {
     flex-wrap: wrap;
     overflow-x: visible;
-    gap: 16px;
+    gap: 12px;
   }
   .stepArrow { display: none; }
   .step {
-    min-width: calc(50% - 8px);
-    flex: none;
+    min-width: 0;
+    width: calc(50% - 6px);
+    flex: 0 0 calc(50% - 6px);
     height: auto;
+    padding: 18px 16px 20px;
   }
-  .cta { grid-template-columns: 1fr; }
+  .stepIcon svg { width: 40px !important; height: 40px !important; }
+  .stepTitle { font-size: 15px; margin-bottom: 8px; }
+  .stepDesc { font-size: 13px; }
+  .cta { grid-template-columns: 1fr; padding: 28px 20px; }
   .ctaRight { display: none; }
+  .ctaTitle { white-space: normal; }
 }
 
 @media (max-width: 768px) {
-  .heroDesc { font-size: 16px; }
-  .geoGrid { grid-template-columns: 1fr; }
+  .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
+  .heroTitle { font-size: clamp(28px, 8vw, 36px); }
+  .heroDesc { font-size: 15px; margin-bottom: 28px; }
+  .heroBtn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    gap: 16px;
+    height: 52px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  .stepsTitle { font-size: clamp(22px, 6vw, 28px); margin-bottom: 16px; }
+  .steps {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .step {
+    width: 100%;
+    flex: none;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    padding: 16px;
+  }
+  .stepIcon { flex: 0 0 auto; padding: 10px 0; }
+  .stepIcon svg { width: 36px !important; height: 36px !important; }
+  .stepTitle { font-size: 15px; margin-bottom: 6px; }
+  .stepDesc { font-size: 13px; }
+  .geoTitle,
+  .faqTitle { font-size: clamp(22px, 6vw, 28px); margin-bottom: 16px; }
+  .geoGrid { grid-template-columns: 1fr; gap: 24px; }
   .geoDivider { display: none; }
-  .faqGrid { grid-template-columns: 1fr; }
-  .ctaTitle { font-size: clamp(22px, 4vw, 28px); }
-  .ctaBtns { flex-direction: column; align-items: stretch; }
+  .geoZone { gap: 12px; }
+  .geoIconWrap { width: 44px; height: 44px; }
+  .geoIconWrap svg { width: 28px !important; height: 28px !important; }
+  .geoName { font-size: 16px; }
+  .geoTime { font-size: 13px; }
+  .faqGrid { grid-template-columns: 1fr; gap: 10px; }
+  .faqCard { padding: 14px; }
+  .faqQ { font-size: 15px; }
+  .faqA { font-size: 13px; }
+  .ctaTitle { font-size: clamp(22px, 6vw, 28px); white-space: normal; }
+  .ctaDesc { font-size: 14px; margin-bottom: 20px; }
+  .ctaBtns { flex-direction: column; align-items: stretch; gap: 10px; }
+  .ctaBtnPrimary,
+  .ctaBtnSecondary {
+    width: 100%;
+    justify-content: center;
+    gap: 12px;
+    height: 48px;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
 }
 
 @media (max-width: 390px) {
-  .step { min-width: 100%; }
+  .heroBtn { font-size: 15px; }
 }
+

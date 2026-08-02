@@ -13,3 +13,24 @@
  * Decorative cats: hide or max-width: 100% at ≤1024/768.
  * Touch targets: min 44×44px.
  */
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* Soften long unbroken strings without breaking layout */
+  p,
+  h1,
+  h2,
+  h3,
+  li,
+  a,
+  button,
+  span {
+    overflow-wrap: anywhere;
+  }
+}

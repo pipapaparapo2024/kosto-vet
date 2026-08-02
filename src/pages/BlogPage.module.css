@@ -229,9 +229,17 @@
 }
 
 @media (max-width: 768px) {
-  .heroTitle { font-size: clamp(28px, 8vw, 32px); }
-  .grid { grid-template-columns: 1fr; }
-  .tags { gap: 10px; }
+  .heroTitle { font-size: clamp(26px, 7vw, 32px); }
+  .heroDesc { font-size: 15px; }
+  .grid { grid-template-columns: 1fr; row-gap: 24px; }
+  .tags { gap: 8px; margin-bottom: 24px; }
+  .tag { height: 40px; padding: 0 14px; font-size: 13px; }
+  .cardTitle { font-size: 18px; }
+  .cardDesc { font-size: 13px; margin-bottom: 24px; }
+  .cardPhoto { height: 180px; }
+  .cardMeta { gap: 20px; flex-wrap: wrap; }
+  .cardMetaItem { font-size: 12px; }
+  .pagination { gap: 6px; }
 }
 
 @media (max-width: 390px) {

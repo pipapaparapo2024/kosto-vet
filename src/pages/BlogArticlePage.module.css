@@ -456,13 +456,29 @@
 }
 
 @media (max-width: 768px) {
-  .page { padding-bottom: 48px; }
-  .articleTitle { font-size: 28px; }
-  .articleDesc { font-size: 16px; }
-  .articleMeta { gap: 20px; }
-  .chapterTitle { font-size: 20px; }
-  .para { font-size: 16px; }
+  .page { padding-bottom: 40px; }
+  .articleTitle { font-size: clamp(24px, 7vw, 32px); margin-bottom: 14px; }
+  .articleDesc { font-size: 15px; margin-bottom: 20px; }
+  .articleMeta { gap: 16px; }
+  .metaItem { font-size: 12px; }
+  .articleCover { height: 180px; font-size: 14px; }
+  .layout { padding-top: 24px; gap: 28px; }
   .tocTitle,
   .widgetTitle,
-  .otherTitle { font-size: 20px; }
+  .otherTitle,
+  .chapterTitle { font-size: 18px; }
+  .tocItem { font-size: 13px; }
+  .para { font-size: 15px; line-height: 1.6; }
+  .widgetCol,
+  .productWidget,
+  .otherArticles { width: 100%; max-width: 100%; }
+  .productWidget { padding: 18px 16px; }
+  .widgetActions { margin-top: 28px; }
+  .widgetBtn,
+  .widgetBtnSecondary,
+  .allArticlesBtn { height: 44px; font-size: 14px; }
+  .otherPhoto { width: 100px; height: 80px; }
+  .otherCardTitle,
+  .otherReadLink { font-size: 13px; }
 }
+

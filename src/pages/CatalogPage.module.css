@@ -753,22 +753,72 @@
 }
 
 @media (max-width: 768px) {
-  .heroLeft { padding: 0 0 40px; }
-  .catHero { padding: 0 0 24px; }
-  .benefits { flex-direction: column; gap: 20px; }
-  .subcats { flex-wrap: nowrap; }
-  .toolbar { flex-direction: column; align-items: flex-start; }
-  .toolbarRight { width: 100%; flex-wrap: wrap; }
-  .searchInput { width: 100%; box-sizing: border-box; }
+  .heroLeft { padding: 0 0 28px; }
+  .catHero { padding: 0 0 20px; }
+  .heroTitle { font-size: clamp(28px, 8vw, 36px); }
+  .heroDesc { font-size: 15px; margin-bottom: 24px; }
+  .benefits { flex-direction: column; gap: 16px; }
+  .benefitTitle { font-size: 15px; }
+  .benefitDesc { font-size: 13px; }
+  .subcats { flex-wrap: nowrap; gap: 8px; padding-bottom: 28px; }
+  .subcat { min-width: 120px; max-width: 140px; height: 148px; }
+  .subcatName { font-size: 12px; padding: 6px 8px 2px 12px; }
+  .subcatCount { font-size: 11px; padding: 0 8px 14px 12px; }
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .count { font-size: 18px; }
+  .toolbarRight {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .searchInput,
+  .sortWrap,
+  .sortSelect,
+  .filterBtn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .sortSelect { width: 100%; }
+  .chips { gap: 8px; }
+  .chip { font-size: 13px; padding: 6px 10px; }
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 16px;
-    row-gap: 16px;
+    column-gap: 12px;
+    row-gap: 14px;
   }
-  .card { width: 100%; height: auto; min-height: 320px; }
+  .card {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+  }
+  .cardName { font-size: 13px; }
+  .cardSku { font-size: 11px; }
+  .cardPrice { font-size: 15px; }
+  .cta {
+    padding: 24px 20px;
+    gap: 20px;
+  }
+  .ctaTitle { font-size: clamp(22px, 6vw, 28px); }
+  .ctaDesc { font-size: 14px; }
+  .ctaBtn {
+    width: 100%;
+    justify-content: center;
+    gap: 12px;
+    height: 48px;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+  .pagination { gap: 6px; padding-bottom: 40px; }
+  .pageBtn,
+  .pageNum { width: 40px; height: 40px; }
 }
 
 @media (max-width: 390px) {
   .grid { grid-template-columns: 1fr; }
   .card { min-height: 0; height: auto; }
 }
+

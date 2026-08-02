@@ -136,8 +136,27 @@
 }
 
 @media (max-width: 768px) {
-  .top { padding: 40px 0 32px; }
+  .top { padding: 36px 0 28px; }
+  .logo { font-size: 20px; margin-bottom: 10px; }
+  .desc { font-size: 14px; }
+  .navCols {
+    margin-left: 0;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .col:nth-child(2),
+  .col:nth-child(3) { margin-left: 0; }
+  .colTitle { font-size: 18px; margin-bottom: 14px; }
+  .colLinks { gap: 10px; }
+  .colLinks a,
+  .colLinks p { font-size: 14px; }
   .catImg { display: none; }
-  .bottomInner { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .bottom { padding: 20px 0 40px; }
+  .bottomInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .bottom { padding: 20px 0 36px; }
 }
+

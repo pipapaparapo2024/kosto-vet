@@ -151,6 +151,7 @@
   border: 2px solid #111111;
   border-radius: 12px;
   background: #fff;
+  box-sizing: border-box;
 }
 
 .stepNum {
@@ -436,8 +437,22 @@
   .hero { grid-template-columns: 1fr; }
   .heroRight { display: none; }
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
-  .steps { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .step { min-width: 180px; flex: none; }
+  .steps {
+    flex-wrap: wrap;
+    gap: 12px;
+    overflow-x: visible;
+  }
+  .stepArrow { display: none; }
+  .step {
+    min-width: 0;
+    width: calc(50% - 6px);
+    flex: 0 0 calc(50% - 6px);
+    height: auto;
+    padding: 18px 16px 20px;
+  }
+  .stepIcon svg { width: 40px !important; height: 40px !important; }
+  .stepTitle { font-size: 15px; margin-bottom: 8px; }
+  .stepDesc { font-size: 13px; }
   .splitInner { grid-template-columns: 1fr; gap: 40px; }
   .splitLeft { padding-right: 0; }
   .splitRight {
@@ -452,16 +467,39 @@
 }
 
 @media (max-width: 768px) {
-  .statsGrid { grid-template-columns: 1fr 1fr; }
-  .statCard { padding: 20px; }
-  .steps { flex-wrap: wrap; overflow-x: visible; }
-  .stepArrow { display: none; }
-  .step { min-width: calc(50% - 8px); flex: none; height: auto; }
-  .ctaTitle { font-size: clamp(22px, 4vw, 28px); }
+  .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
+  .heroTitle { font-size: clamp(28px, 8vw, 36px); }
+  .heroDesc { font-size: 15px; }
+  .sectionTitle24 { font-size: clamp(22px, 6vw, 28px); }
+  .statsGrid { grid-template-columns: 1fr; }
+  .statCard { padding: 16px; }
+  .statValueNum { font-size: 24px; }
+  .statValueText { font-size: 16px; }
+  .statLabel { font-size: 13px; }
+  .steps {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .step {
+    width: 100%;
+    flex: none;
+    min-width: 0;
+    max-width: 100%;
+    height: auto;
+    padding: 16px;
+  }
+  .stepIcon { flex: 0 0 auto; padding: 12px 0; }
+  .stepIcon svg { width: 36px !important; height: 36px !important; }
+  .stepTitle { font-size: 15px; margin-bottom: 6px; }
+  .stepDesc { font-size: 13px; }
+  .ctaTitle { font-size: clamp(22px, 6vw, 28px); white-space: normal; }
   .ctaBtns { flex-direction: column; align-items: stretch; }
+  .ctaBtnPrimary,
+  .ctaBtnSecondary { width: 100%; justify-content: center; box-sizing: border-box; }
 }
 
 @media (max-width: 390px) {
   .statsGrid { grid-template-columns: 1fr; }
-  .step { min-width: 100%; }
 }
+
