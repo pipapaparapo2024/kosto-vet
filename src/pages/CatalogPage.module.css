@@ -171,30 +171,30 @@
 /* ── Основной layout ──────────────────── */
 .layout {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 250px minmax(0, 1fr);
   gap: 20px;
   align-items: flex-start;
   margin-top: 20px;
 }
 
-/* ── Фильтр ───────────────────────────── */
+/* ── Фильтр: чёрная плашка + белая карточка поверх ── */
 .filters {
-  width: 220px;
+  width: 250px;
   max-width: 100%;
   position: sticky;
   top: calc(var(--header-height) + 20px);
-  background: #F5F5F5;
-  border: 1.5px solid #111111;
-  border-radius: 16px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
   box-sizing: border-box;
 }
 
 .filterHead {
-  background: transparent;
-  border-bottom: 1.5px solid #111111;
-  border-radius: 0;
-  padding: 16px;
+  background: #111111;
+  border: none;
+  border-radius: 16px;
+  padding: 18px 16px 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -206,13 +206,13 @@
 .filterTitle {
   font-size: 20px;
   font-weight: 700;
-  color: #111111;
+  color: #ffffff;
 }
 
 .filterClear {
   font-size: 12px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   background: none;
   border: none;
   cursor: pointer;
@@ -220,13 +220,13 @@
   margin-left: 0;
   white-space: nowrap;
 }
-.filterClear:hover { color: #111111; }
+.filterClear:hover { color: #ffffff; }
 
 .filterBody {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  margin-top: 0;
+  background: #ffffff;
+  border: 2px solid #111111;
+  border-radius: 16px;
+  margin-top: -34px;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -237,7 +237,13 @@
   position: relative;
 }
 .filterGroup:not(:last-child)::after {
-  display: none;
+  content: '';
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  bottom: 0;
+  height: 1px;
+  background: #111111;
 }
 
 .filterGroupBtn {
@@ -422,7 +428,7 @@
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  background: #F5F5F5;
+  background: #fff;
   border: 1.5px solid #111111;
   border-radius: 8px;
   font-family: var(--font);
@@ -432,7 +438,7 @@
   cursor: pointer;
   transition: background var(--duration);
 }
-.chip:hover { background: #ececec; }
+.chip:hover { background: #fafafa; }
 
 .chipX {
   color: #111111;
@@ -453,18 +459,18 @@
 /* ── Сетка товаров ────────────────────── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: 16px;
-  row-gap: 20px;
+  grid-template-columns: repeat(4, 236px);
+  column-gap: 20px;
+  row-gap: 21px;
   margin-top: 20px;
   justify-content: start;
 }
 
 /* ── Карточка товара ──────────────────── */
 .card {
-  width: 100%;
+  width: 236px;
   max-width: 100%;
-  height: 360px;
+  height: 354px;
   border: 2px solid #111111;
   border-radius: 8px;
   overflow: hidden;
@@ -473,19 +479,19 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background: #fff;
   transition: box-shadow var(--duration), transform var(--duration);
 }
 .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.12); transform: translateY(-2px); }
 
 .cardImg {
-  height: 118px;
+  height: 130px;
   background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
-  border-radius: 6px 6px 0 0;
 }
 .cardImg img {
   width: 100%;
@@ -497,7 +503,7 @@
 .card:hover .cardImg img { transform: scale(1.04); }
 
 .cardBody {
-  padding: 14px 14px 14px;
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -505,11 +511,10 @@
 }
 
 .cardName {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  line-height: 1.3;
-  margin-bottom: 8px;
-  min-height: calc(1.3em * 2);
+  line-height: 1.25;
+  margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -517,12 +522,11 @@
 }
 
 .cardSku {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.35;
-  margin-bottom: 8px;
-  min-height: calc(1.35em * 2);
+  line-height: 1.3;
+  margin-bottom: 6px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -534,18 +538,18 @@
   flex-direction: column;
   align-items: flex-start;
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 6px;
   gap: 4px;
 }
 
 .cardPrice {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 
 .cardPriceEmpty {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-secondary);
   font-style: italic;
 }
@@ -576,14 +580,14 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 40px;
+  height: 36px;
   background: var(--color-text);
   color: var(--color-btn-text);
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  margin-top: 12px;
+  margin-top: 8px;
   transition: background var(--duration);
   box-sizing: border-box;
 }
@@ -711,14 +715,23 @@
 @media (max-width: 1280px) {
   .container { padding: 0 var(--space-x); }
   .subcat { min-width: 128px; max-width: 148px; height: 160px; }
-  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 12px; }
-  .layout { grid-template-columns: 200px minmax(0, 1fr); gap: 16px; }
-  .filters { width: 200px; }
+  .layout { grid-template-columns: 220px minmax(0, 1fr); gap: 16px; }
+  .filters { width: 220px; }
   .heroImg { width: 480px; height: auto; }
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 21px;
+  }
+  .card { width: 100%; }
 }
 
 @media (max-width: 1100px) {
-  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 21px;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -728,9 +741,13 @@
   .filters {
     position: static;
     width: 100%;
-    max-width: none;
+    max-width: 360px;
   }
-  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 21px;
+  }
   .cta { grid-template-columns: 1fr; padding: 32px 24px; }
   .ctaImg { display: none; }
 }
@@ -743,7 +760,12 @@
   .toolbar { flex-direction: column; align-items: flex-start; }
   .toolbarRight { width: 100%; flex-wrap: wrap; }
   .searchInput { width: 100%; box-sizing: border-box; }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 16px; }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 16px;
+  }
+  .card { width: 100%; height: auto; min-height: 320px; }
 }
 
 @media (max-width: 390px) {

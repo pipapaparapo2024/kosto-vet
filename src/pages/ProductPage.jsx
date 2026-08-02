@@ -308,15 +308,18 @@ export default function ProductPage() {
 
           <section className={styles.benefits}>
             <div className={styles.benefit}>
-              <Clock size={40} strokeWidth={1.5} aria-hidden="true" />
-              <p className={styles.benefitText}>Нужно сегодня? Оформите заказ до 18:00 — доставим по Воронежу за 2–4 часа</p>
+              <Clock size={60} strokeWidth={1.5} aria-hidden="true" />
+              <div className={styles.benefitCopy}>
+                <p className={styles.benefitTitle}>Нужно сегодня?</p>
+                <p className={styles.benefitDesc}>Оформите заказ до 18:00 — доставим по Воронежу за 2–4 часа</p>
+              </div>
             </div>
             <div className={styles.benefit}>
-              <Package size={40} strokeWidth={1.5} aria-hidden="true" />
+              <Package size={60} strokeWidth={1.5} aria-hidden="true" />
               <p className={styles.benefitText}>Актуальный остаток на складе</p>
             </div>
             <div className={styles.benefit}>
-              <User size={40} strokeWidth={1.5} aria-hidden="true" />
+              <User size={60} strokeWidth={1.5} aria-hidden="true" />
               <p className={styles.benefitText}>Помощь с подбором от специалиста</p>
             </div>
           </section>
