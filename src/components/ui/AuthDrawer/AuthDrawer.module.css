@@ -10,7 +10,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: var(--drawer-width);
+  width: min(var(--drawer-width), 100%);
   background: #fff;
   z-index: 101;
   display: flex;
@@ -521,8 +521,7 @@
 }
 .managerBtn:hover { opacity: 0.8; }
 
-@media (max-width: 540px) {
-  .drawer { width: 100%; }
+@media (max-width: 768px) {
   .quickGrid { grid-template-columns: repeat(2, 1fr); }
 }
 

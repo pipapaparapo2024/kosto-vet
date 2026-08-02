@@ -91,7 +91,7 @@ export default function ContactsPage() {
             />
             <ContactCard
               Icon={Mail}
-              method="Email"
+              method="Эл. почта"
               value={email}
               href={`mailto:${email}`}
               btnLabel="Написать письмо"
@@ -185,7 +185,10 @@ export default function ContactsPage() {
                     <Truck size={29} strokeWidth={2} className={`${styles.mapIcon} ${styles.mapIconTruck}`} />
                     <div>
                       <p className={styles.mapInfoLabel}>Доставка</p>
-                      <p className={styles.mapInfoText}>По Воронежу — 2–4 часа. По России — транспортными компаниями</p>
+                      <p className={styles.mapInfoText}>
+                        По Воронежу — 2–4 часа<br />
+                        По России — транспортными компаниями
+                      </p>
                     </div>
                   </div>
                   <a href="#" className={styles.mapRouteBtn}>

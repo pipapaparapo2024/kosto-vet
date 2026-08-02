@@ -17,7 +17,7 @@ export function isInStock(stock) {
 
 export function stockLabel(stock) {
   if (!stock) return 'Наличие неизвестно'
-  if (stock.label) return stock.label
+  if (stock.label && /[А-Яа-яЁё]/.test(stock.label)) return stock.label
   switch (stock.state) {
     case 'available': return 'В наличии'
     case 'low': return 'Мало на складе'

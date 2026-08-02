@@ -28,5 +28,10 @@ export function redirectToPayment(payment) {
 
 export function formatFieldErrors(fieldErrors) {
   if (!fieldErrors?.length) return null
-  return fieldErrors.map(e => e.message || `${e.field}: ${e.code}`).join('. ')
+  const parts = fieldErrors.map(e => {
+    if (e.message && /[А-Яа-яЁё]/.test(e.message)) return e.message
+    if (e.message) return e.message
+    return null
+  }).filter(Boolean)
+  return parts.length ? parts.join('. ') : 'Проверьте заполненные поля'
 }

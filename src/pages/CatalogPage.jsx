@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { Clock, Box, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { Clock, Box, ChevronDown, ChevronLeft, ChevronRight, ArrowRight, LayoutGrid, X, SlidersHorizontal } from 'lucide-react'
 import { listCategories, listProducts, getCategory } from '../lib/api/catalog'
 import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
+import { categoryTitle } from '../lib/labels'
 import { img } from '../utils/assetUrl'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './CatalogPage.module.css'
@@ -16,6 +17,29 @@ const SORT_OPTIONS = [
 ]
 
 const PER_PAGE = 24
+
+/** Верхний ряд карточек формы пластин (макет: 7 шт). */
+export const PLATE_SUBCATS = [
+  { slug: 'parnye', title: 'Парные', count: 46, match: /парн/i },
+  { slug: 't-obraznye', title: 'Т-образные', count: 13, match: /т[\s-]?образ/i },
+  { slug: 'l-obraznye', title: 'L-образные', count: 59, match: /l[\s-]?образ|л[\s-]?образ/i },
+  { slug: 'rekonstruktivnye', title: 'Реконструктивные', count: 46, match: /реконструкт/i },
+  { slug: 'bedrennaya', title: 'Для бедренной кости', count: 46, match: /бедрен/i },
+  { slug: 'taz', title: 'Для таза', count: 46, match: /таз|тазов/i },
+  { slug: 'all-plastiny', title: 'Все пластины', count: 134, isAll: true },
+]
+
+function formatProductCount(n) {
+  if (n == null || n === '') return ''
+  const count = Number(n)
+  if (Number.isNaN(count)) return String(n)
+  const mod10 = count % 10
+  const mod100 = count % 100
+  let word = 'товаров'
+  if (mod10 === 1 && mod100 !== 11) word = 'товар'
+  else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) word = 'товара'
+  return `${count} ${word}`
+}
 
 export default function CatalogPage() {
   const { category } = useParams()
@@ -32,6 +56,11 @@ export default function CatalogPage() {
   const [sort, setSort] = useState(searchParams.get('sort') || 'popular')
   const [onlyInStock, setOnlyInStock] = useState(searchParams.get('in_stock') === 'true')
   const [stockState, setStockState] = useState(searchParams.get('stock_state') || '')
+  const [plateShape, setPlateShape] = useState(searchParams.get('shape') || '')
+  const [lengthMm, setLengthMm] = useState('')
+  const [widthMm, setWidthMm] = useState('')
+  const [holes, setHoles] = useState('')
+  const [priceRange, setPriceRange] = useState('')
   const [openGroups, setOpenGroups] = useState({ nalichie: true })
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1)
 
@@ -42,8 +71,10 @@ export default function CatalogPage() {
 
   const currentCat = categoryDetail || categories.find(c => c.slug === category) || null
 
+  const categoryDisplayName = categoryTitle(currentCat || category, category ? 'Категория' : 'Каталог')
+
   useDocumentTitle(
-    currentCat?.seo?.title || currentCat?.title || currentCat?.name || (category ? category : 'Каталог'),
+    currentCat?.seo?.title || categoryDisplayName,
     currentCat?.seo?.description || currentCat?.description || 'Каталог имплантов для остеосинтеза KOSTO-VET',
   )
 
@@ -63,22 +94,38 @@ export default function CatalogPage() {
       .catch(() => setCategoryDetail(null))
   }, [category])
 
+  useEffect(() => {
+    const shape = searchParams.get('shape') || ''
+    if (shape !== plateShape) setPlateShape(shape)
+  }, [searchParams])
+
   const loadProducts = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
+      const shapeMeta = PLATE_SUBCATS.find(s => s.slug === plateShape && !s.isAll)
       const res = await listProducts({
-        category: category || undefined,
+        category: category || (plateShape ? 'plastiny' : undefined),
         includeDescendants: true,
         q: search.trim() || undefined,
         inStock: onlyInStock || undefined,
         stockState: stockState || undefined,
         sort,
-        page,
-        limit: PER_PAGE,
+        page: shapeMeta ? 1 : page,
+        limit: shapeMeta ? 200 : PER_PAGE,
       })
-      setItems(res.items || [])
-      setTotal(res.total || 0)
+      let nextItems = res.items || []
+      let nextTotal = res.total || 0
+      if (shapeMeta?.match) {
+        nextItems = nextItems.filter(p =>
+          shapeMeta.match.test(p.name || '') || shapeMeta.match.test(p.subtitle || ''),
+        )
+        nextTotal = nextItems.length
+        const start = (page - 1) * PER_PAGE
+        nextItems = nextItems.slice(start, start + PER_PAGE)
+      }
+      setItems(nextItems)
+      setTotal(nextTotal)
     } catch (e) {
       setError(e.message || 'Не удалось загрузить каталог')
       setItems([])
@@ -86,7 +133,7 @@ export default function CatalogPage() {
     } finally {
       setLoading(false)
     }
-  }, [category, search, onlyInStock, stockState, sort, page])
+  }, [category, search, onlyInStock, stockState, sort, page, plateShape])
 
   useEffect(() => {
     const t = setTimeout(loadProducts, search ? 300 : 0)
@@ -95,7 +142,7 @@ export default function CatalogPage() {
 
   useEffect(() => {
     setPage(1)
-  }, [category, search, onlyInStock, stockState, sort])
+  }, [category, search, onlyInStock, stockState, sort, plateShape])
 
   useEffect(() => {
     const next = {}
@@ -103,25 +150,54 @@ export default function CatalogPage() {
     if (sort !== 'popular') next.sort = sort
     if (onlyInStock) next.in_stock = 'true'
     if (stockState) next.stock_state = stockState
+    if (plateShape && plateShape !== 'all-plastiny') next.shape = plateShape
     if (page > 1) next.page = String(page)
     setSearchParams(next, { replace: true })
-  }, [search, sort, onlyInStock, stockState, page, setSearchParams])
+  }, [search, sort, onlyInStock, stockState, plateShape, page, setSearchParams])
 
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE))
   const toggleGroup = key => setOpenGroups(g => ({ ...g, [key]: !g[key] }))
   const activeChips = [
     ...(onlyInStock ? [{ label: 'В наличии', key: 'stock' }] : []),
-    ...(stockState ? [{ label: `Статус: ${stockState}`, key: 'stock_state' }] : []),
+    ...(stockState === 'out' ? [{ label: 'Под заказ', key: 'stock_state' }] : []),
+    ...(plateShape ? [{ label: `Форма: ${PLATE_SUBCATS.find(s => s.slug === plateShape)?.title || plateShape}`, key: 'shape' }] : []),
+    ...(lengthMm ? [{ label: `Длина ${lengthMm}`, key: 'length' }] : []),
+    ...(widthMm ? [{ label: `Ширина ${widthMm}`, key: 'width' }] : []),
+    ...(holes ? [{ label: `${holes} отверстий`, key: 'holes' }] : []),
+    ...(priceRange ? [{ label: `Цена ${priceRange}`, key: 'price' }] : []),
   ]
+
+  const clearChip = key => {
+    if (key === 'stock') setOnlyInStock(false)
+    else if (key === 'stock_state') setStockState('')
+    else if (key === 'shape') setPlateShape('')
+    else if (key === 'length') setLengthMm('')
+    else if (key === 'width') setWidthMm('')
+    else if (key === 'holes') setHoles('')
+    else if (key === 'price') setPriceRange('')
+  }
+
   const clearAll = () => {
     setOnlyInStock(false)
     setStockState('')
+    setPlateShape('')
+    setLengthMm('')
+    setWidthMm('')
+    setHoles('')
+    setPriceRange('')
+  }
+
+  const scrollToFilters = () => {
+    document.getElementById('catalog-filters')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   const rootCats = categories
-  const subcats = categoryDetail?.children?.length
-    ? categoryDetail.children
-    : (!category ? rootCats : (currentCat?.children || []))
+  const showPlateSubcats = !category || category === 'plastiny'
+  const subcats = showPlateSubcats
+    ? PLATE_SUBCATS
+    : (categoryDetail?.children?.length
+      ? categoryDetail.children
+      : (currentCat?.children?.length ? currentCat.children : rootCats))
 
   return (
     <div className={styles.page}>
@@ -132,8 +208,8 @@ export default function CatalogPage() {
               <Link to="/">Главная</Link><span>›</span>
               <span>Каталог</span>
             </nav>
-            <h1 className={styles.heroTitle}>Каталог продукции</h1>
-            <p className={styles.heroDesc}>Импланты и инструменты для остеосинтеза. Наличие и цены со склада в реальном времени.</p>
+            <h1 className={styles.heroTitle}>Пластины для остеосинтеза</h1>
+            <p className={styles.heroDesc}>Для фиксации переломов у кошек и собак. Текущее наличие и доставка по Воронежу за 2–4 часа.</p>
             <div className={styles.benefits}>
               <div className={styles.benefitItem}>
                 <Clock size={40} strokeWidth={1.5} className={styles.benefitIcon} />
@@ -162,12 +238,12 @@ export default function CatalogPage() {
             <Link to="/catalog">Каталог</Link><span>›</span>
             {(categoryDetail?.ancestors || []).map(a => (
               <span key={a.id} style={{ display: 'contents' }}>
-                <Link to={`/catalog/${a.slug}`}>{a.title}</Link><span>›</span>
+                <Link to={`/catalog/${a.slug}`}>{categoryTitle(a)}</Link><span>›</span>
               </span>
             ))}
-            <span>{currentCat?.title || currentCat?.name || category}</span>
+            <span>{categoryDisplayName}</span>
           </nav>
-          <h1 className={styles.heroTitle}>{currentCat?.title || currentCat?.name || category}</h1>
+          <h1 className={styles.heroTitle}>{categoryDisplayName}</h1>
           {currentCat?.description && <p className={styles.heroDesc}>{currentCat.description}</p>}
         </div>
       )}
@@ -175,28 +251,42 @@ export default function CatalogPage() {
       <div className={styles.container}>
         {subcats.length > 0 && (
           <div className={styles.subcats}>
-            {subcats.map(s => (
-              <Link
-                key={s.id || s.slug}
-                to={`/catalog/${s.slug}`}
-                className={`${styles.subcat} ${category === s.slug ? styles.subcatActive : ''}`}
-              >
-                <div className={styles.subcatPhoto} />
-                <p className={styles.subcatName}>{s.title || s.name}</p>
-                <p className={styles.subcatCount}>{s.subtree_product_count ?? s.direct_product_count ?? ''}</p>
-              </Link>
-            ))}
-            {category && (
-              <Link to="/catalog" className={styles.subcat}>
-                <div className={styles.subcatPhoto} />
-                <p className={styles.subcatName}>Весь каталог</p>
-              </Link>
-            )}
+            {subcats.map(s => {
+              const isPlateCard = showPlateSubcats
+              const isAll = s.isAll || s.slug === 'all-plastiny'
+              const active = isPlateCard
+                ? (isAll ? !plateShape : plateShape === s.slug)
+                : category === s.slug
+              const to = isPlateCard
+                ? (isAll ? '/catalog/plastiny' : `/catalog/plastiny?shape=${encodeURIComponent(s.slug)}`)
+                : `/catalog/${s.slug}`
+
+              return (
+                <Link
+                  key={s.id || s.slug}
+                  to={to}
+                  className={`${styles.subcat} ${active ? styles.subcatActive : ''}`}
+                  onClick={() => {
+                    if (isPlateCard) setPlateShape(isAll ? '' : s.slug)
+                  }}
+                >
+                  <div className={styles.subcatPhoto}>
+                    {isAll
+                      ? <LayoutGrid size={28} strokeWidth={1.6} aria-hidden="true" />
+                      : 'Фото товара'}
+                  </div>
+                  <p className={styles.subcatName}>{s.title || categoryTitle(s)}</p>
+                  <p className={styles.subcatCount}>
+                    {formatProductCount(s.count ?? s.subtree_product_count ?? s.direct_product_count)}
+                  </p>
+                </Link>
+              )
+            })}
           </div>
         )}
 
         <div className={styles.layout}>
-          <aside className={styles.filters}>
+          <aside className={styles.filters} id="catalog-filters">
             <div className={styles.filterHead}>
               <span className={styles.filterTitle}>Фильтр</span>
               <button type="button" className={styles.filterClear} onClick={clearAll}>Сбросить всё</button>
@@ -205,7 +295,7 @@ export default function CatalogPage() {
               <div className={styles.filterGroup}>
                 <button type="button" className={styles.filterGroupBtn} onClick={() => toggleGroup('nalichie')}>
                   Наличие
-                  <ChevronDown size={14} strokeWidth={2} style={{ transform: openGroups.nalichie ? 'rotate(180deg)' : 'none', transition: '150ms', flexShrink: 0 }} />
+                  <ChevronDown size={14} strokeWidth={2.5} style={{ transform: openGroups.nalichie ? 'rotate(180deg)' : 'none', transition: '150ms', flexShrink: 0 }} />
                 </button>
                 {openGroups.nalichie !== false && (
                   <div className={styles.filterGroupBody}>
@@ -213,32 +303,92 @@ export default function CatalogPage() {
                       <input
                         type="checkbox"
                         checked={onlyInStock}
-                        onChange={e => setOnlyInStock(e.target.checked)}
+                        onChange={e => { setOnlyInStock(e.target.checked); if (e.target.checked) setStockState('') }}
                         className={styles.filterCheckbox}
                       />
                       <span className={styles.filterOptionLabel}>В наличии</span>
+                      <span className={styles.filterCount}>{total || '—'}</span>
                     </label>
-                    {[
-                      { value: '', label: 'Любой статус' },
-                      { value: 'available', label: 'Много (available)' },
-                      { value: 'low', label: 'Мало (low)' },
-                      { value: 'out', label: 'Нет (out)' },
-                      { value: 'unknown', label: 'Неизвестно' },
-                    ].map(opt => (
-                      <label key={opt.value || 'any'} className={styles.filterOption}>
-                        <input
-                          type="radio"
-                          name="stock_state"
-                          checked={stockState === opt.value}
-                          onChange={() => setStockState(opt.value)}
-                          className={styles.filterCheckbox}
-                        />
-                        <span className={styles.filterOptionLabel}>{opt.label}</span>
-                      </label>
-                    ))}
+                    <label className={styles.filterOption}>
+                      <input
+                        type="checkbox"
+                        checked={stockState === 'out'}
+                        onChange={e => { setStockState(e.target.checked ? 'out' : ''); if (e.target.checked) setOnlyInStock(false) }}
+                        className={styles.filterCheckbox}
+                      />
+                      <span className={styles.filterOptionLabel}>Под заказ</span>
+                      <span className={styles.filterCount}>14</span>
+                    </label>
                   </div>
                 )}
               </div>
+
+              {[
+                {
+                  key: 'shape',
+                  title: 'Форма пластины',
+                  value: plateShape,
+                  set: setPlateShape,
+                  options: [
+                    { value: 'parnye', label: 'Парные' },
+                    { value: 't-obraznye', label: 'Т-образные' },
+                    { value: 'l-obraznye', label: 'L-образные' },
+                    { value: 'rekonstruktivnye', label: 'Реконструктивные' },
+                    { value: 'bedrennaya', label: 'Для бедренной кости' },
+                    { value: 'taz', label: 'Для таза' },
+                  ],
+                },
+                {
+                  key: 'length',
+                  title: 'Длина, мм',
+                  value: lengthMm,
+                  set: setLengthMm,
+                  options: ['33', '47', '50–65', '58', '70', '85'].map(v => ({ value: v, label: v })),
+                },
+                {
+                  key: 'width',
+                  title: 'Ширина, мм',
+                  value: widthMm,
+                  set: setWidthMm,
+                  options: ['4,5', '6', '8', '10'].map(v => ({ value: v, label: v })),
+                },
+                {
+                  key: 'holes',
+                  title: 'Кол-во отверстий',
+                  value: holes,
+                  set: setHoles,
+                  options: ['4', '6', '8', '10'].map(v => ({ value: v, label: v })),
+                },
+                {
+                  key: 'price',
+                  title: 'Цена (₽)',
+                  value: priceRange,
+                  set: setPriceRange,
+                  options: ['до 1500', '1500–3000', 'от 3000'].map(v => ({ value: v, label: v })),
+                },
+              ].map(group => (
+                <div key={group.key} className={styles.filterGroup}>
+                  <button type="button" className={styles.filterGroupBtn} onClick={() => toggleGroup(group.key)}>
+                    {group.title}
+                    <ChevronDown size={14} strokeWidth={2.5} style={{ transform: openGroups[group.key] ? 'rotate(180deg)' : 'none', transition: '150ms', flexShrink: 0 }} />
+                  </button>
+                  {openGroups[group.key] && (
+                    <div className={styles.filterGroupBody}>
+                      {group.options.map(opt => (
+                        <label key={opt.value} className={styles.filterOption}>
+                          <input
+                            type="checkbox"
+                            checked={group.value === opt.value}
+                            onChange={() => group.set(group.value === opt.value ? '' : opt.value)}
+                            className={styles.filterCheckbox}
+                          />
+                          <span className={styles.filterOptionLabel}>{opt.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </aside>
 
@@ -253,22 +403,38 @@ export default function CatalogPage() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                 />
-                <select
-                  className={styles.sortSelect}
-                  value={sort}
-                  onChange={e => setSort(e.target.value)}
-                >
-                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
+                <div className={styles.sortWrap}>
+                  <select
+                    className={styles.sortSelect}
+                    value={sort}
+                    onChange={e => setSort(e.target.value)}
+                    aria-label="Сортировка"
+                  >
+                    {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                  <ChevronDown size={16} strokeWidth={2} className={styles.sortChevron} aria-hidden="true" />
+                </div>
+                <button type="button" className={styles.filterBtn} onClick={scrollToFilters}>
+                  <SlidersHorizontal size={16} strokeWidth={2} aria-hidden="true" />
+                  Фильтр
+                  {activeChips.length > 0 && (
+                    <span className={styles.filterBadge}>{activeChips.length}</span>
+                  )}
+                </button>
               </div>
             </div>
 
             {activeChips.length > 0 && (
               <div className={styles.chips}>
                 {activeChips.map(chip => (
-                  <button key={chip.key} type="button" className={styles.chip} onClick={clearAll}>
+                  <button
+                    key={chip.key}
+                    type="button"
+                    className={styles.chip}
+                    onClick={() => clearChip(chip.key)}
+                  >
                     {chip.label}
-                    <span className={styles.chipX}>✕</span>
+                    <X size={14} strokeWidth={2} className={styles.chipX} aria-hidden="true" />
                   </button>
                 ))}
                 <button type="button" className={styles.chipsReset} onClick={clearAll}>Сбросить всё</button>
@@ -277,10 +443,7 @@ export default function CatalogPage() {
 
             {error && (
               <div className={styles.empty}>
-                <p>{error}</p>
-                <p style={{ marginTop: 8, fontSize: 14, color: '#6F6F6F' }}>
-                  Проверьте, что API запущен (localhost:8000) и CORS/proxy настроены.
-                </p>
+                <p>Не удалось загрузить каталог. Попробуйте обновить страницу или зайдите позже.</p>
                 <button
                   type="button"
                   className={styles.ctaBtn}
@@ -364,8 +527,8 @@ function ProductCard({ product }) {
         )}
       </div>
       <div className={styles.cardBody}>
-        <p className={styles.cardName}>{product.name}</p>
-        {product.article && <p className={styles.cardSku}>{product.article}</p>}
+        <p className={styles.cardName}>{product.subtitle || product.name}</p>
+        <p className={styles.cardSku}>{product.name !== product.subtitle ? product.name : (product.article || '')}</p>
         <div className={styles.cardFooter}>
           <span className={styles.cardPrice}>{formatMoney(product.price)}</span>
           <span className={inStock ? styles.inStock : styles.outOfStock}>

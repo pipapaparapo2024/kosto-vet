@@ -2,21 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
 import { img } from '../utils/assetUrl'
+import { ARTICLES, BLOG_TAGS } from '../data/blogArticles'
 import styles from './BlogPage.module.css'
-
-const TAGS = ['Все статьи', 'Остеосинтез', 'Импланты', 'Инструменты', 'Клинические случаи', 'Уход и реабилитация']
-
-const ARTICLES = [
-  { slug: 'kak-vybrat-plastinu',    tag: 'Остеосинтез',        title: 'Как выбрать пластину для остеосинтеза у собак и кошек',       desc: 'Разбираем основные типы пластин, материалы, формы и критерии выбора для разных случаев.',              date: '17 июля 2026',      read: '7 мин. чтения' },
-  { slug: 'vinty-dlya-osteosinteza', tag: 'Импланты',           title: 'Винты для остеосинтеза: основные правила подбора',             desc: 'Диаметр, длина, тип резьбы и материал — что важно учитывать при выборе винтов.',                      date: '28 июня 2026',      read: '10 мин. чтения' },
-  { slug: 'klinicheskiy-sluchay',    tag: 'Клинические случаи', title: 'Клинический случай: сложный перелом большеберцовой кости',     desc: 'Подробный разбор операции с использованием Т-образной блокирующей пластины.',                          date: '01 августа 2026',   read: '3 мин. чтения' },
-  { slug: 'instrumenty-osnovy',      tag: 'Инструменты',        title: 'Базовый набор инструментов для остеосинтеза',                  desc: 'Что должно быть в операционной — свёрла, развёртки, ключи и отвёртки для пластин.',                   date: '14 августа 2026',   read: '4 мин. чтения' },
-  { slug: 'reabilitaciya',           tag: 'Уход и реабилитация', title: 'Послеоперационная реабилитация после остеосинтеза',           desc: 'Контроль нагрузки, физиотерапия, повторные снимки — схема восстановления.',                            date: '5 сентября 2026',   read: '6 мин. чтения' },
-  { slug: 'kostnyy-metall',          tag: 'Остеосинтез',        title: 'Когда нужно удалять металлоконструкции после сращения',        desc: 'Показания, сроки и техника удаления пластин и винтов после успешного остеосинтеза.',                   date: '20 сентября 2026',  read: '5 мин. чтения' },
-  { slug: 'vinty-2',                 tag: 'Импланты',           title: 'Кортикальные vs губчатые винты: в чём разница',               desc: 'Объясняем разницу в конструкции, показаниях и технике введения.',                                     date: '3 октября 2026',    read: '4 мин. чтения' },
-  { slug: 'sluchay-2',              tag: 'Клинические случаи', title: 'Перелом бедра у кошки: разбор сложного случая',               desc: 'Применение угловых пластин и техника интраоперационного позиционирования.',                            date: '15 октября 2026',   read: '3 мин. чтения' },
-  { slug: 'shovny',                  tag: 'Инструменты',        title: 'Шовный материал для мягких тканей: виды и выбор',             desc: 'Рассасывающийся и нерассасывающийся шовный материал — где и когда применять.',                         date: '28 октября 2026',   read: '5 мин. чтения' },
-]
 
 const PER_PAGE = 9
 
@@ -30,7 +17,6 @@ export default function BlogPage() {
 
   return (
     <div className={styles.page}>
-      {/* Hero — breadcrumb внутри, чтобы картинка выровнялась по верху */}
       <div className={styles.hero}>
         <div className={styles.heroLeft}>
           <nav className={styles.breadcrumb}>
@@ -44,9 +30,8 @@ export default function BlogPage() {
       </div>
 
       <div className={styles.container}>
-        {/* Теги */}
         <div className={styles.tags}>
-          {TAGS.map(t => (
+          {BLOG_TAGS.map(t => (
             <button
               key={t}
               className={`${styles.tag} ${activeTag === t ? styles.tagActive : ''}`}
@@ -57,14 +42,12 @@ export default function BlogPage() {
           ))}
         </div>
 
-        {/* Сетка статей */}
         <div className={styles.grid}>
           {visible.map(article => (
             <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
 
-        {/* Пагинация */}
         <div className={styles.pagination}>
           <button className={styles.pageBtn} onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
             <ChevronLeft size={16} strokeWidth={2} />
@@ -91,14 +74,23 @@ function ArticleCard({ article }) {
   return (
     <Link to={`/blog/${article.slug}`} className={styles.card}>
       <div className={styles.cardPhoto}>
+        {article.coverImage ? (
+          <img src={img(article.coverImage)} alt="" loading="lazy" />
+        ) : null}
         <span className={styles.cardTag}>{article.tag}</span>
       </div>
       <div className={styles.cardBody}>
-        <h2 className={styles.cardTitle}>{article.title}</h2>
+        <p className={styles.cardTitle}>{article.title}</p>
         <p className={styles.cardDesc}>{article.desc}</p>
         <div className={styles.cardMeta}>
-          <span className={styles.cardMetaItem}><Calendar size={14} strokeWidth={1.8} />{article.date}</span>
-          <span className={styles.cardMetaItem}><Clock size={14} strokeWidth={1.8} />{article.read}</span>
+          <span className={styles.cardMetaItem}>
+            <Calendar size={14} strokeWidth={1.6} aria-hidden="true" />
+            {article.date}
+          </span>
+          <span className={styles.cardMetaItem}>
+            <Clock size={14} strokeWidth={1.6} aria-hidden="true" />
+            {article.read}
+          </span>
         </div>
       </div>
     </Link>

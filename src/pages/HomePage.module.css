@@ -6,9 +6,9 @@
 }
 
 .heroInner {
-  padding: 0 75px;
+  padding: 0 var(--space-x);
   display: grid;
-  grid-template-columns: 650px 1fr;
+  grid-template-columns: minmax(0, 650px) 1fr;
   gap: 0;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .heroTitle {
-  font-size: 65px;
+  font-size: var(--text-h1);
   font-weight: 800;
   line-height: 1.05;
   color: var(--color-text);
@@ -29,7 +29,7 @@
 }
 
 .heroDesc {
-  font-size: 24px;
+  font-size: clamp(16px, 2vw, 24px);
   font-weight: 400;
   color: var(--color-text);
   line-height: 1.5;
@@ -60,9 +60,10 @@
 
 .heroCat {
   display: block;
-  width: 807px;
+  width: 736px;
+  max-width: 100%;
   height: calc(100vh - var(--header-height) - 112px);
-  max-height: 680px;
+  max-height: 644px;
   object-fit: contain;
   object-position: bottom left;
 }
@@ -74,13 +75,15 @@
   padding: 32px var(--space-x);
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .benefit {
   display: flex;
   align-items: center;
   gap: 20px;
-  flex: 1;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .benefit svg {
@@ -90,23 +93,25 @@
 }
 
 .benefitTitle {
-  font-size: var(--text-body);
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 600;
   color: var(--color-text);
+  line-height: 1.2;
 }
 
 .benefitDesc {
-  font-size: var(--text-small);
+  font-size: 17px;
+  font-weight: 500;
   color: var(--color-text-secondary);
   margin-top: 2px;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .sep {
-  width: 3px;
+  width: 1px;
   height: 48px;
   background: #111111;
-  margin: 0 80px;
+  margin: 0 70px;
   flex-shrink: 0;
 }
 
@@ -131,6 +136,7 @@
 
 .catalogCat {
   width: 320px;
+  max-width: 100%;
   height: 340px;
   object-fit: contain;
   object-position: bottom left;
@@ -288,7 +294,7 @@
 }
 
 .ctaTitle {
-  font-size: 65px;
+  font-size: var(--text-h1);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -296,7 +302,7 @@
 }
 
 .ctaDesc {
-  font-size: 24px;
+  font-size: clamp(16px, 2vw, 24px);
   font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -336,15 +342,47 @@
 }
 
 /* ── RESPONSIVE ─────────────────────── */
-@media (max-width: 900px) {
-  .heroInner, .ctaInner { grid-template-columns: 1fr; }
-  .heroRight, .ctaRight { display: none; }
-  .catalogInner { grid-template-columns: 1fr; }
-  .catalogTop { grid-template-columns: 1fr; }
-  .catalogCatWrap { display: none; }
-  .catalogCards { grid-template-columns: 1fr; grid-template-rows: auto; }
-  .cardPlastiny { grid-row: span 1; height: 240px; }
-  .benefitsInner { flex-direction: column; align-items: flex-start; gap: 16px; }
+@media (max-width: 1280px) {
+  .heroInner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .catalogLayout { grid-template-columns: minmax(0, 360px) 1fr; }
+  .heroCat { width: 100%; height: auto; max-height: 560px; }
+}
+
+@media (max-width: 1024px) {
+  .heroInner,
+  .ctaInner { grid-template-columns: 1fr; }
+  .heroRight,
+  .ctaRight { display: none; }
+  .catalogLayout { grid-template-columns: 1fr; gap: 24px; }
+  .catalogCat { display: none; }
+  .catalogGrid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .cardPlastiny { min-height: 200px; }
+  .benefitsInner { flex-wrap: wrap; gap: 24px; }
   .sep { width: 100%; height: 1px; margin: 0; }
-  .heroInner, .catalog, .ctaInner, .benefitsInner { padding-left: 16px !important; padding-right: 16px !important; }
+  .heroBtn,
+  .ctaBtn { padding: 0 32px; height: 52px; font-size: 18px; gap: 16px; }
+  .ctaLeft { padding: 48px 0; }
+  .stockBanner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 20px 24px;
+    gap: 12px;
+  }
+  .stockLink { white-space: normal; }
+}
+
+@media (max-width: 768px) {
+  .heroLeft { padding-top: 40px; padding-bottom: 24px; }
+  .catalogSub { font-size: 16px; }
+  .benefitsInner { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .benefit svg { width: 40px; height: 40px; }
+}
+
+@media (max-width: 390px) {
+  .catalogGrid { grid-template-columns: 1fr; }
+  .heroBtn,
+  .ctaBtn { width: 100%; justify-content: center; box-sizing: border-box; }
 }

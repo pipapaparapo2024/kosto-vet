@@ -1,0 +1,15 @@
+/**
+ * Responsive contract (CLAUDE.md)
+ *
+ * | Max-width | Role    | --space-x |
+ * |-----------|---------|-----------|
+ * | ≤1280     | Laptop  | 48px      |
+ * | ≤1024     | Tablet  | 32px      |
+ * | ≤768      | Mobile  | 16px      |
+ * | ≤390      | Small   | 16px      |
+ *
+ * Prefer these four breakpoints in CSS Modules.
+ * Drawers: width: min(var(--drawer-width), 100%);
+ * Decorative cats: hide or max-width: 100% at ≤1024/768.
+ * Touch targets: min 44×44px.
+ */

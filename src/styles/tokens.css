@@ -1,4 +1,11 @@
 :root {
+  /* Breakpoints (documentation / JS parity — use matching max-width in @media) */
+  --bp-desktop: 1440px;
+  --bp-laptop: 1280px;
+  --bp-tablet: 1024px;
+  --bp-mobile: 768px;
+  --bp-small: 390px;
+
   --color-bg: #fefefe;
   --color-bg-secondary: #fafafa;
   --color-text: #111111;
@@ -12,12 +19,12 @@
   --radius-card: 20px;
   --radius-btn: 100px;
   --radius-input: 8px;
-  --space-content: 1200px;
+  --space-content: 1320px;
   --space-section: 80px;
   --space-x: 75px;
   --font: 'Inter', system-ui, sans-serif;
-  --text-h1: clamp(40px, 4.5vw, 65px);
-  --text-h2: clamp(24px, 3vw, 36px);
+  --text-h1: clamp(32px, 4.5vw, 65px);
+  --text-h2: clamp(22px, 3vw, 36px);
   --text-h3: 20px;
   --text-body: 15px;
   --text-small: 13px;
@@ -29,4 +36,26 @@
   --easing: ease-out;
   --shadow-card: 3px 4px 10px 0px rgba(0,0,0,0.10);
   --shadow-card-hover: 3px 6px 20px 0px rgba(0,0,0,0.15);
+}
+
+/* Laptop */
+@media (max-width: 1280px) {
+  :root {
+    --space-x: 48px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  :root {
+    --space-x: 32px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  :root {
+    --space-x: 16px;
+    --space-section: 56px;
+  }
 }

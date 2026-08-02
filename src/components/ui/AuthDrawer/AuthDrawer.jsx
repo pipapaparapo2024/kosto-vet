@@ -8,6 +8,7 @@ import { useAuth } from '../../../context/AuthContext'
 import { listCustomerOrders, listFavorites, removeFavorite, getCustomerOrder } from '../../../lib/api/account'
 import { getCustomerManager } from '../../../lib/api/auth'
 import { formatMoney } from '../../../lib/money'
+import { orderStatusLabel, paymentStatusLabel } from '../../../lib/labels'
 import styles from './AuthDrawer.module.css'
 
 const FEATURES = [
@@ -147,7 +148,7 @@ export default function AuthDrawer({ isOpen, onClose }) {
               {tab === 'login' ? (
                 <>
                   <form className={styles.form} onSubmit={handleLogin}>
-                    <Field label="Email" required>
+                    <Field label="Эл. почта" required>
                       <input
                         className={styles.input}
                         type="email"
@@ -210,7 +211,7 @@ export default function AuthDrawer({ isOpen, onClose }) {
                     <Field label="ФИО" required>
                       <input className={styles.input} type="text" required minLength={2} placeholder="Иванов Иван Иванович" value={regForm.name} onChange={e => setRegForm(f => ({ ...f, name: e.target.value }))} />
                     </Field>
-                    <Field label="Email" required>
+                    <Field label="Эл. почта" required>
                       <input className={styles.input} type="email" required placeholder="ivanov@mail.ru" value={regForm.email} onChange={e => setRegForm(f => ({ ...f, email: e.target.value }))} />
                     </Field>
                     <Field label="Пароль" required>
@@ -246,7 +247,7 @@ export default function AuthDrawer({ isOpen, onClose }) {
                       <input type="checkbox" checked={regForm.consent} onChange={e => setRegForm(f => ({ ...f, consent: e.target.checked }))} />
                       <span>
                         Соглашаюсь с{' '}
-                        <Link to="/documents/agreement" className={styles.termsLink} onClick={onClose}>пользовательским соглашением</Link>
+                        <Link to="/documents/polzovatelskoe-soglashenie" className={styles.termsLink} onClick={onClose}>пользовательским соглашением</Link>
                       </span>
                     </label>
                     <button type="submit" className={styles.submitBtn} disabled={submitting || loading || !regForm.consent}>
@@ -425,8 +426,8 @@ function OrdersPanel() {
       <div className={styles.profileFields}>
         <button type="button" className={styles.linkBtn} onClick={() => setDetail(null)}>← К списку</button>
         <p><strong>Заказ {detail.public_id}</strong></p>
-        <p>Статус: {detail.status}</p>
-        <p>Оплата: {detail.payment_status}</p>
+        <p>Статус: {orderStatusLabel(detail.status)}</p>
+        <p>Оплата: {paymentStatusLabel(detail.payment_status)}</p>
         <p>Итого: {formatMoney(detail.pricing?.total)}</p>
         <ul className={styles.list}>
           {(detail.items || []).map(item => (
@@ -446,7 +447,7 @@ function OrdersPanel() {
         <li key={order.public_id} className={styles.listItem}>
           <button type="button" className={styles.listTitle} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }} onClick={() => openDetail(order.public_id)}>
             Заказ {order.public_id}
-            <span className={styles.panelMuted} style={{ display: 'block', fontWeight: 400 }}>{order.status} · {order.payment_status}</span>
+            <span className={styles.panelMuted} style={{ display: 'block', fontWeight: 400 }}>{orderStatusLabel(order.status)} · {paymentStatusLabel(order.payment_status)}</span>
           </button>
           <span className={styles.listMeta}>{formatMoney(order.pricing?.total)}</span>
         </li>
@@ -539,7 +540,7 @@ function ProfilePanel({ customer }) {
       <Field label="Имя" required>
         <input className={styles.input} required minLength={2} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
       </Field>
-      <Field label="Email" required>
+          <Field label="Эл. почта" required>
         <input className={styles.input} type="email" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
       </Field>
       <Field label="Телефон">
@@ -559,7 +560,7 @@ function ProfilePanel({ customer }) {
           <Field label="ИНН">
             <input className={styles.input} minLength={10} maxLength={12} value={form.inn} onChange={e => setForm(f => ({ ...f, inn: e.target.value }))} />
           </Field>
-          <Field label="Email для документов">
+          <Field label="Эл. почта для документов">
             <input className={styles.input} type="email" value={form.documents_email} onChange={e => setForm(f => ({ ...f, documents_email: e.target.value }))} />
           </Field>
         </>
@@ -577,8 +578,8 @@ function AddressPanel() {
   return (
     <div className={styles.profileFields}>
       <p className={styles.panelMuted}>
-        Сохранённые адреса доставки в API demo-release пока не предусмотрены.
-        Адрес указывается при оформлении заказа на странице checkout или в B2B-заявке.
+        Сохранённые адреса пока недоступны.
+        Адрес указывается при оформлении заказа или в заявке для клиник.
       </p>
       <Link to="/checkout" className={styles.submitBtn} style={{ display: 'inline-flex', textDecoration: 'none', marginTop: 12 }}>
         Перейти к оформлению

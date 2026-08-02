@@ -11,6 +11,7 @@
   grid-template-columns: 1fr auto;
   align-items: flex-start;
   overflow: hidden;
+  margin-bottom: 50px;
 }
 
 .heroLeft {
@@ -32,7 +33,7 @@
 .breadcrumb a:hover { color: var(--color-text); }
 
 .heroTitle {
-  font-size: 48px;
+  font-size: clamp(28px, 4.5vw, 48px);
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -48,13 +49,16 @@
 }
 
 .heroImg {
-  width: 603px;
-  height: 293px;
+  width: 555px; /* 603 * 0.92 */
+  max-width: 100%;
+  height: 270px; /* 293 * 0.92 */
   object-fit: contain;
   object-position: center right;
   mix-blend-mode: multiply;
   flex-shrink: 0;
   margin-top: 42px;
+  transform: translateX(-60px);
+  background: transparent;
 }
 
 /* ── Tags ─────────────────────────── */
@@ -110,6 +114,12 @@
   height: 225px;
   background: var(--color-bg-secondary);
   flex-shrink: 0;
+  overflow: hidden;
+}
+.cardPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .cardTag {
@@ -208,17 +218,22 @@
 .pageNumActive { background: #111111; color: #fff; }
 
 /* ── Responsive ─────────────────── */
-@media (max-width: 1100px) {
+@media (max-width: 1280px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .heroImg { width: 440px; height: auto; }
+}
+
+@media (max-width: 1024px) {
   .hero { grid-template-columns: 1fr; }
   .heroImg { display: none; }
-  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .container { padding: 0 16px; }
-  .breadcrumb { padding-left: 16px; padding-right: 16px; }
-  .hero { padding: 0 16px 32px; }
-  .heroTitle { font-size: 32px; }
+  .heroTitle { font-size: clamp(28px, 8vw, 32px); }
   .grid { grid-template-columns: 1fr; }
   .tags { gap: 10px; }
+}
+
+@media (max-width: 390px) {
+  .tags { gap: 8px; }
 }

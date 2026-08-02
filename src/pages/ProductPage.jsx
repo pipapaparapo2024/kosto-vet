@@ -1,29 +1,39 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Heart } from 'lucide-react'
+import { Heart, Truck, Phone, ArrowRight, Clock, Package, User } from 'lucide-react'
 import { getProduct } from '../lib/api/catalog'
 import { createQuoteOrder, saveOrderAccess } from '../lib/api/orders'
 import { createLead, createStockSubscription } from '../lib/api/leads'
 import { addFavorite, removeFavorite, listFavorites } from '../lib/api/account'
 import { useAuth } from '../context/AuthContext'
-import { useCart } from '../context/CartContext'
 import { useSettings } from '../context/SettingsContext'
 import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
+import { categoryTitleFromProduct, orderStatusLabel } from '../lib/labels'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './ProductPage.module.css'
 import orderStyles from './OrderDrawer.module.css'
 
+function parseDim(dim) {
+  if (!dim) return { length: null, width: null }
+  const [length, width] = String(dim).split('/')
+  return {
+    length: length?.replace(/[^\d,.]/g, '').trim() || null,
+    width: width?.replace(/[^\d,.]/g, '').trim() || null,
+  }
+}
+
 export default function ProductPage() {
   const { id } = useParams()
   const { isAuth } = useAuth()
-  const { addItem, busy: cartBusy } = useCart()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [orderOpen, setOrderOpen] = useState(false)
   const [favorited, setFavorited] = useState(false)
   const [favBusy, setFavBusy] = useState(false)
-  const [cartMsg, setCartMsg] = useState(null)
+  const [selectedLength, setSelectedLength] = useState(null)
+  const [selectedHoles, setSelectedHoles] = useState(null)
+  const [selectedWidth, setSelectedWidth] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -45,6 +55,36 @@ export default function ProductPage() {
       .then(res => setFavorited((res.items || []).some(f => f.product?.id === product.id)))
       .catch(() => {})
   }, [isAuth, product?.id])
+
+  const variantOptions = useMemo(() => {
+    const variants = product?.variants || []
+    const lengths = new Set()
+    const holes = new Set()
+    const widths = new Set()
+    variants.forEach(v => {
+      const { length, width } = parseDim(v.dimensions)
+      if (length) lengths.add(length)
+      if (width) widths.add(width)
+      if (v.holes != null) holes.add(String(v.holes))
+    })
+    if (!lengths.size) ['33', '47', '58', '70', '85'].forEach(v => lengths.add(v))
+    if (!holes.size) ['4', '6', '8', '10'].forEach(v => holes.add(v))
+    if (!widths.size) ['4.5', '6', '10'].forEach(v => widths.add(v))
+    return {
+      lengths: [...lengths],
+      holes: [...holes],
+      widths: [...widths],
+    }
+  }, [product])
+
+  useEffect(() => {
+    if (!product) return
+    const v = product.variants?.[0]
+    const { length, width } = parseDim(v?.dimensions)
+    setSelectedLength(length || variantOptions.lengths[2] || variantOptions.lengths[0] || null)
+    setSelectedHoles(v?.holes != null ? String(v.holes) : (variantOptions.holes[1] || variantOptions.holes[0] || null))
+    setSelectedWidth(width || variantOptions.widths[variantOptions.widths.length - 1] || null)
+  }, [product, variantOptions])
 
   useDocumentTitle(
     product?.seo?.title || product?.name,
@@ -90,24 +130,58 @@ export default function ProductPage() {
   }
 
   const inStock = isInStock(product.stock)
+  const qty = product.stock?.quantity ?? (inStock ? 10 : 0)
   const mainImage = productImageUrl(product.image, 'detail') || productImageUrl(product.images?.[0], 'detail')
   const related = product.related || []
+  const accessories = product.accessories?.length ? product.accessories : related.slice(0, 4)
+  const similar = related
+
+  const thicknessFromProduct = product.specs?.find(s => s.name === 'Толщина')
+  const materialFromProduct = product.specs?.find(s => s.name === 'Материал')
+  const activeVariant = (product.variants || []).find(v => {
+    const { length, width } = parseDim(v.dimensions)
+    return (
+      (!selectedLength || length === selectedLength)
+      && (!selectedHoles || String(v.holes) === String(selectedHoles))
+      && (!selectedWidth || width === selectedWidth)
+    )
+  }) || (product.variants || []).find(v => {
+    const { length } = parseDim(v.dimensions)
+    return length === selectedLength
+  })
+
+  const displayArticle = activeVariant?.sku || product.article
+  const displayPrice = activeVariant?.price != null
+    ? { amount: Math.round(Number(activeVariant.price) * 100), currency: 'RUB' }
+    : product.price
+
+  const specs = [
+    { name: 'Длина', value: selectedLength || '58', unit: 'мм' },
+    { name: 'Кол-во отверстий', value: selectedHoles || '6', unit: '' },
+    { name: 'Ширина', value: selectedWidth || '10', unit: 'мм' },
+    {
+      name: 'Толщина',
+      value: activeVariant?.thickness || thicknessFromProduct?.value || '2,5',
+      unit: 'мм',
+    },
+    {
+      name: 'Материал',
+      value: materialFromProduct?.value || product.material || 'Сплав титана',
+      unit: '',
+    },
+  ]
 
   return (
     <>
       <div className={styles.page}>
-        <div className={styles.breadcrumbWrap}>
-          <div className={styles.container}>
-            <nav className={styles.breadcrumb}>
-              <Link to="/">Главная</Link><span>›</span>
-              <Link to="/catalog">Каталог</Link><span>›</span>
-              <Link to={`/catalog/${product.category_slug}`}>{product.category_slug}</Link><span>›</span>
-              <span>{product.subtitle || product.name}</span>
-            </nav>
-          </div>
-        </div>
-
         <div className={styles.container}>
+          <nav className={styles.breadcrumb}>
+            <Link to="/">Главная</Link><span>›</span>
+            <Link to="/catalog">Каталог</Link><span>›</span>
+            <Link to={`/catalog/${product.category_slug}`}>{categoryTitleFromProduct(product)}</Link><span>›</span>
+            <span>{product.subtitle || product.name}</span>
+          </nav>
+
           <div className={styles.grid}>
             <div className={styles.photoCol}>
               <div className={styles.mainPhoto}>
@@ -125,69 +199,48 @@ export default function ProductPage() {
               <div className={styles.stockRow}>
                 <span className={inStock ? styles.inStock : styles.outOfStock}>
                   <span className={inStock ? styles.dot : styles.dotGrey} />
-                  {stockLabel(product.stock)}
+                  <span className={styles.stockText}>{stockLabel(product.stock)}</span>
+                  {inStock && <span className={styles.stockQty}>{qty} шт</span>}
                 </span>
-                {product.article && (
-                  <span className={styles.article}>Артикул: {product.article}</span>
+                {displayArticle && (
+                  <span className={styles.article}>Артикул: {displayArticle}</span>
                 )}
               </div>
 
               <h1 className={styles.name}>{product.name}</h1>
-              {product.subtitle && <p className={styles.desc}>{product.subtitle}</p>}
-              {product.description && <p className={styles.desc}>{product.description}</p>}
+              <p className={styles.desc}>{product.description || product.subtitle}</p>
 
-              {product.specs?.length > 0 && (
-                <div className={styles.specs}>
-                  {product.specs.map(spec => (
-                    <div key={`${spec.name}-${spec.value}`} className={styles.spec}>
-                      <span className={styles.specVal}>
-                        {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
-                      </span>
-                      <span className={styles.specLabel}>{spec.name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className={styles.specs}>
+                {specs.map(spec => (
+                  <div key={spec.name} className={styles.spec}>
+                    <span className={styles.specVal}>
+                      {spec.value}{spec.unit ? ` ${spec.unit}` : ''}
+                    </span>
+                    <span className={styles.specLabel}>{spec.name}</span>
+                  </div>
+                ))}
+              </div>
 
-              <p className={styles.price}>
-                {formatMoney(product.price)}
-              </p>
+              <p className={styles.price}>{formatMoney(displayPrice)}</p>
 
               <p className={styles.deliveryNote}>
+                <Truck size={25} strokeWidth={1.8} aria-hidden="true" />
                 Доставим по Воронежу сегодня за 2–4 часа.
               </p>
 
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                {inStock && (
-                  <button
-                    type="button"
-                    className={styles.orderBtn}
-                    style={{ background: '#fff', color: '#111', border: '1px solid #111' }}
-                    disabled={cartBusy}
-                    onClick={async () => {
-                      try {
-                        await addItem(product, 1)
-                        setCartMsg('Добавлено в корзину')
-                      } catch (e) {
-                        setCartMsg(e.message || 'Не удалось добавить')
-                      }
-                    }}
-                  >
-                    В корзину
-                  </button>
-                )}
+              <div className={styles.actions}>
                 <button
                   type="button"
                   className={styles.orderBtn}
                   onClick={() => setOrderOpen(true)}
                 >
-                  {inStock ? 'B2B-заявка' : 'Оставить заявку'}
+                  <span>Заказать</span>
+                  <ArrowRight size={22} strokeWidth={1.8} />
                 </button>
                 {isAuth && (
                   <button
                     type="button"
-                    className={styles.orderBtn}
-                    style={{ background: favorited ? '#111' : '#fff', color: favorited ? '#fff' : '#111', border: '1px solid #111', minWidth: 56 }}
+                    className={styles.favBtn}
                     onClick={toggleFavorite}
                     disabled={favBusy}
                     aria-label="Избранное"
@@ -196,25 +249,103 @@ export default function ProductPage() {
                   </button>
                 )}
               </div>
-              {cartMsg && <p className={styles.deliveryNote}>{cartMsg}</p>}
 
               <a href="tel:+79611898933" className={styles.phoneLink}>
+                <Phone size={25} strokeWidth={1.8} aria-hidden="true" />
                 +7 (961) 189-89-33
               </a>
             </div>
           </div>
 
-          {related.length > 0 && (
-            <div className={styles.related}>
-              <div className={styles.relatedHead}>
-                <p className={styles.relatedTitle}>Совместимые и похожие товары</p>
-                <Link to={`/catalog/${product.category_slug}`} className={styles.relatedLink}>Смотреть все →</Link>
-              </div>
-              <div className={styles.relatedScroll}>
-                {related.map(p => <SmallCard key={p.id} product={p} />)}
+          <section className={styles.variants}>
+            <p className={styles.variantsTitle}>Выберите вариант</p>
+            <div className={styles.variantGroup}>
+              <span className={styles.variantLabel}>Длина</span>
+              <div className={`${styles.variantOptions} ${styles.variantOptionsRow}`}>
+                {variantOptions.lengths.map(v => (
+                  <button
+                    key={v}
+                    type="button"
+                    className={`${styles.variantOption} ${selectedLength === v ? styles.variantSelected : ''}`}
+                    onClick={() => setSelectedLength(v)}
+                  >
+                    {v} мм
+                  </button>
+                ))}
               </div>
             </div>
-          )}
+            <div className={styles.variantGroup}>
+              <span className={styles.variantLabel}>Кол-во отверстий</span>
+              <div className={`${styles.variantOptions} ${styles.variantOptionsGrid}`}>
+                {variantOptions.holes.map(v => (
+                  <button
+                    key={v}
+                    type="button"
+                    className={`${styles.variantOption} ${styles.variantOptionSquare} ${selectedHoles === v ? styles.variantSelected : ''}`}
+                    onClick={() => setSelectedHoles(v)}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className={styles.variantGroup}>
+              <span className={styles.variantLabel}>Ширина</span>
+              <div className={`${styles.variantOptions} ${styles.variantOptionsGrid}`}>
+                {variantOptions.widths.map(v => (
+                  <button
+                    key={v}
+                    type="button"
+                    className={`${styles.variantOption} ${styles.variantOptionSquare} ${selectedWidth === v ? styles.variantSelected : ''}`}
+                    onClick={() => setSelectedWidth(v)}
+                  >
+                    {v} мм
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.benefits}>
+            <div className={styles.benefit}>
+              <Clock size={40} strokeWidth={1.5} aria-hidden="true" />
+              <p className={styles.benefitText}>Нужно сегодня? Оформите заказ до 18:00 — доставим по Воронежу за 2–4 часа</p>
+            </div>
+            <div className={styles.benefit}>
+              <Package size={40} strokeWidth={1.5} aria-hidden="true" />
+              <p className={styles.benefitText}>Актуальный остаток на складе</p>
+            </div>
+            <div className={styles.benefit}>
+              <User size={40} strokeWidth={1.5} aria-hidden="true" />
+              <p className={styles.benefitText}>Помощь с подбором от специалиста</p>
+            </div>
+          </section>
+
+          <div className={styles.relatedRow}>
+            {accessories.length > 0 && (
+              <div className={styles.related}>
+                <div className={styles.relatedHead}>
+                  <p className={styles.relatedTitle}>Для установки этой пластины</p>
+                  <Link to="/catalog/vinty" className={styles.relatedLink}>Смотреть всё <ArrowRight size={16} strokeWidth={1.8} /></Link>
+                </div>
+                <div className={styles.relatedScroll}>
+                  {accessories.slice(0, 3).map(p => <SmallCard key={p.id} product={p} />)}
+                </div>
+              </div>
+            )}
+
+            {similar.length > 0 && (
+              <div className={styles.related}>
+                <div className={styles.relatedHead}>
+                  <p className={styles.relatedTitle}>Похожие пластины</p>
+                  <Link to={`/catalog/${product.category_slug}`} className={styles.relatedLink}>Смотреть всё <ArrowRight size={16} strokeWidth={1.8} /></Link>
+                </div>
+                <div className={styles.relatedScroll}>
+                  {similar.slice(0, 3).map(p => <SmallCard key={p.id} product={p} />)}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -233,19 +364,27 @@ function SmallCard({ product }) {
   return (
     <Link to={`/catalog/${product.category_slug}/${product.slug}`} className={styles.smallCard}>
       <div className={styles.smallCardImg}>
-        {image && (
+        {image ? (
           <img
             src={image}
-            alt={product.name}
+            alt=""
             loading="lazy"
-            onError={e => { e.currentTarget.style.opacity = '0.3' }}
+            onError={e => { e.currentTarget.style.display = 'none' }}
           />
-        )}
+        ) : null}
+        <span className={styles.smallCardImgLabel}>Фото товара</span>
       </div>
       <div className={styles.smallCardBody}>
         <p className={styles.smallCardName}>{product.subtitle || product.name}</p>
-        <p className={styles.smallCardPrice}>{formatMoney(product.price)}</p>
-        <span className={styles.smallCardBtn}>Подробнее →</span>
+        <p className={styles.smallCardDesc}>
+          {product.article ? product.article : 'Длина: 6–22 мм'}
+        </p>
+        <p className={styles.smallCardPrice}>
+          {product.price?.amount != null
+            ? `от ${(product.price.amount / 100).toLocaleString('ru-RU')} ₽`
+            : 'от · ₽'}
+        </p>
+        <span className={styles.smallCardBtn}>Подробнее <ArrowRight size={14} strokeWidth={1.8} /></span>
       </div>
     </Link>
   )
@@ -370,7 +509,7 @@ function OrderDrawer({ open, onClose, product, inStock }) {
       <div className={orderStyles.drawer}>
         <div className={orderStyles.header}>
           <h2 className={orderStyles.title}>
-            {mode === 'notify' ? 'Уведомить о наличии' : mode === 'lead' ? 'Заявка' : 'B2B-заявка'}
+            {mode === 'notify' ? 'Уведомить о наличии' : mode === 'lead' ? 'Заявка' : 'Заявка для клиник'}
           </h2>
           <button type="button" className={orderStyles.close} onClick={onClose} aria-label="Закрыть">×</button>
         </div>
@@ -380,7 +519,7 @@ function OrderDrawer({ open, onClose, product, inStock }) {
             <h3>{submitted.type === 'quote' ? 'Заявка принята' : 'Запрос отправлен'}</h3>
             <p>
               {submitted.type === 'quote'
-                ? `Номер: ${submitted.publicId}. Статус: ${submitted.status}. Менеджер свяжется с вами.`
+                ? `Номер: ${submitted.publicId}. Статус: ${orderStatusLabel(submitted.status)}. Менеджер свяжется с вами.`
                 : 'Мы сохранили запрос. Когда товар появится или менеджер обработает заявку — свяжемся с вами.'}
             </p>
             {submitted.type === 'quote' && submitted.publicId && (
@@ -410,7 +549,7 @@ function OrderDrawer({ open, onClose, product, inStock }) {
               {inStock && (
                 <label className={`${orderStyles.radio} ${mode === 'quote' ? orderStyles.radioActive : ''}`}>
                   <input type="radio" checked={mode === 'quote'} onChange={() => setMode('quote')} />
-                  <span>Оформить B2B-заявку</span>
+                  <span>Оформить заявку для клиники</span>
                 </label>
               )}
               <label className={`${orderStyles.radio} ${mode === 'lead' ? orderStyles.radioActive : ''}`}>
@@ -475,7 +614,7 @@ function OrderDrawer({ open, onClose, product, inStock }) {
                   <input className={orderStyles.input} type="text" placeholder="Телефон или email*" required minLength={7} value={form.contact} onChange={e => setForm(f => ({ ...f, contact: e.target.value }))} />
                 )}
                 {mode !== 'notify' && (
-                  <input className={orderStyles.input} type="email" placeholder={mode === 'quote' ? 'Email для документов*' : 'Email'} required={mode === 'quote'} value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value, documentsEmail: e.target.value }))} />
+                  <input className={orderStyles.input} type="email" placeholder={mode === 'quote' ? 'Эл. почта для документов*' : 'Эл. почта'} required={mode === 'quote'} value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value, documentsEmail: e.target.value }))} />
                 )}
               </div>
 

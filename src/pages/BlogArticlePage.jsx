@@ -1,115 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { Calendar, Clock, FileText, ArrowRight } from 'lucide-react'
 import { listProducts } from '../lib/api/catalog'
-import { formatMoney, productImageUrl, stockLabel } from '../lib/money'
+import { formatMoney, productImageUrl, isInStock, stockLabel } from '../lib/money'
+import { getArticleBySlug, getRelatedArticles, ARTICLES } from '../data/blogArticles'
+import { img } from '../utils/assetUrl'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './BlogArticlePage.module.css'
-
-const ARTICLES = [
-  {
-    slug: 'kak-vybrat-plastinu',
-    tag: 'Остеосинтез',
-    title: 'Как выбрать пластину для остеосинтеза у собак и кошек',
-    desc: 'Правильный выбор пластины — залог стабильной фиксации и быстрого восстановления пациента. Разбираем основные критерии и типы пластин.',
-    date: '17 июля 2026',
-    read: '7 мин. чтения',
-    toc: [
-      'Основные типы пластин',
-      'Критерии выбора',
-      'Материалы',
-      'Размер и форма',
-      'Частые ошибки',
-      'Заключение',
-    ],
-  },
-  {
-    slug: 'vinty-dlya-osteosinteza',
-    tag: 'Импланты',
-    title: 'Винты для остеосинтеза: основные правила подбора',
-    desc: 'Диаметр, длина, тип резьбы и интерфейс — что важно учитывать при выборе винтов.',
-    date: '26 июня 2026',
-    read: '5 мин. чтения',
-    toc: ['Типы резьбы', 'Диаметр', 'Длина', 'Материал', 'Заключение'],
-  },
-  {
-    slug: 'klinicheskiy-sluchay',
-    tag: 'Клинические случаи',
-    title: 'Клинический случай: сложный перелом большеберцовой кости у собаки',
-    desc: 'Подробный разбор лечения и остеосинтеза с использованием L-образной пластины.',
-    date: '31 августа 2026',
-    read: '3 мин. чтения',
-    toc: ['Анамнез', 'Диагностика', 'Оперативное вмешательство', 'Результат'],
-  },
-  {
-    slug: 'instrumenty-osnovy',
-    tag: 'Инструменты',
-    title: 'Базовый набор инструментов для остеосинтеза',
-    desc: 'Что должно быть в операционной — свёрла, развёртки, ключи и отвёртки для пластин.',
-    date: '14 августа 2026',
-    read: '4 мин. чтения',
-    toc: ['Свёрла', 'Развёртки', 'Ключи', 'Отвёртки'],
-  },
-  {
-    slug: 'reabilitaciya',
-    tag: 'Уход и реабилитация',
-    title: 'Послеоперационная реабилитация после остеосинтеза',
-    desc: 'Контроль нагрузки, физиотерапия, повторные снимки — схема восстановления.',
-    date: '5 сентября 2026',
-    read: '6 мин. чтения',
-    toc: ['Первые 48 часов', 'Контроль нагрузки', 'Физиотерапия', 'Снимки'],
-  },
-  {
-    slug: 'kostnyy-metall',
-    tag: 'Остеосинтез',
-    title: 'Когда нужно удалять металлоконструкции после сращения',
-    desc: 'Показания, сроки и техника удаления пластин и винтов.',
-    date: '20 сентября 2026',
-    read: '5 мин. чтения',
-    toc: ['Показания', 'Сроки', 'Техника удаления', 'Послеоперационный период'],
-  },
-  {
-    slug: 'vinty-2',
-    tag: 'Импланты',
-    title: 'Кортикальные vs губчатые винты: в чём разница',
-    desc: 'Объясняем разницу в конструкции, показаниях и технике введения.',
-    date: '3 октября 2026',
-    read: '4 мин. чтения',
-    toc: ['Кортикальные', 'Губчатые', 'Применение', 'Ошибки'],
-  },
-  {
-    slug: 'sluchay-2',
-    tag: 'Клинические случаи',
-    title: 'Перелом бедра у кошки: разбор сложного случая',
-    desc: 'Применение угловых пластин и техника интраоперационного позиционирования.',
-    date: '15 октября 2026',
-    read: '3 мин. чтения',
-    toc: ['Описание случая', 'Диагностика', 'Операция', 'Результат'],
-  },
-  {
-    slug: 'shovny',
-    tag: 'Инструменты',
-    title: 'Шовный материал для мягких тканей: виды и выбор',
-    desc: 'Рассасывающийся и нерассасывающийся шовный материал — где и когда применять.',
-    date: '28 октября 2026',
-    read: '5 мин. чтения',
-    toc: ['Рассасывающийся', 'Нерассасывающийся', 'Критерии выбора'],
-  },
-]
-
-const LOREM = `Остеосинтез у мелких животных требует точного подбора имплантов с учётом анатомии, массы тела, типа перелома и доступных методов фиксации. При выборе пластины хирург должен оценить нагрузку на кость, зону перелома и особенности репозиции.
-
-Пластины из медицинской стали и сплавов титана обеспечивают надёжную биосовместимость и механическую стабильность. Сплав титана предпочтителен у пациентов с аллергическими реакциями или при длительном ношении.
-
-Форма пластины — один из ключевых параметров. Прямые пластины применяют при диафизарных переломах длинных костей, Т-образные — в зонах мыщелков и суставных поверхностей, L-образные — при некоторых переломах предплечья и голени.
-
-Толщина и ширина имплантата должны соответствовать диаметру кости. Слишком массивная пластина вызывает стресс-шилдинг, слишком тонкая — риск поломки при ранней нагрузке.
-
-Кол-во и размер отверстий определяют количество фиксирующих винтов. Общее правило — не менее трёх кортикальных слоёв с каждой стороны от линии перелома. Для коротких фрагментов допустимо минимум два хорошо затянутых кортикальных винта.`
 
 export default function BlogArticlePage() {
   const { slug } = useParams()
-  const article = ARTICLES.find(a => a.slug === slug) || ARTICLES[0]
-  const otherArticles = ARTICLES.filter(a => a.slug !== article.slug).slice(0, 3)
+  const article = getArticleBySlug(slug) || ARTICLES[0]
+  const otherArticles = getRelatedArticles(article.slug, 3)
   const [featuredProduct, setFeaturedProduct] = useState(null)
+
+  useDocumentTitle(article.title, article.desc)
 
   useEffect(() => {
     listProducts({ sort: 'popular', limit: 1 })
@@ -117,116 +22,139 @@ export default function BlogArticlePage() {
       .catch(() => setFeaturedProduct(null))
   }, [])
 
+  const inStock = featuredProduct ? isInStock(featuredProduct.stock) : false
+  const productImg = featuredProduct
+    ? productImageUrl(featuredProduct.image, 'thumb')
+    : null
+
   return (
     <div className={styles.page}>
-      {/* Breadcrumb */}
-      <div className={styles.breadcrumbWrap}>
-        <div className={styles.container}>
-          <nav className={styles.breadcrumb}>
-            <Link to="/">Главная</Link><span>›</span>
-            <Link to="/blog">Блог</Link><span>›</span>
-            <span>{article.title}</span>
-          </nav>
-        </div>
-      </div>
-
       <div className={styles.container}>
-        {/* Article header */}
+        <nav className={styles.breadcrumb}>
+          <Link to="/">Главная</Link><span>›</span>
+          <Link to="/blog">Блог</Link><span>›</span>
+          <span>{article.title}</span>
+        </nav>
+
         <div className={styles.articleHeader}>
           <div className={styles.articleHeaderLeft}>
             <h1 className={styles.articleTitle}>{article.title}</h1>
             <p className={styles.articleDesc}>{article.desc}</p>
             <div className={styles.articleMeta}>
-              <span>{article.date}</span>
-              <span>·</span>
-              <span>{article.read}</span>
-              <span>·</span>
-              <span className={styles.articleTag}>{article.tag}</span>
+              <span className={styles.metaItem}>
+                <Calendar size={17} strokeWidth={1.6} aria-hidden="true" />
+                {article.date}
+              </span>
+              <span className={styles.metaItem}>
+                <Clock size={17} strokeWidth={1.6} aria-hidden="true" />
+                {article.read}
+              </span>
+              <span className={styles.metaItem}>
+                <FileText size={17} strokeWidth={1.6} aria-hidden="true" />
+                {article.tag}
+              </span>
             </div>
           </div>
-          <div className={styles.articleCover}>Обложка статьи</div>
+          <div className={styles.articleCover}>
+            {article.coverImage ? (
+              <img src={img(article.coverImage)} alt="" />
+            ) : (
+              'Обложка статьи'
+            )}
+          </div>
         </div>
 
-        {/* Content layout */}
         <div className={styles.layout}>
-          {/* Left sidebar: TOC */}
           <aside className={styles.sidebar}>
             <div className={styles.toc}>
               <p className={styles.tocTitle}>Содержание</p>
               <ol className={styles.tocList}>
                 {article.toc.map((item, i) => (
-                  <li key={i} className={styles.tocItem}>
+                  <li key={item} className={styles.tocItem}>
                     <span className={styles.tocNum}>{i + 1}.</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ol>
-              <button className={styles.pdfBtn}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                Скачать PDF
-                <span className={styles.pdfVersion}>Версия от {article.date}</span>
-              </button>
             </div>
           </aside>
 
-          {/* Main content */}
           <article className={styles.article}>
-            <h2 className={styles.chapterTitle}>1. {article.toc[0]}</h2>
-            {LOREM.split('\n\n').map((para, i) => (
-              <p key={i} className={styles.para}>{para}</p>
-            ))}
-            {article.toc.slice(1).map((chapter, i) => (
-              <div key={i}>
-                <h2 className={styles.chapterTitle}>{i + 2}. {chapter}</h2>
-                <p className={styles.para}>{LOREM.split('\n\n')[i % 5]}</p>
+            {article.sections.map((section, i) => (
+              <div key={section.title}>
+                <h2 className={styles.chapterTitle}>{i + 1}. {section.title}</h2>
+                {section.paragraphs.map((para, pi) => (
+                  <p key={pi} className={styles.para}>{para}</p>
+                ))}
               </div>
             ))}
           </article>
 
-          {/* Right sidebar: product widget + other articles */}
           <aside className={styles.widgetCol}>
-            {/* Product widget */}
-            {featuredProduct && (
-              <div className={styles.productWidget}>
-                <p className={styles.widgetTitle}>Нужен этот имплант?</p>
-                <p className={styles.widgetDesc}>Проверьте наличие или получите помощь в подборе</p>
+            <div className={styles.productWidget}>
+              <p className={styles.widgetTitle}>Нужен этот имплант?</p>
+              <p className={styles.widgetDesc}>Проверьте наличие или получите помощь в подборе</p>
+
+              {featuredProduct && (
                 <div className={styles.widgetProduct}>
                   <div className={styles.widgetPhoto}>
-                    {productImageUrl(featuredProduct.image, 'thumb') && (
+                    {productImg ? (
                       <img
-                        src={productImageUrl(featuredProduct.image, 'thumb')}
+                        src={productImg}
                         alt={featuredProduct.name}
                         onError={e => { e.currentTarget.style.opacity = '0.3' }}
                       />
+                    ) : (
+                      <span>Фото пластины</span>
                     )}
                   </div>
-                  <div>
-                    <p className={styles.widgetProductName}>{featuredProduct.subtitle || featuredProduct.name}</p>
-                    <p className={styles.widgetSku}>Арт. {featuredProduct.article}</p>
-                    <p className={styles.widgetStock}>{stockLabel(featuredProduct.stock)}</p>
+                  <div className={styles.widgetProductInfo}>
+                    <p className={styles.widgetProductName}>
+                      {featuredProduct.subtitle || featuredProduct.name}
+                    </p>
+                    {featuredProduct.article && (
+                      <p className={styles.widgetSku}>Арт. {featuredProduct.article}</p>
+                    )}
+                    <p className={styles.widgetStock}>
+                      <span className={inStock ? styles.dot : styles.dotGrey} />
+                      {stockLabel(featuredProduct.stock)}
+                    </p>
                     <p className={styles.widgetPrice}>{formatMoney(featuredProduct.price)}</p>
                   </div>
                 </div>
-                <Link to={`/catalog/${featuredProduct.category_slug}/${featuredProduct.slug}`} className={styles.widgetBtn}>
+              )}
+
+              <div className={styles.widgetActions}>
+                <Link
+                  to={featuredProduct
+                    ? `/catalog/${featuredProduct.category_slug}/${featuredProduct.slug}`
+                    : '/catalog'}
+                  className={styles.widgetBtn}
+                >
                   Проверить наличие
                 </Link>
                 <Link to="/contacts" className={styles.widgetBtnSecondary}>
                   Получить подбор
                 </Link>
               </div>
-            )}
+            </div>
 
-            {/* Other articles */}
             <div className={styles.otherArticles}>
               <p className={styles.otherTitle}>Другие статьи</p>
               {otherArticles.map(a => (
                 <Link key={a.slug} to={`/blog/${a.slug}`} className={styles.otherCard}>
-                  <div className={styles.otherPhoto}>Обложка статьи</div>
+                  <div className={styles.otherPhoto}>
+                    {a.coverImage ? (
+                      <img src={img(a.coverImage)} alt="" />
+                    ) : (
+                      'Обложка'
+                    )}
+                  </div>
                   <div className={styles.otherBody}>
                     <p className={styles.otherCardTitle}>{a.title}</p>
-                    <span className={styles.otherReadLink}>Читать →</span>
+                    <span className={styles.otherReadLink}>
+                      Читать <ArrowRight size={14} strokeWidth={1.8} />
+                    </span>
                   </div>
                 </Link>
               ))}

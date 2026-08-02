@@ -2,7 +2,7 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, ''
 
 export class ApiError extends Error {
   constructor({ code, message, request_id, retryable, field_errors, status, meta }) {
-    super(message || 'Request failed')
+    super(message || 'Запрос не выполнен')
     this.name = 'ApiError'
     this.code = code
     this.requestId = request_id

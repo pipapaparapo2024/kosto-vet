@@ -15,6 +15,7 @@ const DOCS = [
   { id: 'kontrol-kachestva',            label: 'Контроль качества продукции', group: 'Технические' },
   { id: 'politika-konfidencialnosti',   label: 'Политика конфиденциальности', group: 'Юридические' },
   { id: 'obrabotka-personalnyh-dannyh', label: 'Обработка персональных данных', group: 'Юридические' },
+  { id: 'polzovatelskoe-soglashenie',   label: 'Пользовательское соглашение', group: 'Юридические', to: '/documents/polzovatelskoe-soglashenie' },
   { id: 'oferta',                       label: 'Договор-оферта', group: 'Юридические' },
   { id: 'vozvrat',                      label: 'Порядок возврата', group: 'Юридические' },
   { id: 'licenziya',                    label: 'Лицензия на деятельность', group: 'Юридические' },
@@ -144,19 +145,20 @@ const AGREEMENT = {
 
 export default function DocumentsPage() {
   const { doc: docParam } = useParams()
-  const isAgreement = !docParam || docParam === AGREEMENT_ID
+  const isAgreement = docParam === AGREEMENT_ID
   const [expanded, setExpanded] = useState(false)
 
-  const [activeDoc, setActiveDoc] = useState(() =>
-    docParam && DOCS.some(d => d.id === docParam) ? docParam : DOCS[0].id
-  )
+  const [activeDoc, setActiveDoc] = useState(() => {
+    if (docParam && DOCS.some(d => d.id === docParam && !d.to)) return docParam
+    return DOCS.find(d => !d.to)?.id || DOCS[0].id
+  })
 
   if (isAgreement) {
     const visibleSections = expanded ? AGREEMENT.sections : AGREEMENT.sections.slice(0, 7)
 
     return (
       <div className={styles.page}>
-        <div className={styles.container}>
+        <div className={styles.containerWide}>
           <nav className={styles.breadcrumbTop}>
             <Link to="/">Главная</Link><span>›</span>
             <Link to="/documents">Документы</Link><span>›</span>
@@ -209,7 +211,7 @@ export default function DocumentsPage() {
               ))}
 
               {!expanded && (
-                <button className={styles.readMoreBtn} onClick={() => setExpanded(true)}>
+                <button type="button" className={styles.readMoreBtn} onClick={() => setExpanded(true)}>
                   Читать далее <ChevronDown size={18} strokeWidth={2} />
                 </button>
               )}
@@ -225,46 +227,51 @@ export default function DocumentsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.breadcrumbWrap}>
-        <div className={styles.container}>
-          <nav className={styles.breadcrumb}>
-            <Link to="/">Главная</Link><span>›</span>
-            <span>Документы</span>
-          </nav>
-        </div>
-      </div>
+      <div className={styles.containerWide}>
+        <nav className={styles.breadcrumbTop}>
+          <Link to="/">Главная</Link><span>›</span>
+          <span>Документы</span>
+        </nav>
 
-      <div className={styles.container}>
         <h1 className={styles.pageTitle}>Документация</h1>
         <p className={styles.pageDesc}>Сертификаты, технические условия и юридические документы компании Kosto-Vet.</p>
 
         <div className={styles.layout}>
-          {/* Left nav */}
           <nav className={styles.nav}>
             {GROUPS.map(group => (
               <div key={group} className={styles.navGroup}>
                 <p className={styles.navGroupTitle}>{group}</p>
                 {DOCS.filter(d => d.group === group).map(d => (
-                  <button
-                    key={d.id}
-                    className={`${styles.navItem} ${activeDoc === d.id ? styles.navItemActive : ''}`}
-                    onClick={() => setActiveDoc(d.id)}
-                  >
-                    {d.label}
-                  </button>
+                  d.to ? (
+                    <Link
+                      key={d.id}
+                      to={d.to}
+                      className={styles.navItem}
+                    >
+                      {d.label}
+                    </Link>
+                  ) : (
+                    <button
+                      key={d.id}
+                      type="button"
+                      className={`${styles.navItem} ${activeDoc === d.id ? styles.navItemActive : ''}`}
+                      onClick={() => setActiveDoc(d.id)}
+                    >
+                      {d.label}
+                    </button>
+                  )
                 ))}
               </div>
             ))}
           </nav>
 
-          {/* Document view */}
           <div className={styles.docView}>
             <div className={styles.docHeader}>
               <div>
                 <h2 className={styles.docTitle}>{content.title}</h2>
                 <p className={styles.docUpdated}>Обновлено: {content.updated}</p>
               </div>
-              <button className={styles.downloadBtn}>
+              <button type="button" className={styles.downloadBtn}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>

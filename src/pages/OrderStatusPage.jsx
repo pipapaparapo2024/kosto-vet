@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getPublicOrder, getOrderAccess, createOrderPaymentAttempt, saveOrderAccess } from '../lib/api/orders'
 import { redirectToPayment, formatFieldErrors } from '../lib/payment'
 import { formatMoney, stockLabel } from '../lib/money'
+import { orderStatusLabel, paymentStatusLabel } from '../lib/labels'
 import { ApiError } from '../lib/apiClient'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './OrderStatusPage.module.css'
@@ -18,7 +19,7 @@ export default function OrderStatusPage() {
   const load = async () => {
     const token = getOrderAccess(publicId)
     if (!token) {
-      setError('Нет доступа к заказу. Токен выдаётся один раз при оформлении и хранится только в этой сессии браузера.')
+      setError('Нет доступа к этому заказу. Откройте ссылку из письма или оформите заказ заново.')
       setLoading(false)
       return
     }
@@ -77,8 +78,8 @@ export default function OrderStatusPage() {
         {error && <p className={styles.error}>{error}</p>}
         {order && (
           <div className={styles.card}>
-            <p><strong>Статус:</strong> {order.status}</p>
-            <p><strong>Оплата:</strong> {order.payment_status}</p>
+            <p><strong>Статус:</strong> {orderStatusLabel(order.status)}</p>
+            <p><strong>Оплата:</strong> {paymentStatusLabel(order.payment_status)}</p>
             {order.delivery_tracking_number && (
               <p><strong>Трек:</strong> {order.delivery_tracking_number}</p>
             )}
@@ -99,7 +100,7 @@ export default function OrderStatusPage() {
 
             {canPay && (
               <div className={styles.payBox}>
-                <p>Оплата ещё не завершена. Можно создать новую попытку (Robokassa sandbox).</p>
+                <p>Оплата ещё не завершена. Можно создать новую попытку оплаты.</p>
                 <div className={styles.payRow}>
                   <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
                     <option value="sbp">СБП</option>

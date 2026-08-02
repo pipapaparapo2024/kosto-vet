@@ -17,5 +17,9 @@ export default defineConfig(({ mode }) => {
         '/health': { target: proxyTarget, changeOrigin: true },
       },
     },
+    test: {
+      environment: 'node',
+      include: ['src/**/*.test.js', 'tests/**/*.test.js'],
+    },
   }
 })

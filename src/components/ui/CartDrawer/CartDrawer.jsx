@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { X, Minus, Plus, Trash2 } from 'lucide-react'
 import { useCart } from '../../../context/CartContext'
 import { formatMoney, productImageUrl, stockLabel } from '../../../lib/money'
+import { cartConflictLabel } from '../../../lib/labels'
 import styles from './CartDrawer.module.css'
 
 export default function CartDrawer() {
@@ -65,7 +66,7 @@ export default function CartDrawer() {
                   </Link>
                   {product?.article && <p className={styles.meta}>Арт. {product.article}</p>}
                   <p className={styles.meta}>{stockLabel(item.stock || product?.stock)}</p>
-                  {item.conflict && <p className={styles.conflict}>{item.conflict}</p>}
+                  {item.conflict && <p className={styles.conflict}>{cartConflictLabel(item.conflict)}</p>}
                   <div className={styles.row}>
                     <div className={styles.qty}>
                       <button
@@ -117,7 +118,7 @@ export default function CartDrawer() {
             >
               Оформить заказ
             </Link>
-            <p className={styles.footerNote}>B2B-заявку без оплаты можно отправить со страницы товара.</p>
+            <p className={styles.footerNote}>Заявку без оплаты можно отправить со страницы товара.</p>
           </div>
         )}
       </aside>

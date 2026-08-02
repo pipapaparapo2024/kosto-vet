@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Phone, Clock, Star, MapPin, Truck, ClipboardList, Package, PackageCheck, Flag } from 'lucide-react'
 import { img } from '../utils/assetUrl'
-import { useSettings } from '../context/SettingsContext'
-import { formatMoney } from '../lib/money'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './DeliveryPage.module.css'
 
@@ -37,8 +35,6 @@ const MAP_CITIES = [
 ]
 
 export default function DeliveryPage() {
-  const { settings } = useSettings()
-  const deliveryPrice = formatMoney(settings?.fixed_delivery_price, { empty: null })
   useDocumentTitle('Доставка', 'Доставка имплантов по Воронежу за 2–4 часа и в регионы ЦЧР.')
 
   return (
@@ -53,10 +49,15 @@ export default function DeliveryPage() {
       {/* Hero */}
       <div className={styles.hero}>
         <div className={styles.heroLeft}>
-          <h1 className={styles.heroTitle}>Когда операция не может ждать — доставка тоже.</h1>
+          <h1 className={styles.heroTitle}>
+            Когда операция не может ждать<br />
+            — доставка тоже.
+          </h1>
           <p className={styles.heroDesc}>
-            По Воронежу доставляем за 2–4 часа. В другие города Центрально-Черноземного региона — уже на следующий день. Работаем без выходных и праздников.
-            {deliveryPrice ? ` Фиксированная стоимость доставки в demo: ${deliveryPrice}.` : ''}
+            По Воронежу доставляем за 2-4 часа.<br />
+            В другие города Центрально-Черноземного<br />
+            региона — уже на следующий день.<br />
+            Работаем без выходных и праздников.
           </p>
           <Link to="/catalog" className={styles.heroBtn}>
             Проверить наличие <ArrowRight size={20} strokeWidth={1.8} />
@@ -149,7 +150,7 @@ export default function DeliveryPage() {
             {FAQ.map(({ Icon, q, a }, i) => (
               <div key={i} className={styles.faqCard}>
                 <div className={styles.faqIconWrap}>
-                  <Icon size={42} strokeWidth={1.5} />
+                  <Icon size={28} strokeWidth={1.5} />
                 </div>
                 <div className={styles.faqText}>
                   <p className={styles.faqQ}>{q}</p>

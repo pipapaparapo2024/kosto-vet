@@ -6,6 +6,7 @@ import CartDrawer from '../../ui/CartDrawer/CartDrawer'
 import { useAuth } from '../../../context/AuthContext'
 import { useCart } from '../../../context/CartContext'
 import { getSearchSuggestions } from '../../../lib/api/catalog'
+import { suggestionTypeLabel } from '../../../lib/labels'
 import styles from './Header.module.css'
 
 const NAV_LINKS = [
@@ -121,7 +122,7 @@ export default function Header() {
                       className={styles.suggestItem}
                       onClick={() => setSearchOpen(false)}
                     >
-                      <span className={styles.suggestType}>{item.type}</span>
+                      <span className={styles.suggestType}>{suggestionTypeLabel(item.type)}</span>
                       {item.label}
                     </Link>
                   </li>

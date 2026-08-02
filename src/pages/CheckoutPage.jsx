@@ -117,7 +117,7 @@ export default function CheckoutPage() {
         </nav>
         <h1 className={styles.title}>Оформление заказа</h1>
         <p className={styles.sub}>
-          B2C-оплата через Robokassa (sandbox). Резерв склада ~{settings?.stock_reservation_ttl_seconds || 300} сек.
+          Онлайн-оплата. Товар резервируется примерно на {settings?.stock_reservation_ttl_seconds || 300} сек.
           {!isAuth && ' Можно оформить без входа.'}
         </p>
 
@@ -138,7 +138,7 @@ export default function CheckoutPage() {
               <h2>Контакты</h2>
               <input className={styles.input} required minLength={2} placeholder="Имя*" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
               <input className={styles.input} required minLength={7} type="tel" placeholder="Телефон*" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
-              <input className={styles.input} type="email" placeholder="Email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+              <input className={styles.input} type="email" placeholder="Эл. почта" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
             </section>
 
             <section className={styles.section}>
