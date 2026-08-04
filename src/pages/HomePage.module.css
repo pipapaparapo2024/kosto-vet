@@ -433,8 +433,13 @@
 @media (max-width: 768px) {
   .heroLeft { padding-top: 32px; padding-bottom: 20px; }
   .heroDesc { font-size: 15px; }
+  .catalog {
+    padding-top: 32px;
+  }
+  .catalogLayout { gap: 16px; }
   .catalogSub { font-size: 15px; }
   .catalogTitle { font-size: clamp(22px, 6vw, 28px); }
+  .catalogTitleWrap { padding-top: 8px; gap: 6px; }
   .benefitsInner {
     flex-direction: column;
     align-items: flex-start;
@@ -446,6 +451,16 @@
   .benefitDesc { font-size: 13px; }
   .categoryName { font-size: 16px; }
   .categoryDesc { font-size: 13px; }
+  .stockBanner {
+    margin-top: 14px;
+    padding: 14px 16px;
+  }
+  .cta {
+    margin-top: 28px;
+  }
+  .ctaLeft { padding: 28px 0 32px; }
+  .ctaTitle { margin-bottom: 14px; }
+  .ctaDesc { margin-bottom: 24px; }
   .heroBtn,
   .ctaBtn {
     width: 100%;

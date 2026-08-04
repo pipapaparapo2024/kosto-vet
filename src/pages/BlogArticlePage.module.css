@@ -1,5 +1,5 @@
 .page {
-  padding-bottom: 80px;
+  padding-bottom: 40px;
 }
 
 .container {
@@ -469,17 +469,26 @@
   .productWidget,
   .otherArticles { width: 100%; max-width: 400px; }
   .articleHeader { grid-template-columns: 1fr; }
-  .articleCover { max-width: 420px; }
+  .articleCover {
+    width: 100%;
+    max-width: none;
+  }
   .widgetActions { margin-top: 20px; }
 }
 
 @media (max-width: 768px) {
-  .page { padding-bottom: 40px; }
+  .page { padding-bottom: 0; }
   .articleTitle { font-size: clamp(24px, 7vw, 32px); margin-bottom: 14px; }
   .articleDesc { font-size: 15px; margin-bottom: 20px; }
   .articleMeta { gap: 16px; }
   .metaItem { font-size: 12px; }
-  .articleCover { height: 180px; font-size: 14px; }
+  .articleCover {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 420 / 260;
+    font-size: 14px;
+  }
   .layout { padding-top: 24px; gap: 28px; }
   .tocTitle,
   .widgetTitle,

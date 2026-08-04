@@ -94,7 +94,7 @@
 }
 
 @media (max-width: 768px) {
-  .page { padding: 32px 0 56px; }
+  .page { padding: 32px 0 0; }
   .card { padding: 20px; font-size: 15px; }
   .payRow select,
   .payRow button { width: 100%; box-sizing: border-box; }

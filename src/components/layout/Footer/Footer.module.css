@@ -1,5 +1,5 @@
 .footer {
-  margin-top: var(--space-section);
+  margin-top: 36px;
 }
 
 /* Меньший отступ сверху: главная и страница товара */
@@ -143,7 +143,11 @@
 }
 
 @media (max-width: 768px) {
-  .top { padding: 36px 0 28px; }
+  .footer,
+  .footerTight {
+    margin-top: 20px;
+  }
+  .top { padding: 28px 0 20px; }
   .logo { font-size: 26px; margin-bottom: 10px; }
   .desc { font-size: 14px; }
   .navCols {

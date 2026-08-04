@@ -1,5 +1,4 @@
 .page {
-  /* padding-top убран — header position:sticky, не нужен сдвиг */
   padding-bottom: 14px;
 }
 
@@ -447,6 +446,7 @@
 }
 
 @media (max-width: 768px) {
+  .page { padding-bottom: 0; }
   .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
   .heroTitle { font-size: clamp(28px, 8vw, 36px); }
   .heroDesc { font-size: 15px; margin-bottom: 28px; }
@@ -487,8 +487,10 @@
   .geoIconWrap svg { width: 28px !important; height: 28px !important; }
   .geoName { font-size: 16px; }
   .geoTime { font-size: 13px; }
+  .faqSection { padding-bottom: 20px; }
   .faqGrid { grid-template-columns: 1fr; gap: 10px; }
   .faqCard { width: 100%; max-width: 100%; height: auto; min-height: 0; padding: 14px; }
+  .faqText { gap: 15px; }
   .faqQ { font-size: 15px; }
   .faqA { font-size: 13px; }
   .ctaTitle { font-size: clamp(22px, 6vw, 28px); white-space: normal; }

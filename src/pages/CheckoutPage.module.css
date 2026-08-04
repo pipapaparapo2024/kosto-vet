@@ -221,7 +221,7 @@
 
 @media (max-width: 768px) {
   .form, .summary { padding: 20px; }
-  .page { padding: 32px 0 64px; }
+  .page { padding: 32px 0 0; }
 }
 
 @media (max-width: 390px) {

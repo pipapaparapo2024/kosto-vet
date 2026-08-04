@@ -159,7 +159,7 @@
 }
 
 @media (max-width: 768px) {
-  .page { padding-bottom: 24px; }
+  .page { padding-bottom: 0; }
   .docPreviewInner { padding: 20px; }
   .docActions {
     flex-direction: column;
@@ -175,7 +175,7 @@
   }
   .breadcrumbTop { padding: 24px 0; flex-wrap: wrap; }
   .pdfBtn { padding: 20px 16px; }
-  .agreementLayout { padding-bottom: 24px; }
+  .agreementLayout { padding-bottom: 0; }
 }
 
 @media (max-width: 390px) {

@@ -244,6 +244,7 @@
 }
 
 @media (max-width: 768px) {
+  .page { padding-bottom: 0; }
   .hero {
     margin-bottom: 16px;
   }
