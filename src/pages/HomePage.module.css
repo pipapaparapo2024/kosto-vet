@@ -21,15 +21,15 @@
 }
 
 .heroTitle {
-  font-size: var(--text-h1);
-  font-weight: 800;
+  font-size: clamp(30px, 4.5vw, 63px);
+  font-weight: 700;
   line-height: 1.05;
   color: var(--color-text);
   letter-spacing: -0.02em;
 }
 
 .heroDesc {
-  font-size: clamp(16px, 2vw, 24px);
+  font-size: clamp(14px, 2vw, 22px);
   font-weight: 400;
   color: var(--color-text);
   line-height: 1.5;
@@ -44,8 +44,8 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: var(--radius-btn);
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 500;
   text-decoration: none;
   align-self: flex-start;
   transition: background var(--duration);
@@ -91,15 +91,15 @@
 }
 
 .benefitTitle {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 500;
   color: var(--color-text);
   line-height: 1.2;
 }
 
 .benefitDesc {
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 400;
   color: var(--color-text-secondary);
   margin-top: 2px;
   line-height: 1.35;
@@ -144,6 +144,10 @@
   margin-bottom: -14px;
   position: relative;
   z-index: 1;
+  /* тень по силуэту (не по прямоугольнику PNG) */
+  filter:
+    drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
 }
 
 /* Правая колонка */
@@ -161,15 +165,15 @@
 }
 
 .catalogTitle {
-  font-size: clamp(28px, 2.8vw, 40px);
-  font-weight: 800;
+  font-size: clamp(26px, 2.8vw, 38px);
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--color-text);
 }
 
 .catalogSub {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 400;
   color: var(--color-text-secondary);
 }
 
@@ -210,19 +214,21 @@
 }
 
 .categoryName {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   margin-bottom: 6px;
 }
 
 .categoryDesc {
-  font-size: var(--text-small);
+  font-size: 11px;
+  font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 .categoryCount {
-  font-size: var(--text-small);
+  font-size: 11px;
+  font-weight: 400;
   color: var(--color-text-secondary);
   margin-top: 10px;
 }
@@ -250,7 +256,7 @@
   height: 100px;
   background: var(--color-bg-secondary);
   border-radius: var(--radius-card);
-  font-size: var(--text-small);
+  font-size: 11px;
 }
 
 .stockIcon {
@@ -269,14 +275,14 @@
   width: 36px;
   height: 36px;
 }
-.stockBanner p { flex: 1; line-height: 1.5; font-size: 14px; }
-.stockBanner p strong { font-size: 16px; font-weight: 700; display: block; margin-bottom: 2px; }
+.stockBanner p { flex: 1; line-height: 1.5; font-size: 12px; font-weight: 400; }
+.stockBanner p strong { font-size: 14px; font-weight: 600; display: block; margin-bottom: 2px; }
 
 .stockLink {
   margin-left: auto;
   color: var(--color-text);
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 500;
+  font-size: 14px;
   text-decoration: none;
   white-space: nowrap;
   display: inline-flex;
@@ -315,15 +321,15 @@
 }
 
 .ctaTitle {
-  font-size: var(--text-h1);
-  font-weight: 800;
+  font-size: clamp(30px, 4.5vw, 63px);
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.02em;
   margin-bottom: 25px;
 }
 
 .ctaDesc {
-  font-size: clamp(16px, 2vw, 24px);
+  font-size: clamp(14px, 2vw, 22px);
   font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -339,8 +345,8 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: var(--radius-btn);
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 500;
   text-decoration: none;
   align-self: flex-start;
   transition: background var(--duration);
@@ -375,7 +381,17 @@
   .heroRight,
   .ctaRight { display: none; }
   .catalogLayout { grid-template-columns: 1fr; gap: 24px; }
-  .catalogCat { display: none; }
+  .catalogLeft {
+    align-items: stretch;
+  }
+  .catalogCat {
+    display: block;
+    width: 200px;
+    height: 210px;
+    margin-left: 12px;
+    margin-bottom: -12px;
+    object-position: bottom left;
+  }
   .catalogGrid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
@@ -389,20 +405,20 @@
   }
   .sep { display: none; }
   .benefit { width: 100%; }
-  .benefitTitle { font-size: 18px; }
-  .benefitDesc { font-size: 14px; }
+  .benefitTitle { font-size: 16px; }
+  .benefitDesc { font-size: 12px; }
   .benefit svg { width: 40px; height: 40px; }
   .heroBtn,
   .ctaBtn {
     padding: 0 24px;
     height: 52px;
-    font-size: 16px;
+    font-size: 14px;
     gap: 12px;
     max-width: 100%;
     box-sizing: border-box;
   }
   .ctaLeft { padding: 40px 0; }
-  .ctaTitle { font-size: clamp(24px, 5vw, 32px); }
+  .ctaTitle { font-size: clamp(22px, 5vw, 30px); }
   .stockBanner {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
@@ -425,20 +441,26 @@
     grid-area: link;
     margin-left: 0;
     white-space: nowrap;
-    font-size: 14px;
+    font-size: 12px;
     justify-self: start;
   }
 }
 
 @media (max-width: 768px) {
   .heroLeft { padding-top: 32px; padding-bottom: 20px; }
-  .heroDesc { font-size: 15px; }
+  .heroDesc { font-size: 13px; }
   .catalog {
     padding-top: 32px;
   }
   .catalogLayout { gap: 16px; }
-  .catalogSub { font-size: 15px; }
-  .catalogTitle { font-size: clamp(22px, 6vw, 28px); }
+  .catalogCat {
+    width: 160px;
+    height: 170px;
+    margin-left: 8px;
+    margin-bottom: -10px;
+  }
+  .catalogSub { font-size: 13px; }
+  .catalogTitle { font-size: clamp(20px, 6vw, 26px); }
   .catalogTitleWrap { padding-top: 8px; gap: 6px; }
   .benefitsInner {
     flex-direction: column;
@@ -447,10 +469,10 @@
     padding: 20px var(--space-x);
   }
   .benefit svg { width: 36px; height: 36px; }
-  .benefitTitle { font-size: 16px; }
-  .benefitDesc { font-size: 13px; }
-  .categoryName { font-size: 16px; }
-  .categoryDesc { font-size: 13px; }
+  .benefitTitle { font-size: 14px; }
+  .benefitDesc { font-size: 11px; }
+  .categoryName { font-size: 14px; }
+  .categoryDesc { font-size: 11px; }
   .stockBanner {
     margin-top: 14px;
     padding: 14px 16px;
