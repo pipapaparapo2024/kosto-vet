@@ -103,30 +103,53 @@ export default function Header() {
               <Search size={18} strokeWidth={2} className={styles.searchIcon} />
               <input
                 autoFocus
-                type="search"
+                type="text"
+                inputMode="search"
+                enterKeyHint="search"
                 placeholder="Поиск по каталогу..."
                 className={styles.searchInput}
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
-              <button type="button" className={styles.searchClose} onClick={() => setSearchOpen(false)}>
+              {query && (
+                <button
+                  type="button"
+                  className={styles.searchClear}
+                  onClick={() => { setQuery(''); setSuggestions([]) }}
+                  aria-label="Очистить"
+                >
+                  <X size={16} strokeWidth={2} />
+                </button>
+              )}
+              <button type="button" className={styles.searchClose} onClick={() => { setSearchOpen(false); setQuery(''); setSuggestions([]) }} aria-label="Закрыть поиск">
                 <X size={18} strokeWidth={2} />
               </button>
             </form>
+            {query.trim().length >= 2 && suggestions.length === 0 && (
+              <p className={styles.suggestEmpty}>Ничего не нашли. Попробуйте изменить запрос.</p>
+            )}
             {suggestions.length > 0 && (
               <ul className={styles.suggestList}>
-                {suggestions.map((item, i) => (
-                  <li key={`${item.type}-${item.label}-${i}`}>
-                    <Link
-                      to={normalizeSuggestionUrl(item.url)}
-                      className={styles.suggestItem}
-                      onClick={() => setSearchOpen(false)}
-                    >
-                      <span className={styles.suggestType}>{suggestionTypeLabel(item.type)}</span>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+                {suggestions.map((item, i) => {
+                  const label = item.label || item.title || item.name || ''
+                  return (
+                    <li key={`${item.type}-${label}-${i}`}>
+                      <Link
+                        to={normalizeSuggestionUrl(item.url)}
+                        className={styles.suggestItem}
+                        onClick={() => { setSearchOpen(false); setQuery('') }}
+                      >
+                        <span className={styles.suggestType}>{suggestionTypeLabel(item.type)}</span>
+                        <span className={styles.suggestLabel}>{label}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
+                <li>
+                  <button type="button" className={styles.suggestAll} onClick={submitSearch}>
+                    Смотреть все результаты
+                  </button>
+                </li>
               </ul>
             )}
           </div>

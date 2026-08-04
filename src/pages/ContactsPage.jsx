@@ -9,10 +9,13 @@ import { ApiError } from '../lib/apiClient'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './ContactsPage.module.css'
 
-const FAQ = [
+const FAQ_LEFT = [
   { q: 'Можно ли приехать лично?', a: 'Да, мы работаем по адресу: г. Воронеж, ул. Димитрова 56а. Предварительно позвоните, чтобы убедиться в наличии нужного товара.' },
   { q: 'Есть ли самовывоз?', a: 'Да, самовывоз доступен. Уточните время работы склада по телефону.' },
   { q: 'Работаете ли в выходные?', a: 'По вопросам заказов — звоните в любое время. Доставка осуществляется в рабочие дни.' },
+]
+
+const FAQ_RIGHT = [
   { q: 'Как быстро отвечаете?', a: 'Обычно в течение 15–30 минут в рабочее время. В выходные — по мере возможности.' },
   { q: 'Можно ли отправить снимок для подбора?', a: 'Да, пришлите фото в ВКонтакте или на email — специалист поможет с подбором.' },
   { q: 'Работаете ли вы с физическими лицами?', a: 'Работаем преимущественно с ветеринарными клиниками и специалистами.' },
@@ -205,15 +208,64 @@ export default function ContactsPage() {
         <section className={styles.faqSection}>
           <h2 className={styles.sectionTitle}>Часто задаваемые вопросы</h2>
           <div className={styles.faqList}>
-            {FAQ.map((item, i) => (
-              <div key={i} className={`${styles.faqItem} ${faqOpen === i ? styles.faqOpen : ''}`}>
-                <button className={styles.faqQ} onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
-                  {item.q}
-                  <ChevronDown size={14} strokeWidth={2} style={{ transform: faqOpen === i ? 'rotate(180deg)' : 'none', transition: '200ms', flexShrink: 0 }} />
-                </button>
-                {faqOpen === i && <p className={styles.faqA}>{item.a}</p>}
-              </div>
-            ))}
+            <div className={styles.faqCol}>
+              {FAQ_LEFT.map((item, i) => {
+                const id = `L${i}`
+                const isOpen = faqOpen === id
+                return (
+                  <div key={item.q} className={`${styles.faqItem}${isOpen ? ` ${styles.faqOpen}` : ''}`}>
+                    <button
+                      type="button"
+                      className={styles.faqQ}
+                      aria-expanded={isOpen}
+                      onClick={() => setFaqOpen(isOpen ? null : id)}
+                    >
+                      {item.q}
+                      <ChevronDown
+                        size={14}
+                        strokeWidth={2}
+                        className={`${styles.faqChevron}${isOpen ? ` ${styles.faqChevronOpen}` : ''}`}
+                        aria-hidden="true"
+                      />
+                    </button>
+                    <div className={`${styles.faqPanel}${isOpen ? ` ${styles.faqPanelOpen}` : ''}`}>
+                      <div className={styles.faqPanelInner}>
+                        <p className={styles.faqA}>{item.a}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className={styles.faqCol}>
+              {FAQ_RIGHT.map((item, i) => {
+                const id = `R${i}`
+                const isOpen = faqOpen === id
+                return (
+                  <div key={item.q} className={`${styles.faqItem}${isOpen ? ` ${styles.faqOpen}` : ''}`}>
+                    <button
+                      type="button"
+                      className={styles.faqQ}
+                      aria-expanded={isOpen}
+                      onClick={() => setFaqOpen(isOpen ? null : id)}
+                    >
+                      {item.q}
+                      <ChevronDown
+                        size={14}
+                        strokeWidth={2}
+                        className={`${styles.faqChevron}${isOpen ? ` ${styles.faqChevronOpen}` : ''}`}
+                        aria-hidden="true"
+                      />
+                    </button>
+                    <div className={`${styles.faqPanel}${isOpen ? ` ${styles.faqPanelOpen}` : ''}`}>
+                      <div className={styles.faqPanelInner}>
+                        <p className={styles.faqA}>{item.a}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </section>
 
@@ -227,7 +279,7 @@ export default function ContactsPage() {
                 Проверить наличие <ArrowRight size={20} strokeWidth={1.8} />
               </Link>
               <a href="tel:+79611898933" className={styles.ctaBtnSecondary}>
-                Позвонить сейчас <Phone size={20} strokeWidth={1.5} />
+                Звоните сейчас <Phone size={20} strokeWidth={1.5} />
               </a>
             </div>
           </div>

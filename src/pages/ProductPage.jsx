@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Heart, Truck, Phone, ArrowRight, Clock, Package, User } from 'lucide-react'
+import { Heart, Truck, Phone, ArrowRight, Clock, Package, User, X, MapPin, Shield } from 'lucide-react'
 import { getProduct } from '../lib/api/catalog'
-import { createQuoteOrder, saveOrderAccess } from '../lib/api/orders'
 import { createLead, createStockSubscription } from '../lib/api/leads'
 import { addFavorite, removeFavorite, listFavorites } from '../lib/api/account'
 import { useAuth } from '../context/AuthContext'
 import { useSettings } from '../context/SettingsContext'
 import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
-import { categoryTitleFromProduct, orderStatusLabel } from '../lib/labels'
+import { categoryTitleFromProduct } from '../lib/labels'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { ProductPageSkeleton } from '../components/ui/Skeleton/Skeleton'
 import styles from './ProductPage.module.css'
@@ -357,6 +356,12 @@ export default function ProductPage() {
         onClose={() => setOrderOpen(false)}
         product={product}
         inStock={inStock}
+        meta={{
+          length: selectedLength,
+          holes: selectedHoles,
+          article: displayArticle,
+          price: displayPrice,
+        }}
       />
     </>
   )
@@ -407,30 +412,27 @@ function SmallCard({ product }) {
   )
 }
 
-function OrderDrawer({ open, onClose, product, inStock }) {
+function OrderDrawer({ open, onClose, product, inStock, meta = {} }) {
   const { settings } = useSettings()
   const overlayRef = useRef(null)
-  const [mode, setMode] = useState(inStock ? 'quote' : 'notify')
   const [qty, setQty] = useState(1)
-  const [destination, setDestination] = useState('voronezh')
+  const [delivery, setDelivery] = useState('voronezh')
   const [form, setForm] = useState({
     name: '',
     phone: '',
-    email: '',
     companyName: '',
-    inn: '',
-    kpp: '',
-    documentsEmail: '',
-    city: 'Воронеж',
-    addressLine: '',
     comment: '',
-    contact: '',
-    consent: false,
     website: '',
   })
   const [submitted, setSubmitted] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+
+  const deliveryOptions = [
+    { value: 'voronezh', label: 'Доставка по Воронежу (2–4 часа)', Icon: Truck },
+    { value: 'pickup', label: 'Самовывоз', Icon: MapPin },
+    { value: 'russia', label: 'Доставка по России (1–3 дня)', Icon: Package },
+  ]
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -439,9 +441,10 @@ function OrderDrawer({ open, onClose, product, inStock }) {
 
   useEffect(() => {
     if (open) {
-      setMode(inStock ? 'quote' : 'notify')
       setSubmitted(null)
       setError(null)
+      setQty(1)
+      setDelivery('voronezh')
     }
   }, [open, inStock])
 
@@ -454,61 +457,46 @@ function OrderDrawer({ open, onClose, product, inStock }) {
   if (!open) return null
 
   const image = productImageUrl(product.image, 'thumb')
+  const specsLine = [
+    meta.length ? `${meta.length} мм` : null,
+    meta.holes ? `${meta.holes} отверстий` : null,
+  ].filter(Boolean).join(' · ')
+
+  const deliveryLabel = deliveryOptions.find(o => o.value === delivery)?.label || delivery
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.consent || submitting) return
+    if (submitting) return
     setSubmitting(true)
     setError(null)
     try {
-      if (mode === 'notify') {
+      if (!inStock) {
         await createStockSubscription({
           productSlug: product.slug,
           name: form.name,
-          contact: form.contact || form.phone || form.email,
+          contact: form.phone,
           website: form.website,
         })
         setSubmitted({ type: 'notify' })
-      } else if (mode === 'lead') {
+      } else {
+        const message = [
+          `Товар: ${product.name}`,
+          meta.article ? `Артикул: ${meta.article}` : null,
+          `Количество: ${qty}`,
+          `Способ получения: ${deliveryLabel}`,
+          form.comment ? `Комментарий: ${form.comment}` : null,
+        ].filter(Boolean).join('\n')
+
         await createLead({
           name: form.name,
           phone: form.phone,
-          email: form.email || undefined,
           company: form.companyName || undefined,
-          message: form.comment || undefined,
+          message,
           productSlug: product.slug,
           source: 'product',
           website: form.website,
         })
         setSubmitted({ type: 'lead' })
-      } else {
-        const res = await createQuoteOrder({
-          customer: {
-            name: form.name,
-            phone: form.phone,
-            email: form.email || undefined,
-          },
-          legal_entity: {
-            company_name: form.companyName,
-            inn: form.inn,
-            kpp: form.kpp || undefined,
-            documents_email: form.documentsEmail || form.email,
-          },
-          delivery: {
-            destination,
-            city: form.city,
-            address_line: form.addressLine,
-            comment: form.comment || null,
-          },
-          items: [{ product_id: product.id, quantity: qty }],
-          comment: form.comment || undefined,
-          consent: true,
-          website: form.website,
-        })
-        if (res?.public_id && res?.order_access_token) {
-          saveOrderAccess(res.public_id, res.order_access_token)
-        }
-        setSubmitted({ type: 'quote', publicId: res.public_id, status: res.status })
       }
     } catch (err) {
       setError(err.message || 'Не удалось отправить заявку')
@@ -523,27 +511,24 @@ function OrderDrawer({ open, onClose, product, inStock }) {
       ref={overlayRef}
       onClick={e => { if (e.target === overlayRef.current) onClose() }}
     >
-      <div className={orderStyles.drawer}>
+      <div className={orderStyles.drawer} role="dialog" aria-label="Ваш заказ">
         <div className={orderStyles.header}>
           <h2 className={orderStyles.title}>
-            {mode === 'notify' ? 'Уведомить о наличии' : mode === 'lead' ? 'Заявка' : 'Заявка для клиник'}
+            {inStock ? 'Ваш заказ' : 'Уведомить о наличии'}
           </h2>
-          <button type="button" className={orderStyles.close} onClick={onClose} aria-label="Закрыть">×</button>
+          <button type="button" className={orderStyles.close} onClick={onClose} aria-label="Закрыть">
+            <X size={20} strokeWidth={2} />
+          </button>
         </div>
 
         {submitted ? (
           <div className={orderStyles.success}>
-            <h3>{submitted.type === 'quote' ? 'Заявка принята' : 'Запрос отправлен'}</h3>
+            <h3>Заявка отправлена</h3>
             <p>
-              {submitted.type === 'quote'
-                ? `Номер: ${submitted.publicId}. Статус: ${orderStatusLabel(submitted.status)}. Менеджер свяжется с вами.`
-                : 'Мы сохранили запрос. Когда товар появится или менеджер обработает заявку — свяжемся с вами.'}
+              {submitted.type === 'notify'
+                ? 'Мы сообщим, когда товар появится на складе.'
+                : 'Наш специалист свяжется с Вами в течение нескольких минут.'}
             </p>
-            {submitted.type === 'quote' && submitted.publicId && (
-              <Link to={`/orders/${submitted.publicId}`} className={orderStyles.submitBtn} onClick={onClose} style={{ display: 'inline-flex', textDecoration: 'none', marginBottom: 8 }}>
-                Статус заказа
-              </Link>
-            )}
             {settings?.manager?.phone && (
               <p>Менеджер: {settings.manager.name}, {settings.manager.phone}</p>
             )}
@@ -553,32 +538,24 @@ function OrderDrawer({ open, onClose, product, inStock }) {
           <>
             <div className={orderStyles.productRow}>
               <div className={orderStyles.productPhoto}>
-                {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 4 }} />}
+                {image ? (
+                  <img src={image} alt="" />
+                ) : (
+                  'Фото товара'
+                )}
               </div>
               <div className={orderStyles.productInfo}>
-                <p className={orderStyles.productName}>{product.name}</p>
-                {product.article && <p className={orderStyles.productArticle}>Артикул: {product.article}</p>}
+                <p className={orderStyles.productName}>{product.subtitle || product.name}</p>
+                {specsLine && <p className={orderStyles.productMeta}>{specsLine}</p>}
+                {(meta.article || product.article) && (
+                  <p className={orderStyles.productArticle}>
+                    Артикул: {meta.article || product.article}
+                  </p>
+                )}
+                <p className={orderStyles.productPrice}>
+                  {formatMoney(meta.price ?? product.price)}
+                </p>
               </div>
-              <p className={orderStyles.productPrice}>{formatMoney(product.price)}</p>
-            </div>
-
-            <div className={orderStyles.radioGroup} style={{ padding: '0 24px', marginBottom: 8 }}>
-              {inStock && (
-                <label className={`${orderStyles.radio} ${mode === 'quote' ? orderStyles.radioActive : ''}`}>
-                  <input type="radio" checked={mode === 'quote'} onChange={() => setMode('quote')} />
-                  <span>Оформить заявку для клиники</span>
-                </label>
-              )}
-              <label className={`${orderStyles.radio} ${mode === 'lead' ? orderStyles.radioActive : ''}`}>
-                <input type="radio" checked={mode === 'lead'} onChange={() => setMode('lead')} />
-                <span>Перезвоните мне</span>
-              </label>
-              {!inStock && (
-                <label className={`${orderStyles.radio} ${mode === 'notify' ? orderStyles.radioActive : ''}`}>
-                  <input type="radio" checked={mode === 'notify'} onChange={() => setMode('notify')} />
-                  <span>Сообщить о поступлении</span>
-                </label>
-              )}
             </div>
 
             <form className={orderStyles.form} onSubmit={handleSubmit}>
@@ -590,79 +567,118 @@ function OrderDrawer({ open, onClose, product, inStock }) {
                 tabIndex={-1}
                 autoComplete="off"
                 aria-hidden="true"
-                style={{ position: 'absolute', left: -9999, opacity: 0, height: 0, width: 0 }}
+                className={orderStyles.honeypot}
               />
 
-              {mode === 'quote' && (
-                <div className={orderStyles.field}>
-                  <label className={orderStyles.label}>Количество</label>
+              {inStock && (
+                <div className={orderStyles.section}>
+                  <p className={orderStyles.label}>Количество</p>
                   <div className={orderStyles.qtyRow}>
-                    <button type="button" className={orderStyles.qtyBtn} onClick={() => setQty(q => Math.max(1, q - 1))}>-</button>
+                    <button
+                      type="button"
+                      className={orderStyles.qtyBtn}
+                      onClick={() => setQty(q => Math.max(1, q - 1))}
+                      aria-label="Уменьшить"
+                    >
+                      −
+                    </button>
                     <span className={orderStyles.qtyVal}>{qty}</span>
-                    <button type="button" className={orderStyles.qtyBtn} onClick={() => setQty(q => q + 1)}>+</button>
+                    <button
+                      type="button"
+                      className={orderStyles.qtyBtn}
+                      onClick={() => setQty(q => q + 1)}
+                      aria-label="Увеличить"
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               )}
 
-              {mode === 'quote' && (
-                <div className={orderStyles.field}>
-                  <label className={orderStyles.label}>Доставка</label>
+              {inStock && (
+                <div className={orderStyles.section}>
+                  <p className={orderStyles.label}>Способ получения</p>
                   <div className={orderStyles.radioGroup}>
-                    {[
-                      { value: 'voronezh', label: 'По Воронежу' },
-                      { value: 'intercity', label: 'В другой город' },
-                    ].map(opt => (
-                      <label key={opt.value} className={`${orderStyles.radio} ${destination === opt.value ? orderStyles.radioActive : ''}`}>
-                        <input type="radio" name="destination" value={opt.value} checked={destination === opt.value} onChange={() => setDestination(opt.value)} />
-                        <span>{opt.label}</span>
+                    {deliveryOptions.map(({ value, label, Icon }) => (
+                      <label key={value} className={orderStyles.radio}>
+                        <input
+                          type="radio"
+                          name="delivery"
+                          className={orderStyles.radioInput}
+                          checked={delivery === value}
+                          onChange={() => setDelivery(value)}
+                        />
+                        <span className={orderStyles.radioLabel}>{label}</span>
+                        <Icon size={20} strokeWidth={1.6} className={orderStyles.radioIcon} aria-hidden="true" />
                       </label>
                     ))}
                   </div>
                 </div>
               )}
 
-              <div className={orderStyles.field}>
-                <label className={orderStyles.label}>Контактные данные</label>
-                <input className={orderStyles.input} type="text" placeholder="Ваше имя*" required minLength={2} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
-                {mode !== 'notify' && (
-                  <input className={orderStyles.input} type="tel" placeholder="Телефон*" required minLength={7} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
-                )}
-                {mode === 'notify' && (
-                  <input className={orderStyles.input} type="text" placeholder="Телефон или email*" required minLength={7} value={form.contact} onChange={e => setForm(f => ({ ...f, contact: e.target.value }))} />
-                )}
-                {mode !== 'notify' && (
-                  <input className={orderStyles.input} type="email" placeholder={mode === 'quote' ? 'Эл. почта для документов*' : 'Эл. почта'} required={mode === 'quote'} value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value, documentsEmail: e.target.value }))} />
-                )}
+              <div className={orderStyles.section}>
+                <p className={orderStyles.label}>Контактные данные</p>
+                <div className={orderStyles.fieldsStack}>
+                  <input
+                    className={orderStyles.input}
+                    type="text"
+                    placeholder="Ваше имя*"
+                    required
+                    minLength={2}
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  />
+                  <input
+                    className={orderStyles.input}
+                    type="tel"
+                    placeholder="Телефон*"
+                    required
+                    minLength={7}
+                    value={form.phone}
+                    onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                  />
+                  {inStock && (
+                    <input
+                      className={orderStyles.input}
+                      type="text"
+                      placeholder="Клиника"
+                      value={form.companyName}
+                      onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))}
+                    />
+                  )}
+                </div>
               </div>
 
-              {mode === 'quote' && (
-                <div className={orderStyles.field}>
-                  <label className={orderStyles.label}>Юрлицо</label>
-                  <input className={orderStyles.input} type="text" placeholder="Название клиники / компании*" required minLength={2} value={form.companyName} onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))} />
-                  <input className={orderStyles.input} type="text" placeholder="ИНН*" required minLength={10} maxLength={12} value={form.inn} onChange={e => setForm(f => ({ ...f, inn: e.target.value }))} />
-                  <input className={orderStyles.input} type="text" placeholder="КПП" maxLength={9} value={form.kpp} onChange={e => setForm(f => ({ ...f, kpp: e.target.value }))} />
-                  <input className={orderStyles.input} type="text" placeholder="Город*" required minLength={2} value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
-                  <input className={orderStyles.input} type="text" placeholder="Адрес доставки*" required minLength={5} value={form.addressLine} onChange={e => setForm(f => ({ ...f, addressLine: e.target.value }))} />
+              {inStock && (
+                <div className={`${orderStyles.section} ${orderStyles.sectionLast}`}>
+                  <p className={orderStyles.label}>Комментарий к заказу</p>
+                  <textarea
+                    className={orderStyles.textarea}
+                    placeholder="Например: нужно сегодня до 17:00"
+                    value={form.comment}
+                    onChange={e => setForm(f => ({ ...f, comment: e.target.value }))}
+                  />
                 </div>
               )}
 
-              {mode !== 'notify' && (
-                <div className={orderStyles.field}>
-                  <label className={orderStyles.label}>Комментарий</label>
-                  <textarea className={orderStyles.textarea} placeholder="Например: нужно сегодня до 17:00" value={form.comment} onChange={e => setForm(f => ({ ...f, comment: e.target.value }))} />
-                </div>
-              )}
+              {error && <p className={orderStyles.formError}>{error}</p>}
 
-              <label className={orderStyles.privacy} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer' }}>
-                <input type="checkbox" checked={form.consent} onChange={e => setForm(f => ({ ...f, consent: e.target.checked }))} required />
-                <span>Согласен на обработку персональных данных</span>
-              </label>
-
-              {error && <p style={{ color: '#eb5757', fontSize: 13 }}>{error}</p>}
-
-              <button type="submit" className={orderStyles.submitBtn} disabled={!form.consent || submitting}>
-                {submitting ? 'Отправка…' : mode === 'quote' ? 'Отправить заявку' : 'Отправить'}
+              <button type="submit" className={orderStyles.submitBtn} disabled={submitting}>
+                {submitting
+                  ? 'Отправка…'
+                  : inStock
+                    ? 'Оформить заказ'
+                    : 'Сообщить о поступлении'}
               </button>
+
+              <p className={orderStyles.privacy}>
+                <Shield size={14} strokeWidth={1.6} className={orderStyles.privacyIcon} aria-hidden="true" />
+                <span>Мы не передаём ваши данные третьим лицам</span>
+              </p>
+
+              <p className={orderStyles.callbackNote}>
+                Наш специалист свяжется с Вами в течение нескольких минут.
+              </p>
             </form>
           </>
         )}

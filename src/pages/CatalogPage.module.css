@@ -1,8 +1,8 @@
-.page { padding-bottom: 0; }
+.page { padding-bottom: 0; overflow-x: clip; }
 .container {
-  padding: 0 75px;
-  max-width: calc(var(--space-content) + 150px);
-  margin: 0 auto;
+  padding: 0 var(--space-x);
+  max-width: none;
+  margin: 0;
   box-sizing: border-box;
   width: 100%;
 }
@@ -49,6 +49,7 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
   margin-bottom: 40px;
+  max-width: 455px;
 }
 
 .heroImg {
@@ -67,13 +68,21 @@
 /* ── Benefits ─────────────────────────── */
 .benefits {
   display: flex;
-  gap: 60px;
+  gap: 48px;
+  width: 560px;
+  max-width: 100%;
+  align-items: flex-start;
 }
 
 .benefitItem {
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  min-width: 0;
+}
+
+.benefitItem > div {
+  min-width: 0;
 }
 
 .benefitIcon {
@@ -115,10 +124,11 @@
 }
 
 .subcat {
-  flex: 1 1 0;
-  min-width: 140px;
-  max-width: 168px;
-  height: 170px;
+  flex: 0 0 184px;
+  width: 184px;
+  min-width: 184px;
+  max-width: 184px;
+  height: 172px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -202,17 +212,21 @@
   border-radius: 16px;
   padding: 22px 18px 64px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   position: relative;
   z-index: 0;
   gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(22px + 30px + 64px);
 }
 
 .filterTitle {
   font-size: 20px;
   font-weight: 700;
   color: #ffffff;
+  line-height: 30px;
 }
 
 .filterClear {
@@ -226,6 +240,7 @@
   margin-left: 0;
   white-space: nowrap;
   text-decoration: none;
+  line-height: 30px;
 }
 .filterClear:hover { color: #ffffff; }
 
@@ -233,7 +248,8 @@
   background: #ffffff;
   border: 2px solid #111111;
   border-radius: 16px;
-  margin-top: -40px;
+  /* меньше наезда — нижний padding 64px чёрной плашки виден */
+  margin-top: -28px;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -783,9 +799,9 @@
 /* ── Responsive ───────────────────────── */
 @media (max-width: 1280px) {
   .container { padding: 0 var(--space-x); }
-  .subcat { min-width: 128px; max-width: 148px; height: 160px; }
-  .layout { grid-template-columns: 220px minmax(0, 1fr); gap: 16px; }
-  .filters { width: 220px; }
+  .subcat { flex: 0 0 148px; width: 148px; min-width: 148px; max-width: 148px; height: 160px; }
+  .layout { grid-template-columns: 250px minmax(0, 1fr); gap: 16px; }
+  .filters { width: 250px; }
   .heroImg { width: 480px; height: auto; }
   .grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -798,7 +814,18 @@
 @media (max-width: 1024px) {
   .hero { grid-template-columns: 1fr; }
   .heroImg { display: none; }
-  .heroLeft { padding: 0 var(--space-x) 40px; }
+  .heroLeft {
+    padding: 0 var(--space-x) 40px;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .heroTitle,
+  .heroDesc {
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  .benefits { width: 100%; }
   .layout { grid-template-columns: 1fr; }
   .filters {
     position: static;
@@ -816,15 +843,30 @@
 
 @media (max-width: 768px) {
   .heroLeft { padding: 0 var(--space-x) 24px; }
-  .catHero { padding: 0 0 20px; }
-  .heroTitle { font-size: clamp(28px, 8vw, 36px); }
-  .heroDesc { font-size: 15px; margin-bottom: 16px; }
-  .benefits { flex-direction: column; gap: 10px; }
-  .benefitItem { gap: 12px; }
+  .catHero { padding: 0 var(--space-x) 20px; box-sizing: border-box; }
+  .heroTitle {
+    font-size: clamp(26px, 7vw, 32px);
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  .heroDesc {
+    font-size: 15px;
+    margin-bottom: 16px;
+    max-width: 100%;
+  }
+  .benefits { flex-direction: column; gap: 12px; width: 100%; }
+  .benefitItem { gap: 12px; width: 100%; }
   .benefitTitle { font-size: 15px; margin-bottom: 2px; }
-  .benefitDesc { font-size: 13px; }
-  .subcats { flex-wrap: nowrap; gap: 8px; padding-bottom: 28px; }
-  .subcat { min-width: 120px; max-width: 140px; height: 148px; }
+  .benefitDesc { font-size: 13px; overflow-wrap: break-word; }
+  .subcats {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding-bottom: 20px;
+    margin: 0 calc(-1 * var(--space-x));
+    padding-left: var(--space-x);
+    padding-right: var(--space-x);
+  }
+  .subcat { flex: 0 0 140px; width: 140px; min-width: 140px; max-width: 140px; height: 148px; border-radius: 10px; }
   .subcatName { font-size: 12px; padding: 6px 8px 2px 12px; }
   .subcatCount { font-size: 11px; padding: 0 8px 14px 12px; }
   .toolbar {
@@ -862,20 +904,33 @@
   .cardSku { font-size: 11px; }
   .cardPrice { font-size: 15px; }
   .cta {
-    padding: 24px 20px;
-    gap: 20px;
+    padding: 18px 16px;
+    gap: 14px;
+    margin-top: 32px;
+    border-radius: 14px;
   }
-  .ctaTitle { font-size: clamp(22px, 6vw, 28px); }
-  .ctaDesc { font-size: 14px; }
+  .ctaTitle {
+    font-size: clamp(20px, 6vw, 26px);
+    margin-bottom: 8px;
+  }
+  .ctaDesc {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
   .ctaBtn {
     width: 100%;
     justify-content: center;
     gap: 12px;
     height: 48px;
     font-size: 15px;
+    margin-bottom: 0;
     box-sizing: border-box;
   }
-  .pagination { gap: 6px; padding-bottom: 40px; }
+  .pagination {
+    gap: 6px;
+    margin-top: 24px;
+    padding-bottom: 20px;
+  }
   .pageBtn,
   .pageNum { width: 40px; height: 40px; }
 }

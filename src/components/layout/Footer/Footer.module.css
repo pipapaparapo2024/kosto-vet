@@ -36,7 +36,7 @@
 .logo {
   display: flex;
   flex-direction: column;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 800;
   line-height: 1.1;
   color: var(--color-text);
@@ -82,7 +82,7 @@
 .colLinks {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .colLinks a, .colLinks p {
@@ -104,7 +104,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px 32px;
+  gap: 0;
   font-size: clamp(10px, 1.5vw, 16px);
   font-weight: 400;
   color: var(--color-text-secondary);
@@ -116,15 +116,17 @@
 }
 .bottomInner a:hover { color: var(--color-text); }
 
-.bottomPolicy  { margin-left: 0; }
-.bottomPersonal { margin-left: 0; }
+.bottomPolicy  { margin-left: 215px; }
+.bottomPersonal { margin-left: 96px; }
 
 @media (max-width: 1280px) {
   .navCols { margin-left: 40px; }
   .col:nth-child(2) { margin-left: 48px; }
   .col:nth-child(3) { margin-left: 48px; }
-  .logo { font-size: 20px; }
+  .logo { font-size: 26px; }
   .desc { font-size: 14px; }
+  .bottomPolicy  { margin-left: 96px; }
+  .bottomPersonal { margin-left: 48px; }
 }
 
 @media (max-width: 1024px) {
@@ -142,7 +144,7 @@
 
 @media (max-width: 768px) {
   .top { padding: 36px 0 28px; }
-  .logo { font-size: 20px; margin-bottom: 10px; }
+  .logo { font-size: 26px; margin-bottom: 10px; }
   .desc { font-size: 14px; }
   .navCols {
     margin-left: 0;
@@ -162,6 +164,8 @@
     gap: 10px;
     font-size: 12px;
   }
+  .bottomPolicy,
+  .bottomPersonal { margin-left: 0; }
   .bottom { padding: 20px 0 36px; }
 }
 

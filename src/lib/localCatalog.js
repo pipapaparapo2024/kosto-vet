@@ -245,6 +245,7 @@ export function localSearchSuggestions(q) {
   const needle = q.trim()
   const products = PRODUCTS.filter(p => matchesQuery(p, needle)).slice(0, 6).map(p => ({
     type: 'product',
+    label: p.name,
     title: p.name,
     url: `/catalog/${p.category}/${p.slug}`,
     slug: p.slug,
@@ -253,6 +254,7 @@ export function localSearchSuggestions(q) {
     .filter(c => c.name.toLowerCase().includes(needle.toLowerCase()))
     .map(c => ({
       type: 'category',
+      label: c.name,
       title: c.name,
       url: `/catalog/${c.slug}`,
       slug: c.slug,

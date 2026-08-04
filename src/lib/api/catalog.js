@@ -92,5 +92,18 @@ export function getSearchSuggestions(q) {
   return withLocalFallback(
     () => apiRequest(`/api/v1/catalog/search-suggestions${toQuery({ q })}`),
     () => localSearchSuggestions(q),
-  )
+    { preferLocalIfEmpty: true },
+  ).then((data) => {
+    const items = (data?.items || [])
+      .map((item) => ({
+        ...item,
+        label: item.label || item.title || item.name || '',
+        url: item.url || (item.slug
+          ? (item.type === 'category' ? `/catalog/${item.slug}` : `/catalog/${item.category_slug || item.category || 'plastiny'}/${item.slug}`)
+          : '/catalog'),
+      }))
+      .filter((item) => item.label)
+    if (items.length === 0) return localSearchSuggestions(q)
+    return { ...data, items }
+  })
 }

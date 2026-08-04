@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Phone, Clock, Star, MapPin, Truck, ClipboardList, Package, PackageCheck, Flag } from 'lucide-react'
+import { ArrowRight, Phone, Clock, Star, MapPin, Truck, ClipboardList, Package, PackageCheck, Flag, Calendar } from 'lucide-react'
 import { img } from '../utils/assetUrl'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './DeliveryPage.module.css'
@@ -14,15 +14,19 @@ const STEPS = [
 
 const ZONES = [
   { name: 'Воронеж',          time: '2–4 часа',                    Icon: Clock },
-  { name: 'ЦЧР',              time: 'Следующий день',               Icon: Truck },
+  { name: 'ЦЧР',              time: 'Следующий день',               Icon: Calendar },
   { name: 'Остальная Россия', time: 'Через транспортную компанию',  Icon: Package },
 ]
 
 const FAQ = [
-  { Icon: Clock,  q: 'Можно ли получить заказ сегодня?',     a: 'Да. Если товар есть на складе, доставим по Воронежу за 2–4 часа.' },
+  {
+    Icon: Clock,
+    q: 'Можно ли получить заказ сегодня?',
+    a: 'Да. Оформите заказ сегодня до 18:00 — доставим по Воронежу за 2–4 часа.',
+  },
   { Icon: Star,   q: 'Можно заказать ночью?',                 a: 'Да. Заявка поступит менеджеру сразу после начала рабочего дня.' },
   { Icon: MapPin, q: 'Можно вызвать курьера?',                a: 'Да. Курьер привезёт заказ по указанному адресу в удобное время.' },
-  { Icon: Truck,  q: 'Отправляете транспортными компаниями?', a: 'Да. Работаем со всеми крупными перевозчиками по всей России.' },
+  { Icon: Calendar, q: 'Отправляете транспортными компаниями?', a: 'Да. Работаем со всеми крупными перевозчиками по всей России.' },
 ]
 
 /* Воронеж — центр карты cx=150, cy=120 (в обрезанном viewBox) */
@@ -33,6 +37,9 @@ const MAP_CITIES = [
   { x: 10,  y: 194, label: 'Белгород' },
   { x: 132, y: 210, label: 'Орёл' },
 ]
+
+const CITY_R = 5
+const CENTER_R = 9.5
 
 export default function DeliveryPage() {
   useDocumentTitle('Доставка', 'Доставка имплантов по Воронежу за 2–4 часа и в регионы ЦЧР.')
@@ -100,18 +107,18 @@ export default function DeliveryPage() {
             <div className={styles.geoMap}>
               {/* viewBox обрезан сверху/снизу на 35px с каждой стороны */}
               <svg viewBox="0 35 320 210" className={styles.mapSvg}>
-                <circle cx="150" cy="140" r="11.5" fill="#111" />
+                <circle cx="150" cy="140" r={CENTER_R} fill="#111" />
                 <text x="168" y="162" fontSize="14" fontWeight="700" fill="#111">Воронеж</text>
                 {MAP_CITIES.map((city, i) => (
                   <g key={i}>
                     <line
                       x1="150" y1="140"
-                      x2={city.x + 7} y2={city.y + 7}
-                      stroke="#111111" strokeWidth="2"
+                      x2={city.x + CITY_R} y2={city.y + CITY_R}
+                      stroke="#111111" strokeWidth="1"
                     />
-                    <circle cx={city.x + 7} cy={city.y + 7} r="7" fill="#111" />
+                    <circle cx={city.x + CITY_R} cy={city.y + CITY_R} r={CITY_R} fill="#111" />
                     <text
-                      x={city.x + 18} y={city.y + 12}
+                      x={city.x + CITY_R + 11} y={city.y + CITY_R + 5}
                       fontSize="12"
                       fontWeight="500"
                       fill="#111"
@@ -150,7 +157,7 @@ export default function DeliveryPage() {
             {FAQ.map(({ Icon, q, a }, i) => (
               <div key={i} className={styles.faqCard}>
                 <div className={styles.faqIconWrap}>
-                  <Icon size={28} strokeWidth={1.5} />
+                  <Icon size={40} strokeWidth={1.5} />
                 </div>
                 <div className={styles.faqText}>
                   <p className={styles.faqQ}>{q}</p>

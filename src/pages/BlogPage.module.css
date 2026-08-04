@@ -1,4 +1,4 @@
-.page { padding-bottom: 50px; overflow-x: hidden; }
+.page { padding-bottom: 24px; overflow-x: hidden; }
 .container { padding: 0 var(--space-x); }
 
 .breadcrumb { display: flex; align-items: center; gap: 8px; padding: 42px var(--space-x); font-size: 16px; font-weight: 400; color: var(--color-text-secondary); }
@@ -8,16 +8,21 @@
 /* ── Hero ─────────────────────────── */
 .hero {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 663px);
   align-items: flex-start;
-  overflow: hidden;
+  gap: 24px;
+  padding: 0 var(--space-x);
   margin-bottom: 50px;
+  box-sizing: border-box;
 }
 
 .heroLeft {
   display: flex;
   flex-direction: column;
-  padding: 0 var(--space-x) 53px;
+  width: 687px;
+  max-width: 100%;
+  padding: 0 0 30px;
+  box-sizing: border-box;
 }
 
 .breadcrumb {
@@ -49,16 +54,16 @@
 }
 
 .heroImg {
-  width: 555px; /* 603 * 0.92 */
+  width: 663px;
   max-width: 100%;
-  height: 270px; /* 293 * 0.92 */
+  height: 293px;
   object-fit: contain;
   object-position: center right;
   mix-blend-mode: multiply;
-  flex-shrink: 0;
+  min-width: 0;
   margin-top: 42px;
-  transform: translateX(-60px);
   background: transparent;
+  justify-self: end;
 }
 
 /* ── Tags ─────────────────────────── */
@@ -99,7 +104,7 @@
   display: flex;
   flex-direction: column;
   border: 2px solid #111111;
-  border-radius: var(--radius-card);
+  border-radius: 8px;
   overflow: hidden;
   text-decoration: none;
   color: var(--color-text);
@@ -155,7 +160,7 @@
 .cardDesc {
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   line-height: 1.5;
   flex: 1;
   margin-bottom: 45px;
@@ -173,15 +178,21 @@
   gap: 6px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
 
 /* ── Pagination ───────────────────── */
 .pagination {
   display: flex;
   align-items: center;
-  gap: 6px;
   justify-content: center;
+  gap: 22px;
+}
+
+.pageNums {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .pageBtn {
@@ -200,13 +211,12 @@
 }
 .pageBtn:hover:not(:disabled) { background: #111111; color: #fff; }
 .pageBtn:disabled { opacity: 0.3; cursor: default; }
-.pageArrowPrev { transform: rotate(180deg); }
 
 .pageNum {
   width: 47px;
   height: 47px;
   border-radius: 6px;
-  border: 2px solid #111111;
+  border: none;
   background: none;
   font-family: var(--font);
   font-size: 14px;
@@ -215,13 +225,17 @@
   transition: background var(--duration), color var(--duration);
   color: var(--color-text);
 }
-.pageNum:hover { background: #111111; color: #fff; }
-.pageNumActive { background: #111111; color: #fff; }
+.pageNum:hover { color: var(--color-text); }
+.pageNumActive {
+  background: #111111;
+  color: #fff;
+  border-radius: 6px;
+}
 
 /* ── Responsive ─────────────────── */
 @media (max-width: 1280px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
-  .heroImg { width: 440px; height: auto; }
+  .heroImg { width: 480px; height: auto; }
 }
 
 @media (max-width: 1024px) {
@@ -234,7 +248,8 @@
     margin-bottom: 16px;
   }
   .heroLeft {
-    padding: 0 var(--space-x) 12px;
+    padding: 0 0 12px;
+    width: 100%;
   }
   .heroTitle { font-size: clamp(26px, 7vw, 32px); margin-bottom: 12px; }
   .heroDesc { font-size: 15px; }
@@ -246,7 +261,7 @@
   .cardPhoto { height: 180px; }
   .cardMeta { gap: 20px; flex-wrap: wrap; }
   .cardMetaItem { font-size: 12px; }
-  .pagination { gap: 6px; }
+  .pagination { gap: 12px; margin-bottom: 0; }
 }
 
 @media (max-width: 390px) {

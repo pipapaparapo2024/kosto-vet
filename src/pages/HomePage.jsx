@@ -127,12 +127,12 @@ export default function HomePage() {
 
         <div className={styles.stockBanner}>
           <span className={styles.stockIcon} aria-hidden="true">
-            <Package size={28} strokeWidth={1.5} />
+            <Package size={36} strokeWidth={1.5} />
           </span>
           <p><strong>Остаток в реальном времени</strong> — Вы видите, что товар точно есть, до оформления заказа</p>
           <Link to="/about" className={styles.stockLink}>
             Как это работает?
-            <ArrowRight size={16} strokeWidth={2} />
+            <ArrowRight size={20} strokeWidth={2} />
           </Link>
         </div>
       </section>

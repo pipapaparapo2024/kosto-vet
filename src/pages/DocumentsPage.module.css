@@ -1,12 +1,13 @@
-.page { padding-bottom: 80px; }
+.page { padding-bottom: 40px; }
 .breadcrumbWrap { border-bottom: 1px solid #e8e8e8; padding: 12px 0; }
 .container { padding: 0 var(--space-x); }
 
-/* Как на главной: широкие боковые отступы */
+/* Как на всём сайте: боковые отступы 75px, без лишнего margin */
 .containerWide {
-  padding: 0 130px;
-  max-width: 1440px;
-  margin: 0 auto;
+  padding: 0 var(--space-x);
+  width: 100%;
+  max-width: none;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -158,14 +159,23 @@
 }
 
 @media (max-width: 768px) {
+  .page { padding-bottom: 24px; }
   .docPreviewInner { padding: 20px; }
   .docActions {
     flex-direction: column;
     align-items: stretch;
+    padding: 14px 16px;
+    gap: 10px;
   }
-  .docContactBtn { white-space: normal; text-align: center; }
+  .docContactBtn {
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+    padding: 10px 12px;
+  }
   .breadcrumbTop { padding: 24px 0; flex-wrap: wrap; }
   .pdfBtn { padding: 20px 16px; }
+  .agreementLayout { padding-bottom: 24px; }
 }
 
 @media (max-width: 390px) {
@@ -187,7 +197,7 @@
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 64px;
-  padding-bottom: 80px;
+  padding-bottom: 40px;
 }
 
 .toc {

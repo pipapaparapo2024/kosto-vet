@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
 import { img } from '../utils/assetUrl'
 import { ARTICLES, BLOG_TAGS } from '../data/blogArticles'
 import styles from './BlogPage.module.css'
@@ -62,24 +62,28 @@ export default function BlogPage() {
             className={styles.pageBtn}
             onClick={() => goToPage(Math.max(1, page - 1))}
             disabled={page === 1}
+            aria-label="Предыдущая страница"
           >
-            <ArrowRight size={16} strokeWidth={2} className={styles.pageArrowPrev} aria-hidden="true" />
+            <ChevronLeft size={18} strokeWidth={2} aria-hidden="true" />
           </button>
-          {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map(p => (
-            <button
-              key={p}
-              className={`${styles.pageNum} ${p === page ? styles.pageNumActive : ''}`}
-              onClick={() => goToPage(p)}
-            >
-              {p}
-            </button>
-          ))}
+          <div className={styles.pageNums}>
+            {Array.from({ length: totalPages || 1 }, (_, i) => i + 1).map(p => (
+              <button
+                key={p}
+                className={`${styles.pageNum} ${p === page ? styles.pageNumActive : ''}`}
+                onClick={() => goToPage(p)}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
           <button
             className={styles.pageBtn}
             onClick={() => goToPage(Math.min(totalPages, page + 1))}
             disabled={page === totalPages || totalPages === 0}
+            aria-label="Следующая страница"
           >
-            <ArrowRight size={16} strokeWidth={2} />
+            <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
           </button>
         </div>
       </div>

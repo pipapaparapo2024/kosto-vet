@@ -70,7 +70,7 @@
   padding-right: 29px;
   background: var(--color-btn);
   color: var(--color-btn-text);
-  border-radius: 16px;
+  border-radius: 10px;
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
@@ -129,7 +129,7 @@
   flex-direction: column;
   padding: 25px 25px 45px;
   border: 2px solid #111111;
-  border-radius: var(--radius-card);
+  border-radius: 10px;
   background: #fff;
   box-sizing: border-box;
 }
@@ -266,23 +266,27 @@
 
 .faqGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 335px);
   gap: 13px;
+  justify-content: start;
 }
 
 .faqCard {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  width: 335px;
+  height: 190px;
   padding: 18px 18px 18px 16px;
   border: 2px solid #111111;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #fff;
+  box-sizing: border-box;
 }
 
 .faqIconWrap {
-  width: 48px;
-  height: 48px;
+  width: 75px;
+  height: 75px;
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--color-bg-secondary);
@@ -296,12 +300,12 @@
 .faqText {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 30px;
   min-width: 0;
 }
 
 .faqQ {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--color-text);
   line-height: 1.2;
@@ -312,7 +316,7 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  line-height: 1.35;
+  line-height: 1.4;
   margin: 0;
 }
 
@@ -325,7 +329,7 @@
   gap: 40px;
   align-items: center;
   background: #F5F5F5;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 30px 17px 30px 48px;
 }
 
@@ -366,7 +370,7 @@
   padding-right: 29px;
   background: var(--color-btn);
   color: var(--color-btn-text);
-  border-radius: 16px;
+  border-radius: 10px;
   font-size: 20px;
   font-weight: 600;
   text-decoration: none;
@@ -379,15 +383,15 @@
 .ctaBtnSecondary {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   height: 60px;
   padding: 0 31px;
   background: #fff;
   color: var(--color-text);
   border: 2px solid #111111;
-  border-radius: 16px;
-  font-size: 20px;
-  font-weight: 600;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
   text-decoration: none;
   transition: background var(--duration), color var(--duration);
   flex-shrink: 0;
@@ -409,7 +413,7 @@
 
 /* ── Responsive ─────────────────────────── */
 @media (max-width: 1280px) {
-  .faqGrid { grid-template-columns: repeat(2, 1fr); }
+  .faqGrid { grid-template-columns: repeat(2, 335px); }
   .heroLeft { width: 100%; max-width: 100%; }
   .heroTitle { max-width: 100%; }
 }
@@ -484,7 +488,7 @@
   .geoName { font-size: 16px; }
   .geoTime { font-size: 13px; }
   .faqGrid { grid-template-columns: 1fr; gap: 10px; }
-  .faqCard { padding: 14px; }
+  .faqCard { width: 100%; max-width: 100%; height: auto; min-height: 0; padding: 14px; }
   .faqQ { font-size: 15px; }
   .faqA { font-size: 13px; }
   .ctaTitle { font-size: clamp(22px, 6vw, 28px); white-space: normal; }

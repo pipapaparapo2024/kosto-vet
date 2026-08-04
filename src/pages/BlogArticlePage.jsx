@@ -70,9 +70,21 @@ export default function BlogArticlePage() {
               <p className={styles.tocTitle}>Содержание</p>
               <ol className={styles.tocList}>
                 {article.toc.map((item, i) => (
-                  <li key={item} className={styles.tocItem}>
-                    <span className={styles.tocNum}>{i + 1}.</span>
-                    <span>{item}</span>
+                  <li key={item}>
+                    <a
+                      href={`#section-${i}`}
+                      className={styles.tocItem}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        document.getElementById(`section-${i}`)?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        })
+                      }}
+                    >
+                      <span className={styles.tocNum}>{i + 1}.</span>
+                      <span>{item}</span>
+                    </a>
                   </li>
                 ))}
               </ol>
@@ -81,7 +93,7 @@ export default function BlogArticlePage() {
 
           <article className={styles.article}>
             {article.sections.map((section, i) => (
-              <div key={section.title}>
+              <div key={section.title} id={`section-${i}`}>
                 <h2 className={styles.chapterTitle}>{i + 1}. {section.title}</h2>
                 {section.paragraphs.map((para, pi) => (
                   <p key={pi} className={styles.para}>{para}</p>

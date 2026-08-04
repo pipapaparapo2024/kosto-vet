@@ -8,7 +8,7 @@ const STATS = [
   { Icon: Package,    value: '1000+',              label: 'позиций в наличии',                          isNum: true },
   { Icon: Clock,      value: '2–4 часа',           label: 'доставка по Воронежу в день заказа',         isNum: true },
   { Icon: Users,      value: 'Работаем с клиниками', label: 'от небольших кабинетов до крупных центров', isNum: false },
-  { Icon: Headphones, value: 'Помогаем с подбором', label: 'если нет уверенности — подберём совместно', isNum: false },
+  { Icon: Headphones, value: 'Помогаем с подбором', label: 'если нет уверенности — подскажем совместимое решение', isNum: false },
 ]
 
 const STEPS = [
@@ -78,9 +78,11 @@ export default function AboutPage() {
               <div key={s.num} className={styles.stepRow}>
                 <div className={styles.step}>
                   <div className={styles.stepNum}>{s.num}</div>
-                  <div className={styles.stepIcon}><s.Icon size={66} strokeWidth={1.2} /></div>
-                  <p className={styles.stepTitle}>{s.title}</p>
-                  <p className={styles.stepDesc}>{s.desc}</p>
+                  <div className={styles.stepIcon}><s.Icon size={71} strokeWidth={1.2} /></div>
+                  <div className={styles.stepText}>
+                    <p className={styles.stepTitle}>{s.title}</p>
+                    <p className={styles.stepDesc}>{s.desc}</p>
+                  </div>
                 </div>
                 {i < STEPS.length - 1 && (
                   <div className={styles.stepArrow}><ArrowRight size={20} strokeWidth={2} /></div>
@@ -115,7 +117,7 @@ export default function AboutPage() {
               <div className={styles.whyList}>
                 {WHY.map(({ Icon, title, desc }, i) => (
                   <div key={i} className={styles.whyItem}>
-                    <Icon size={40} strokeWidth={1.5} className={styles.whyIcon} />
+                    <Icon size={45} strokeWidth={1.5} className={styles.whyIcon} />
                     <div>
                       <p className={styles.whyTitle}>{title}</p>
                       <p className={styles.whyDesc}>{desc}</p>
@@ -124,6 +126,8 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
+
+            <div className={styles.splitDivider} aria-hidden="true" />
 
             <div className={styles.splitRight}>
               <h2 className={styles.sectionTitle24}>Частые вопросы</h2>
@@ -163,15 +167,32 @@ function FaqList({ items }) {
   const [open, setOpen] = useState(null)
   return (
     <div className={styles.faq}>
-      {items.map((item, i) => (
-        <div key={i} className={`${styles.faqItem} ${open === i ? styles.faqOpen : ''}`}>
-          <button className={styles.faqQ} onClick={() => setOpen(open === i ? null : i)}>
-            {item.q}
-            <ChevronDown size={16} strokeWidth={2} style={{ transform: open === i ? 'rotate(180deg)' : 'none', transition: '200ms', flexShrink: 0 }} />
-          </button>
-          {open === i && <p className={styles.faqA}>{item.a}</p>}
-        </div>
-      ))}
+      {items.map((item, i) => {
+        const isOpen = open === i
+        return (
+          <div key={item.q} className={`${styles.faqItem}${isOpen ? ` ${styles.faqOpen}` : ''}`}>
+            <button
+              type="button"
+              className={styles.faqQ}
+              aria-expanded={isOpen}
+              onClick={() => setOpen(isOpen ? null : i)}
+            >
+              {item.q}
+              <ChevronDown
+                size={16}
+                strokeWidth={2}
+                className={`${styles.faqChevron}${isOpen ? ` ${styles.faqChevronOpen}` : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+            <div className={`${styles.faqPanel}${isOpen ? ` ${styles.faqPanelOpen}` : ''}`}>
+              <div className={styles.faqPanelInner}>
+                <p className={styles.faqA}>{item.a}</p>
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
