@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { listCustomerOrders, listFavorites, removeFavorite, getCustomerOrder } from '../../../lib/api/account'
-import { getCustomerManager } from '../../../lib/api/auth'
+import { getCustomerManager, startYandexLogin } from '../../../lib/api/auth'
 import { formatMoney } from '../../../lib/money'
 import { orderStatusLabel, paymentStatusLabel } from '../../../lib/labels'
 import { AuthListSkeleton, AuthProfileSkeleton } from '../Skeleton/Skeleton'
@@ -63,6 +63,20 @@ export default function AuthDrawer({ isOpen, onClose }) {
       setFormError(null)
       setError?.(null)
       setShowPassword(false)
+    } else {
+      // Обработать oauth_error из URL (после редиректа от Яндекса)
+      const params = new URLSearchParams(window.location.search)
+      const oauthError = params.get('oauth_error')
+      if (oauthError) {
+        setFormError(
+          oauthError === 'provider_denied'
+            ? 'Вы отменили вход через Яндекс. Попробуйте ещё раз.'
+            : 'Не удалось войти через Яндекс. Попробуйте другой способ.'
+        )
+        params.delete('oauth_error')
+        const newSearch = params.toString()
+        window.history.replaceState(null, '', window.location.pathname + (newSearch ? `?${newSearch}` : ''))
+      }
     }
   }, [isOpen, setError])
 
@@ -213,6 +227,15 @@ export default function AuthDrawer({ isOpen, onClose }) {
                     <span className={styles.orText}>или</span>
                     <span className={styles.orLine} />
                   </div>
+
+                  <button
+                    type="button"
+                    className={styles.yandexBtn}
+                    onClick={() => startYandexLogin(window.location.pathname)}
+                  >
+                    <YandexIcon />
+                    Войти через Яндекс ID
+                  </button>
 
                   <button
                     type="button"
@@ -783,5 +806,14 @@ function ManagerPanel({ manager: initialManager }) {
         <p><a href={manager.messenger_url} target="_blank" rel="noreferrer">Мессенджер</a></p>
       )}
     </div>
+  )
+}
+
+function YandexIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="22" height="22" rx="5" fill="#000"/>
+      <path d="M12.53 16.5H14V5.5H11.617C9.24 5.5 7.9 6.77 7.9 8.8c0 1.76.88 2.77 2.53 3.86L7.5 16.5h1.77l3.07-3.67-.79-.52c-1.34-.89-1.94-1.65-1.94-3.04 0-1.21.82-2 2.2-2h.72V16.5z" fill="#fff"/>
+    </svg>
   )
 }

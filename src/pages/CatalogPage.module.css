@@ -1,4 +1,4 @@
-.page { padding-bottom: 0; overflow-x: clip; }
+﻿.page { padding-bottom: 0; overflow-x: clip; }
 .container {
   padding: 0 var(--space-x);
   max-width: none;
@@ -13,7 +13,7 @@
   align-items: center;
   gap: 8px;
   padding: 42px 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: var(--color-text-secondary);
 }
@@ -44,7 +44,7 @@
 }
 
 .heroDesc {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -93,14 +93,14 @@
 }
 
 .benefitTitle {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 6px;
 }
 
 .benefitDesc {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -152,7 +152,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--color-text);
 }
@@ -165,7 +165,7 @@
 }
 
 .subcatName {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   padding: 6px 8px 2px 20px;
   text-align: left;
@@ -177,7 +177,7 @@
 }
 
 .subcatCount {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-text-secondary);
   padding: 0 8px 20px 20px;
@@ -223,14 +223,14 @@
 }
 
 .filterTitle {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #ffffff;
   line-height: 30px;
 }
 
 .filterClear {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
   background: none;
@@ -278,7 +278,7 @@
   background: none;
   border: none;
   font-family: var(--font);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--color-text);
   cursor: pointer;
@@ -313,13 +313,13 @@
 
 .filterOptionLabel {
   flex: 1;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--color-text);
 }
 
 .filterCount {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--color-text-secondary);
 }
@@ -327,10 +327,14 @@
 /* ── Область товаров ──────────────────── */
 .productsArea {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* ── Тулбар ───────────────────────────── */
 .toolbar {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -338,7 +342,7 @@
 }
 
 .count {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-text);
   white-space: nowrap;
@@ -357,7 +361,7 @@
   border: 1.5px solid #111111;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   background: #fff;
   outline: none;
@@ -390,7 +394,7 @@
   border: 1.5px solid #111111;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   background: #fff;
   outline: none;
@@ -436,7 +440,7 @@
   border-radius: 6px;
   background: transparent;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
   text-align: left;
@@ -465,7 +469,7 @@
   border: 1.5px solid #111111;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -483,12 +487,13 @@
   border-radius: 50%;
   background: #fff;
   color: #111111;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 /* ── Активные чипы ────────────────────── */
 .chips {
+  width: 100%;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -505,7 +510,7 @@
   border: 1.5px solid #111111;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
   cursor: pointer;
@@ -519,7 +524,7 @@
 }
 
 .chipsReset {
-  font-size: 14px;
+  font-size: 16px;
   color: #111111;
   background: none;
   border: none;
@@ -534,7 +539,7 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 236px);
-  column-gap: 20px;
+  column-gap: 46px;
   row-gap: 21px;
   margin-top: 20px;
   justify-content: start;
@@ -544,7 +549,7 @@
 .card {
   width: 236px;
   max-width: 100%;
-  height: 354px;
+  height: 355px;
   border: 2px solid #111111;
   border-radius: 8px;
   overflow: hidden;
@@ -585,30 +590,33 @@
 }
 
 .cardName {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.25;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
+  height: calc(16px * 1.25 * 2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .cardSku {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.3;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .cardSpecs {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
   line-height: 1.3;
@@ -625,13 +633,13 @@
 }
 
 .cardPrice {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 
 .cardPriceEmpty {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--color-text-secondary);
   font-style: italic;
 }
@@ -640,7 +648,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-text);
 }
@@ -649,7 +657,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-text-secondary);
 }
@@ -668,7 +676,7 @@
   color: var(--color-btn-text);
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   margin-top: 8px;
   transition: background var(--duration);
@@ -679,9 +687,10 @@
 
 /* ── Empty state ──────────────────────── */
 .empty {
+  width: 100%;
   padding: 60px 0;
   color: var(--color-text-secondary);
-  font-size: 15px;
+  font-size: 17px;
 }
 
 /* ── CTA — вне layout, полная ширина ──── */
@@ -700,7 +709,7 @@
 .ctaLeft { display: flex; flex-direction: column; }
 
 .ctaTitle {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -709,7 +718,7 @@
 }
 
 .ctaDesc {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -727,7 +736,7 @@
   color: var(--color-btn-text);
   border-radius: 14px;
   font-family: var(--font);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   text-decoration: none;
   align-self: flex-start;
@@ -749,6 +758,7 @@
 
 /* ── Пагинация ────────────────────────── */
 .pagination {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -767,7 +777,7 @@
   border: 2px solid #111111;
   background: none;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   color: var(--color-text);
@@ -787,7 +797,7 @@
   border: 2px solid #111111;
   background: none;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   color: var(--color-text);
@@ -850,14 +860,14 @@
     overflow-wrap: break-word;
   }
   .heroDesc {
-    font-size: 15px;
+    font-size: 17px;
     margin-bottom: 16px;
     max-width: 100%;
   }
   .benefits { flex-direction: column; gap: 12px; width: 100%; }
   .benefitItem { gap: 12px; width: 100%; }
-  .benefitTitle { font-size: 15px; margin-bottom: 2px; }
-  .benefitDesc { font-size: 13px; overflow-wrap: break-word; }
+  .benefitTitle { font-size: 17px; margin-bottom: 2px; }
+  .benefitDesc { font-size: 15px; overflow-wrap: break-word; }
   .subcats {
     flex-wrap: nowrap;
     gap: 8px;
@@ -867,14 +877,14 @@
     padding-right: var(--space-x);
   }
   .subcat { flex: 0 0 140px; width: 140px; min-width: 140px; max-width: 140px; height: 148px; border-radius: 10px; }
-  .subcatName { font-size: 12px; padding: 6px 8px 2px 12px; }
-  .subcatCount { font-size: 11px; padding: 0 8px 14px 12px; }
+  .subcatName { font-size: 14px; padding: 6px 8px 2px 12px; }
+  .subcatCount { font-size: 13px; padding: 0 8px 14px 12px; }
   .toolbar {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  .count { font-size: 18px; }
+  .count { font-size: 20px; }
   .toolbarRight {
     width: 100%;
     flex-wrap: wrap;
@@ -889,7 +899,7 @@
   }
   .sortSelect { width: 100%; }
   .chips { gap: 8px; }
-  .chip { font-size: 13px; padding: 6px 10px; }
+  .chip { font-size: 15px; padding: 6px 10px; }
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 12px;
@@ -900,9 +910,9 @@
     height: auto;
     min-height: 300px;
   }
-  .cardName { font-size: 13px; }
-  .cardSku { font-size: 11px; }
-  .cardPrice { font-size: 15px; }
+  .cardName { font-size: 15px; }
+  .cardSku { font-size: 13px; }
+  .cardPrice { font-size: 17px; }
   .cta {
     padding: 18px 16px;
     gap: 14px;
@@ -914,7 +924,7 @@
     margin-bottom: 8px;
   }
   .ctaDesc {
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 14px;
   }
   .ctaBtn {
@@ -922,7 +932,7 @@
     justify-content: center;
     gap: 12px;
     height: 48px;
-    font-size: 15px;
+    font-size: 17px;
     margin-bottom: 0;
     box-sizing: border-box;
   }

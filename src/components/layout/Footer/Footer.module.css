@@ -1,4 +1,4 @@
-.footer {
+﻿.footer {
   margin-top: 36px;
 }
 
@@ -36,7 +36,7 @@
 .logo {
   display: flex;
   flex-direction: column;
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
   line-height: 1.1;
   color: var(--color-text);
@@ -46,7 +46,7 @@
 }
 
 .desc {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -116,17 +116,27 @@
 }
 .bottomInner a:hover { color: var(--color-text); }
 
-.bottomPolicy  { margin-left: 215px; }
-.bottomPersonal { margin-left: 96px; }
+.bottomLinks {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+.bottomLinks a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.bottomLinks a:hover { color: var(--color-text); }
 
 @media (max-width: 1280px) {
   .navCols { margin-left: 40px; }
   .col:nth-child(2) { margin-left: 48px; }
   .col:nth-child(3) { margin-left: 48px; }
-  .logo { font-size: 26px; }
-  .desc { font-size: 14px; }
-  .bottomPolicy  { margin-left: 96px; }
-  .bottomPersonal { margin-left: 48px; }
+  .logo { font-size: 28px; }
+  .desc { font-size: 16px; }
 }
 
 @media (max-width: 1024px) {
@@ -148,8 +158,8 @@
     margin-top: 20px;
   }
   .top { padding: 28px 0 20px; }
-  .logo { font-size: 26px; margin-bottom: 10px; }
-  .desc { font-size: 14px; }
+  .logo { font-size: 28px; margin-bottom: 10px; }
+  .desc { font-size: 16px; }
   .navCols {
     margin-left: 0;
     flex-direction: column;
@@ -157,19 +167,18 @@
   }
   .col:nth-child(2),
   .col:nth-child(3) { margin-left: 0; }
-  .colTitle { font-size: 18px; margin-bottom: 14px; }
+  .colTitle { font-size: 20px; margin-bottom: 14px; }
   .colLinks { gap: 10px; }
   .colLinks a,
-  .colLinks p { font-size: 14px; }
+  .colLinks p { font-size: 16px; }
   .catImg { display: none; }
   .bottomInner {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    font-size: 12px;
+    font-size: 14px;
   }
-  .bottomPolicy,
-  .bottomPersonal { margin-left: 0; }
+  .bottomLinks { margin-left: 0; }
   .bottom { padding: 20px 0 36px; }
 }
 

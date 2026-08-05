@@ -1,4 +1,4 @@
-.page {}
+﻿.page {}
 
 /* ── HERO ──────────────────────────────── */
 .hero {
@@ -44,7 +44,7 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: var(--radius-btn);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   text-decoration: none;
   align-self: flex-start;
@@ -91,14 +91,14 @@
 }
 
 .benefitTitle {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text);
   line-height: 1.2;
 }
 
 .benefitDesc {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 400;
   color: var(--color-text-secondary);
   margin-top: 2px;
@@ -172,7 +172,7 @@
 }
 
 .catalogSub {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 400;
   color: var(--color-text-secondary);
 }
@@ -214,20 +214,20 @@
 }
 
 .categoryName {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 6px;
 }
 
 .categoryDesc {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 .categoryCount {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--color-text-secondary);
   margin-top: 10px;
@@ -256,7 +256,7 @@
   height: 100px;
   background: var(--color-bg-secondary);
   border-radius: var(--radius-card);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .stockIcon {
@@ -275,14 +275,14 @@
   width: 36px;
   height: 36px;
 }
-.stockBanner p { flex: 1; line-height: 1.5; font-size: 12px; font-weight: 400; }
-.stockBanner p strong { font-size: 14px; font-weight: 600; display: block; margin-bottom: 2px; }
+.stockBanner p { flex: 1; line-height: 1.5; font-size: 14px; font-weight: 400; }
+.stockBanner p strong { font-size: 16px; font-weight: 600; display: block; margin-bottom: 2px; }
 
 .stockLink {
   margin-left: auto;
   color: var(--color-text);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   text-decoration: none;
   white-space: nowrap;
   display: inline-flex;
@@ -345,7 +345,7 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: var(--radius-btn);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   text-decoration: none;
   align-self: flex-start;
@@ -405,14 +405,14 @@
   }
   .sep { display: none; }
   .benefit { width: 100%; }
-  .benefitTitle { font-size: 16px; }
-  .benefitDesc { font-size: 12px; }
+  .benefitTitle { font-size: 18px; }
+  .benefitDesc { font-size: 14px; }
   .benefit svg { width: 40px; height: 40px; }
   .heroBtn,
   .ctaBtn {
     padding: 0 24px;
     height: 52px;
-    font-size: 14px;
+    font-size: 16px;
     gap: 12px;
     max-width: 100%;
     box-sizing: border-box;
@@ -441,14 +441,14 @@
     grid-area: link;
     margin-left: 0;
     white-space: nowrap;
-    font-size: 12px;
+    font-size: 14px;
     justify-self: start;
   }
 }
 
 @media (max-width: 768px) {
   .heroLeft { padding-top: 32px; padding-bottom: 20px; }
-  .heroDesc { font-size: 13px; }
+  .heroDesc { font-size: 15px; }
   .catalog {
     padding-top: 32px;
   }
@@ -459,7 +459,7 @@
     margin-left: 8px;
     margin-bottom: -10px;
   }
-  .catalogSub { font-size: 13px; }
+  .catalogSub { font-size: 15px; }
   .catalogTitle { font-size: clamp(20px, 6vw, 26px); }
   .catalogTitleWrap { padding-top: 8px; gap: 6px; }
   .benefitsInner {
@@ -469,10 +469,10 @@
     padding: 20px var(--space-x);
   }
   .benefit svg { width: 36px; height: 36px; }
-  .benefitTitle { font-size: 14px; }
-  .benefitDesc { font-size: 11px; }
-  .categoryName { font-size: 14px; }
-  .categoryDesc { font-size: 11px; }
+  .benefitTitle { font-size: 16px; }
+  .benefitDesc { font-size: 13px; }
+  .categoryName { font-size: 16px; }
+  .categoryDesc { font-size: 13px; }
   .stockBanner {
     margin-top: 14px;
     padding: 14px 16px;

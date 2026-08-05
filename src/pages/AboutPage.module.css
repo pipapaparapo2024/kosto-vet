@@ -1,4 +1,4 @@
-.page {
+﻿.page {
   padding-bottom: 24px;
 }
 
@@ -12,7 +12,7 @@
   align-items: center;
   gap: 8px;
   padding: 42px var(--space-x);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: var(--color-text-secondary);
 }
@@ -48,7 +48,7 @@
 }
 
 .heroDesc {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -71,7 +71,7 @@
 
 /* ── Shared title 24px ─────────────────── */
 .sectionTitle24 {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 27px;
@@ -112,7 +112,7 @@
 }
 
 .statValueNum {
-  font-size: 48px;
+  font-size: 50px;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--color-text);
@@ -121,7 +121,7 @@
 }
 
 .statValueText {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 8px;
@@ -129,7 +129,7 @@
 }
 
 .statLabel {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--color-text);
   line-height: 1;
@@ -171,7 +171,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -191,7 +191,7 @@
 }
 
 .stepTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 12px;
@@ -201,7 +201,7 @@
 }
 
 .stepDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -223,7 +223,7 @@
 }
 
 .vkladDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.35;
@@ -245,7 +245,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text-secondary);
 }
@@ -304,7 +304,7 @@
 }
 
 .whyTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 10px;
@@ -312,7 +312,7 @@
 }
 
 .whyDesc {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.25;
@@ -343,7 +343,7 @@
   background: none;
   border: none;
   font-family: var(--font);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   text-align: left;
   cursor: pointer;
@@ -377,7 +377,7 @@
 
 .faqA {
   padding: 0 20px 16px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.6;
@@ -407,7 +407,7 @@
 }
 
 .ctaTitle {
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -415,7 +415,7 @@
 }
 
 .ctaDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -438,7 +438,7 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: 14px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   text-decoration: none;
   transition: background var(--duration);
@@ -457,7 +457,7 @@
   color: var(--color-text);
   border: 2px solid #111111;
   border-radius: 14px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   text-decoration: none;
   transition: background var(--duration), color var(--duration);
@@ -505,8 +505,8 @@
     padding: 18px 16px 20px;
   }
   .stepIcon svg { width: 40px !important; height: 40px !important; }
-  .stepTitle { font-size: 15px; margin-bottom: 8px; }
-  .stepDesc { font-size: 13px; }
+  .stepTitle { font-size: 17px; margin-bottom: 8px; }
+  .stepDesc { font-size: 15px; }
   .splitInner { grid-template-columns: 1fr; gap: 40px; }
   .splitDivider { display: none; }
   .splitLeft { padding-right: 0; }
@@ -529,17 +529,17 @@
 
 @media (max-width: 768px) {
   .page { padding-bottom: 0; }
-  .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
+  .breadcrumb { padding: 24px var(--space-x); font-size: 15px; }
   .hero { padding-bottom: 35px; }
   .heroTitle { font-size: clamp(28px, 8vw, 36px); }
-  .heroDesc { font-size: 15px; }
+  .heroDesc { font-size: 17px; }
   .sectionTitle24 { font-size: clamp(22px, 6vw, 28px); }
   .statsSection { padding-bottom: 35px; }
   .statsGrid { grid-template-columns: 1fr; }
   .statCard { padding: 16px; }
-  .statValueNum { font-size: 24px; }
-  .statValueText { font-size: 16px; }
-  .statLabel { font-size: 13px; }
+  .statValueNum { font-size: 26px; }
+  .statValueText { font-size: 18px; }
+  .statLabel { font-size: 15px; }
   .stepsSection { padding-bottom: 35px; }
   .steps {
     flex-direction: column;
@@ -556,8 +556,8 @@
   }
   .stepIcon { flex: 0 0 auto; padding: 12px 0; }
   .stepIcon svg { width: 36px !important; height: 36px !important; }
-  .stepTitle { font-size: 15px; margin-bottom: 6px; }
-  .stepDesc { font-size: 13px; }
+  .stepTitle { font-size: 17px; margin-bottom: 6px; }
+  .stepDesc { font-size: 15px; }
   .vkladSection { padding-bottom: 28px; }
   .vkladDesc { margin-bottom: 16px; }
   .warehousePhotos {
@@ -591,7 +591,7 @@
     white-space: normal;
     margin-bottom: 12px;
   }
-  .ctaDesc { margin-bottom: 16px; font-size: 14px; }
+  .ctaDesc { margin-bottom: 16px; font-size: 16px; }
   .ctaBtns { flex-direction: column; align-items: stretch; gap: 10px; }
   .ctaBtnPrimary,
   .ctaBtnSecondary {
@@ -599,7 +599,7 @@
     justify-content: center;
     box-sizing: border-box;
     height: 48px;
-    font-size: 15px;
+    font-size: 17px;
     gap: 12px;
     padding: 0 20px;
   }

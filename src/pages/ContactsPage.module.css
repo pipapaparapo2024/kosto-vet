@@ -1,7 +1,7 @@
-.page { padding-bottom: 0; }
+﻿.page { padding-bottom: 0; }
 .container { padding: 0 var(--space-x); }
 
-.breadcrumb { display: flex; align-items: center; gap: 8px; padding: 42px var(--space-x); font-size: 16px; font-weight: 400; color: var(--color-text-secondary); }
+.breadcrumb { display: flex; align-items: center; gap: 8px; padding: 42px var(--space-x); font-size: 18px; font-weight: 400; color: var(--color-text-secondary); }
 .breadcrumb a { color: var(--color-text-secondary); text-decoration: none; }
 .breadcrumb a:hover { color: var(--color-text); }
 
@@ -30,7 +30,7 @@
   align-items: center;
   gap: 8px;
   padding: 42px 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: var(--color-text-secondary);
 }
@@ -47,7 +47,7 @@
 }
 
 .heroDesc {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -71,7 +71,7 @@
 .section { padding: 60px 0; }
 
 .sectionTitle {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 25px;
@@ -108,14 +108,14 @@
 }
 
 .contactMethod {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 20px;
 }
 
 .contactValue {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--color-text);
   flex: 1;
@@ -133,7 +133,7 @@
   color: #fff;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   text-decoration: none;
   align-self: stretch;
@@ -225,7 +225,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-text-secondary);
   cursor: pointer;
   line-height: 1.4;
@@ -237,7 +237,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: #eb5757;
   margin: 0;
 }
@@ -246,7 +246,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
 }
@@ -284,7 +284,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--color-text);
   box-sizing: border-box;
@@ -326,14 +326,14 @@
 .mapIconTruck { width: 29px; height: 29px; }
 
 .mapInfoLabel {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 8px;
 }
 
 .mapInfoText {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -350,7 +350,7 @@
   color: #fff;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   text-decoration: none;
   transition: opacity var(--duration);
@@ -396,7 +396,7 @@
   background: none;
   border: none;
   font-family: var(--font);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   text-align: left;
   cursor: pointer;
@@ -430,7 +430,7 @@
 
 .faqA {
   padding: 0 20px 16px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.6;
@@ -452,7 +452,7 @@
 .ctaLeft { display: flex; flex-direction: column; }
 
 .ctaTitle {
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -460,7 +460,7 @@
 }
 
 .ctaDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -483,7 +483,7 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: 14px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   text-decoration: none;
   transition: background var(--duration);
@@ -502,7 +502,7 @@
   color: var(--color-text);
   border: 2px solid #111111;
   border-radius: 14px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   text-decoration: none;
   transition: background var(--duration), color var(--duration);
@@ -573,11 +573,11 @@
 }
 
 @media (max-width: 768px) {
-  .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
+  .breadcrumb { padding: 24px var(--space-x); font-size: 15px; }
   .heroTitle { font-size: clamp(28px, 8vw, 36px); }
-  .heroDesc { font-size: 15px; }
+  .heroDesc { font-size: 17px; }
   .section { padding: 28px 0; }
-  .sectionTitle { margin-bottom: 14px; font-size: 20px; }
+  .sectionTitle { margin-bottom: 14px; font-size: 22px; }
   .contactCards { flex-direction: column; gap: 12px; }
   .contactCard {
     width: 100%;
@@ -586,7 +586,7 @@
     min-height: 0;
     padding: 16px;
   }
-  .contactValue { font-size: 16px; }
+  .contactValue { font-size: 18px; }
   .formMapGrid { gap: 20px; }
   .formCol,
   .form { max-width: none; }
@@ -596,11 +596,11 @@
   .faqCol { gap: 8px; }
   .faqItem { padding: 0; }
   .faqQ {
-    font-size: 14px;
+    font-size: 16px;
     padding: 12px 14px;
   }
   .faqA {
-    font-size: 13px;
+    font-size: 15px;
     padding: 0 14px 12px;
   }
   .cta {
@@ -612,7 +612,7 @@
     white-space: normal;
     margin-bottom: 12px;
   }
-  .ctaDesc { margin-bottom: 16px; font-size: 14px; }
+  .ctaDesc { margin-bottom: 16px; font-size: 16px; }
   .ctaBtns {
     flex-direction: column;
     align-items: stretch;
@@ -623,7 +623,7 @@
     width: 100%;
     max-width: none;
     height: 48px;
-    font-size: 15px;
+    font-size: 17px;
     padding: 0 20px;
     justify-content: space-between;
     box-sizing: border-box;

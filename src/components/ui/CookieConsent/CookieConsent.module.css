@@ -1,4 +1,4 @@
-.root {
+﻿.root {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -38,7 +38,7 @@
   margin: 0;
   flex: 1;
   min-width: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   line-height: 1.45;
   color: #ffffff;
@@ -64,7 +64,7 @@
   padding: 0 28px;
   border-radius: var(--radius-btn);
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -92,12 +92,12 @@
     gap: 16px;
     padding: 18px 20px;
   }
-  .text { font-size: 13px; }
+  .text { font-size: 15px; }
   .btnAccept,
   .btnDecline {
     height: 44px;
     padding: 0 22px;
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
@@ -113,7 +113,7 @@
     border-radius: 20px;
   }
   .text {
-    font-size: 13px;
+    font-size: 15px;
     text-align: left;
   }
   .actions {
@@ -129,10 +129,10 @@
 }
 
 @media (max-width: 390px) {
-  .text { font-size: 12px; }
+  .text { font-size: 14px; }
   .btnAccept,
   .btnDecline {
     height: 44px;
-    font-size: 14px;
+    font-size: 16px;
   }
 }

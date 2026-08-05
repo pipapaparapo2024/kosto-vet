@@ -60,9 +60,13 @@ export default function Footer() {
       <div className={styles.bottom}>
         <div className={styles.container}>
           <div className={styles.bottomInner}>
-            <span>© 2026 Kosto-Vet</span>
-            <Link to="/documents/politika-konfidencialnosti" className={styles.bottomPolicy}>Политика конфиденциальности</Link>
-            <Link to="/documents/obrabotka-personalnyh-dannyh" className={styles.bottomPersonal}>Обработка персональных данных</Link>
+            <span>© 2026 Kosto-Vet · ИП Чекунов М.В. · ОГРНИП 304366235500321</span>
+            <nav className={styles.bottomLinks}>
+              <Link to="/privacy-policy">Политика обработки ПД</Link>
+              <Link to="/personal-data-consent">Согласие на обработку ПД</Link>
+              <Link to="/user-agreement">Пользовательское соглашение</Link>
+              <Link to="/offer">Публичная оферта</Link>
+            </nav>
           </div>
         </div>
       </div>

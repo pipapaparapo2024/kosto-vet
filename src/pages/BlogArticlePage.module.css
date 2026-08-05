@@ -1,4 +1,4 @@
-.page {
+﻿.page {
   padding-bottom: 40px;
 }
 
@@ -16,7 +16,7 @@
   flex-wrap: wrap;
   gap: 8px;
   padding: 42px 0;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-text-secondary);
 }
 .breadcrumb a {
@@ -43,7 +43,7 @@
 }
 
 .articleTitle {
-  font-size: 48px;
+  font-size: 50px;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -52,7 +52,7 @@
 }
 
 .articleDesc {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -70,7 +70,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--color-text-secondary);
 }
@@ -91,7 +91,7 @@
   align-items: center;
   justify-content: center;
   color: #aaa;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   overflow: hidden;
 }
@@ -124,7 +124,7 @@
 }
 
 .tocTitle {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 20px;
@@ -142,7 +142,7 @@
 .tocItem {
   display: flex;
   gap: 8px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -172,7 +172,7 @@
 }
 
 .chapterTitle {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #111111;
   margin: 32px 0 6px;
@@ -181,7 +181,7 @@
 .article > div:first-child .chapterTitle { margin-top: 0; }
 
 .para {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
   color: #333333;
   line-height: 1.7;
@@ -212,7 +212,7 @@
 }
 
 .widgetTitle {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 14px;
@@ -220,7 +220,7 @@
 }
 
 .widgetDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.45;
@@ -248,7 +248,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: #aaa;
   text-align: center;
@@ -266,7 +266,7 @@
 }
 
 .widgetProductName {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: #111111;
   line-height: 1.3;
@@ -274,7 +274,7 @@
 }
 
 .widgetSku {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
   margin: 0 0 10px;
@@ -284,7 +284,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   color: #111111;
   margin: 0 0 20px;
@@ -306,7 +306,7 @@
 }
 
 .widgetPrice {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #111111;
   margin: 0;
@@ -330,7 +330,7 @@
   border-radius: 8px;
   border: 1.5px solid #111111;
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   text-decoration: none;
   box-sizing: border-box;
@@ -363,7 +363,7 @@
 }
 
 .otherTitle {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 30px;
@@ -389,7 +389,7 @@
   align-items: center;
   justify-content: center;
   color: #888;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   overflow: hidden;
 }
@@ -406,7 +406,7 @@
 }
 
 .otherCardTitle {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #111111;
   line-height: 1.35;
@@ -417,7 +417,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
 }
@@ -429,7 +429,7 @@
   height: 48px;
   border: 1.5px solid #111111;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: #111111;
   text-decoration: none;
@@ -479,23 +479,23 @@
 @media (max-width: 768px) {
   .page { padding-bottom: 0; }
   .articleTitle { font-size: clamp(24px, 7vw, 32px); margin-bottom: 14px; }
-  .articleDesc { font-size: 15px; margin-bottom: 20px; }
+  .articleDesc { font-size: 17px; margin-bottom: 20px; }
   .articleMeta { gap: 16px; }
-  .metaItem { font-size: 12px; }
+  .metaItem { font-size: 14px; }
   .articleCover {
     width: 100%;
     max-width: none;
     height: auto;
     aspect-ratio: 420 / 260;
-    font-size: 14px;
+    font-size: 16px;
   }
   .layout { padding-top: 24px; gap: 28px; }
   .tocTitle,
   .widgetTitle,
   .otherTitle,
-  .chapterTitle { font-size: 18px; }
-  .tocItem { font-size: 13px; }
-  .para { font-size: 15px; line-height: 1.6; }
+  .chapterTitle { font-size: 20px; }
+  .tocItem { font-size: 15px; }
+  .para { font-size: 17px; line-height: 1.6; }
   .widgetCol,
   .productWidget,
   .otherArticles { width: 100%; max-width: 100%; }
@@ -503,9 +503,9 @@
   .widgetActions { margin-top: 28px; }
   .widgetBtn,
   .widgetBtnSecondary,
-  .allArticlesBtn { height: 44px; font-size: 14px; }
+  .allArticlesBtn { height: 44px; font-size: 16px; }
   .otherPhoto { width: 100px; height: 80px; }
   .otherCardTitle,
-  .otherReadLink { font-size: 13px; }
+  .otherReadLink { font-size: 15px; }
 }
 

@@ -1,4 +1,4 @@
-.page {
+﻿.page {
   padding-bottom: 14px;
 }
 
@@ -12,7 +12,7 @@
   align-items: center;
   gap: 8px;
   padding: 42px var(--space-x);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: var(--color-text-secondary);
 }
@@ -53,7 +53,7 @@
 }
 
 .heroDesc {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -70,7 +70,7 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: 10px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   text-decoration: none;
   align-self: flex-start;
@@ -105,7 +105,7 @@
 }
 
 .stepsTitle {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 800;
   color: var(--color-text);
   margin-bottom: 27px;
@@ -142,7 +142,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -156,7 +156,7 @@
 }
 
 .stepTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 20px;
@@ -164,7 +164,7 @@
 }
 
 .stepDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -186,7 +186,7 @@
 }
 
 .geoTitle {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 27px;
@@ -239,14 +239,14 @@
 }
 
 .geoName {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 4px;
 }
 
 .geoTime {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--color-text-secondary);
 }
@@ -257,7 +257,7 @@
 }
 
 .faqTitle {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 30px;
@@ -304,7 +304,7 @@
 }
 
 .faqQ {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--color-text);
   line-height: 1.2;
@@ -312,7 +312,7 @@
 }
 
 .faqA {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -338,7 +338,7 @@
 }
 
 .ctaTitle {
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -347,7 +347,7 @@
 }
 
 .ctaDesc {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-text-secondary);
   line-height: 1.5;
@@ -370,7 +370,7 @@
   background: var(--color-btn);
   color: var(--color-btn-text);
   border-radius: 10px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   text-decoration: none;
   transition: background var(--duration);
@@ -389,7 +389,7 @@
   color: var(--color-text);
   border: 2px solid #111111;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   text-decoration: none;
   transition: background var(--duration), color var(--duration);
@@ -438,8 +438,8 @@
     padding: 18px 16px 20px;
   }
   .stepIcon svg { width: 40px !important; height: 40px !important; }
-  .stepTitle { font-size: 15px; margin-bottom: 8px; }
-  .stepDesc { font-size: 13px; }
+  .stepTitle { font-size: 17px; margin-bottom: 8px; }
+  .stepDesc { font-size: 15px; }
   .cta { grid-template-columns: 1fr; padding: 28px 20px; }
   .ctaRight { display: none; }
   .ctaTitle { white-space: normal; }
@@ -447,16 +447,16 @@
 
 @media (max-width: 768px) {
   .page { padding-bottom: 0; }
-  .breadcrumb { padding: 24px var(--space-x); font-size: 13px; }
+  .breadcrumb { padding: 24px var(--space-x); font-size: 15px; }
   .heroTitle { font-size: clamp(28px, 8vw, 36px); }
-  .heroDesc { font-size: 15px; margin-bottom: 28px; }
+  .heroDesc { font-size: 17px; margin-bottom: 28px; }
   .heroBtn {
     width: 100%;
     max-width: 100%;
     justify-content: center;
     gap: 16px;
     height: 52px;
-    font-size: 16px;
+    font-size: 18px;
     box-sizing: border-box;
   }
   .stepsTitle { font-size: clamp(22px, 6vw, 28px); margin-bottom: 16px; }
@@ -475,8 +475,8 @@
   }
   .stepIcon { flex: 0 0 auto; padding: 10px 0; }
   .stepIcon svg { width: 36px !important; height: 36px !important; }
-  .stepTitle { font-size: 15px; margin-bottom: 6px; }
-  .stepDesc { font-size: 13px; }
+  .stepTitle { font-size: 17px; margin-bottom: 6px; }
+  .stepDesc { font-size: 15px; }
   .geoTitle,
   .faqTitle { font-size: clamp(22px, 6vw, 28px); margin-bottom: 16px; }
   .geoGrid { grid-template-columns: 1fr; gap: 24px; }
@@ -485,16 +485,16 @@
   .geoZone { gap: 12px; }
   .geoIconWrap { width: 44px; height: 44px; }
   .geoIconWrap svg { width: 28px !important; height: 28px !important; }
-  .geoName { font-size: 16px; }
-  .geoTime { font-size: 13px; }
+  .geoName { font-size: 18px; }
+  .geoTime { font-size: 15px; }
   .faqSection { padding-bottom: 20px; }
   .faqGrid { grid-template-columns: 1fr; gap: 10px; }
   .faqCard { width: 100%; max-width: 100%; height: auto; min-height: 0; padding: 14px; }
   .faqText { gap: 15px; }
-  .faqQ { font-size: 15px; }
-  .faqA { font-size: 13px; }
+  .faqQ { font-size: 17px; }
+  .faqA { font-size: 15px; }
   .ctaTitle { font-size: clamp(22px, 6vw, 28px); white-space: normal; }
-  .ctaDesc { font-size: 14px; margin-bottom: 20px; }
+  .ctaDesc { font-size: 16px; margin-bottom: 20px; }
   .ctaBtns { flex-direction: column; align-items: stretch; gap: 10px; }
   .ctaBtnPrimary,
   .ctaBtnSecondary {
@@ -502,12 +502,12 @@
     justify-content: center;
     gap: 12px;
     height: 48px;
-    font-size: 15px;
+    font-size: 17px;
     box-sizing: border-box;
   }
 }
 
 @media (max-width: 390px) {
-  .heroBtn { font-size: 15px; }
+  .heroBtn { font-size: 17px; }
 }
 

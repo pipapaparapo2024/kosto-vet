@@ -1,4 +1,4 @@
-.overlay {
+﻿.overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.25);
@@ -42,7 +42,7 @@
 }
 
 .title {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 12px;
@@ -50,7 +50,7 @@
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: #6F6F6F;
   line-height: 1.5;
@@ -96,7 +96,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: #6F6F6F;
   transition: color 250ms ease-out;
@@ -116,7 +116,7 @@
 }
 
 .formHint {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: #6F6F6F;
   margin: 0 0 18px;
@@ -135,7 +135,7 @@
 }
 
 .fieldLabel {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #111111;
 }
@@ -151,7 +151,7 @@
   padding: 0 14px;
   border: 1.5px solid #111111;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 17px;
   font-family: var(--font);
   outline: none;
   box-sizing: border-box;
@@ -221,7 +221,7 @@
   border: none;
   border-radius: 6px;
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   cursor: pointer;
   transition: background 250ms ease-out;
@@ -251,7 +251,7 @@
 }
 
 .orText {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: #9A9A9A;
 }
@@ -268,7 +268,7 @@
   border: 1.5px solid #111111;
   border-radius: 6px;
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   cursor: pointer;
   transition: background 250ms ease-out;
@@ -278,6 +278,30 @@
   background: #FAFAFA;
 }
 
+.yandexBtn + button,
+.yandexBtn + .secondaryBtn {
+  margin-top: 10px;
+}
+
+.yandexBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background: #FC3F1D;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 200ms;
+}
+.yandexBtn:hover { opacity: 0.88; }
+
 .forgotLink {
   display: block;
   margin: 16px auto 0;
@@ -285,7 +309,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
   text-decoration: underline;
@@ -294,7 +318,7 @@
 }
 
 .termsText {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   color: #6F6F6F;
   line-height: 1.5;
@@ -309,7 +333,7 @@
 .switchNote {
   margin-top: auto;
   padding-top: 40px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
 }
@@ -319,7 +343,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #111111;
   text-decoration: underline;
@@ -356,14 +380,14 @@
 }
 
 .featureTitle {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 2px;
 }
 
 .featureDesc {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #6F6F6F;
   line-height: 1.45;
@@ -376,7 +400,7 @@
   border-radius: 8px;
   background: #fdecec;
   color: #EB5757;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
 }
 
@@ -436,7 +460,7 @@
 }
 
 .profileName {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #111111;
 }
@@ -445,7 +469,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: #27AE60;
   background: #EAF8F0;
@@ -455,7 +479,7 @@
 
 .profileCity,
 .profileInn {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: #6F6F6F;
   margin: 0;
@@ -470,7 +494,7 @@
 }
 
 .quickTitle {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 12px;
@@ -495,7 +519,7 @@
   background: #fff;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: #111111;
   text-align: center;
@@ -526,7 +550,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
   text-align: left;
@@ -561,7 +585,7 @@
   border-radius: 999px;
   background: #EFEFEF;
   color: #111111;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -598,7 +622,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   color: #6F6F6F;
   text-align: center;
@@ -614,21 +638,21 @@
 }
 
 .managerTitle {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #6F6F6F;
   margin: 0 0 4px;
 }
 
 .managerName {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: #111111;
   margin: 0 0 4px;
 }
 
 .managerPhone {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #111111;
   margin: 0;
@@ -645,7 +669,7 @@
   border: none;
   border-radius: 8px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
@@ -674,7 +698,7 @@
 }
 
 .panelMuted {
-  font-size: 14px;
+  font-size: 16px;
   color: #6F6F6F;
 }
 
@@ -697,14 +721,14 @@
 }
 
 .listTitle {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: #111111;
   text-decoration: none;
 }
 
 .listMeta {
-  font-size: 13px;
+  font-size: 15px;
   white-space: nowrap;
 }
 
@@ -716,7 +740,7 @@
   background: none;
   color: #6F6F6F;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 15px;
   text-decoration: none;
 }
 
@@ -728,7 +752,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 

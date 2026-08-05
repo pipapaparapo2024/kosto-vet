@@ -1,4 +1,4 @@
-.page { padding-bottom: 40px; }
+﻿.page { padding-bottom: 40px; }
 .breadcrumbWrap { border-bottom: 1px solid #e8e8e8; padding: 12px 0; }
 .container { padding: 0 var(--space-x); }
 
@@ -11,12 +11,12 @@
   box-sizing: border-box;
 }
 
-.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #888; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 15px; color: #888; }
 .breadcrumb a { color: #888; text-decoration: none; }
 .breadcrumb a:hover { color: #111; }
 
 .pageTitle { font-size: clamp(24px, 3vw, 32px); font-weight: 600; color: #111; margin: 0 0 8px; }
-.pageDesc { font-size: 15px; color: #777; margin-bottom: 36px; }
+.pageDesc { font-size: 17px; color: #777; margin-bottom: 36px; }
 
 .layout {
   display: grid;
@@ -29,7 +29,7 @@
 .nav { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 24px; }
 .navGroup { display: flex; flex-direction: column; gap: 4px; }
 .navGroupTitle {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -44,7 +44,7 @@
   background: none;
   border: none;
   padding: 8px 12px;
-  font-size: 13px;
+  font-size: 15px;
   color: #555;
   border-radius: 6px;
   cursor: pointer;
@@ -66,8 +66,8 @@
   justify-content: space-between;
   gap: 16px;
 }
-.docTitle { font-size: 22px; font-weight: 600; color: #111; }
-.docUpdated { font-size: 13px; color: #aaa; margin-top: 4px; }
+.docTitle { font-size: 24px; font-weight: 600; color: #111; }
+.docUpdated { font-size: 15px; color: #aaa; margin-top: 4px; }
 
 .downloadBtn {
   display: flex;
@@ -78,7 +78,7 @@
   border: none;
   border-radius: 8px;
   padding: 10px 16px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
@@ -110,10 +110,10 @@
   padding-bottom: 16px;
   border-bottom: 1px solid #e8e8e8;
 }
-.docPreviewLogo { font-size: 18px; font-weight: 700; color: #111; letter-spacing: .03em; }
-.docPreviewSubtitle { font-size: 12px; color: #aaa; }
-.docPreviewTitle { font-size: 18px; font-weight: 600; color: #111; margin-top: 8px; }
-.docPreviewBody { font-size: 15px; color: #444; line-height: 1.85; max-width: none; }
+.docPreviewLogo { font-size: 20px; font-weight: 700; color: #111; letter-spacing: .03em; }
+.docPreviewSubtitle { font-size: 14px; color: #aaa; }
+.docPreviewTitle { font-size: 20px; font-weight: 600; color: #111; margin-top: 8px; }
+.docPreviewBody { font-size: 17px; color: #444; line-height: 1.85; max-width: none; }
 
 /* Actions */
 .docActions {
@@ -124,12 +124,12 @@
   background: #f7f7f7;
   border-radius: 10px;
 }
-.docActionsNote { font-size: 14px; color: #555; flex: 1; }
+.docActionsNote { font-size: 16px; color: #555; flex: 1; }
 .docContactBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 15px;
   color: #111;
   text-decoration: none;
   font-weight: 500;
@@ -179,15 +179,15 @@
 }
 
 @media (max-width: 390px) {
-  .sectionTitle { font-size: 20px; }
-  .sectionP { font-size: 15px; }
+  .sectionTitle { font-size: 22px; }
+  .sectionP { font-size: 17px; }
 }
 .breadcrumbTop {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 42px 0;
-  font-size: 13px;
+  font-size: 15px;
   color: #888;
 }
 .breadcrumbTop a { color: #888; text-decoration: none; }
@@ -212,7 +212,7 @@
 }
 
 .tocTitle {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--color-text);
 }
@@ -220,7 +220,7 @@
 .tocList { display: flex; flex-direction: column; }
 
 .tocItem {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--color-text);
   text-decoration: none;
   padding: 10px 0;
@@ -247,8 +247,8 @@
 }
 .pdfBtn:hover { border-color: var(--color-text); }
 
-.pdfBtnTitle { display: block; font-size: 14px; font-weight: 700; color: var(--color-text); }
-.pdfBtnSub { display: block; font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.pdfBtnTitle { display: block; font-size: 16px; font-weight: 700; color: var(--color-text); }
+.pdfBtnSub { display: block; font-size: 14px; color: var(--color-text-secondary); margin-top: 2px; }
 
 .agreementBody { max-width: none; min-width: 0; }
 
@@ -260,10 +260,10 @@
   line-height: 1.15;
 }
 
-.agreementUpdated { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 20px; }
+.agreementUpdated { font-size: 16px; color: var(--color-text-secondary); margin-bottom: 20px; }
 
 .agreementIntro {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--color-text);
   line-height: 1.75;
   margin-bottom: 40px;
@@ -272,15 +272,15 @@
 .section { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid var(--color-border); }
 .section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-.sectionTitle { font-size: 24px; font-weight: 700; color: var(--color-text); margin-bottom: 16px; }
-.sectionP { font-size: 16px; color: var(--color-text); line-height: 1.75; margin-bottom: 10px; }
+.sectionTitle { font-size: 26px; font-weight: 700; color: var(--color-text); margin-bottom: 16px; }
+.sectionP { font-size: 18px; color: var(--color-text); line-height: 1.75; margin-bottom: 10px; }
 .sectionP:last-child { margin-bottom: 0; }
 
 .sectionBlock { margin-bottom: 16px; }
 .sectionBlock:last-child { margin-bottom: 0; }
-.sectionSubtitle { font-size: 15px; font-weight: 600; color: var(--color-text); margin-bottom: 8px; }
+.sectionSubtitle { font-size: 17px; font-weight: 600; color: var(--color-text); margin-bottom: 8px; }
 .sectionList { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
-.sectionList li { font-size: 15px; color: var(--color-text); line-height: 1.6; }
+.sectionList li { font-size: 17px; color: var(--color-text); line-height: 1.6; }
 
 .readMoreBtn {
   display: inline-flex;
@@ -292,7 +292,7 @@
   border-radius: 100px;
   background: none;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--color-text);
   cursor: pointer;

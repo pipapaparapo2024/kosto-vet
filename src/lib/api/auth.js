@@ -46,3 +46,18 @@ export function updateCustomerMe(payload) {
 export function getCustomerManager() {
   return apiRequest('/api/v1/account/manager')
 }
+
+/** Перенаправляет браузер на Яндекс OAuth. returnPath — куда вернуть после логина. */
+export function startYandexLogin(returnPath = '/') {
+  window.location.href = `/api/v1/customer/auth/yandex/start?return_to=${encodeURIComponent(returnPath)}`
+}
+
+/** Привязать Яндекс к существующему аккаунту */
+export function linkYandexAccount() {
+  return apiRequest('/api/v1/customer/auth/yandex/link', { method: 'POST' })
+}
+
+/** Отвязать Яндекс от аккаунта */
+export function unlinkYandexAccount() {
+  return apiRequest('/api/v1/customer/auth/yandex/unlink', { method: 'DELETE' })
+}

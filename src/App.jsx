@@ -15,6 +15,7 @@ import DocumentsPage from './pages/DocumentsPage'
 import OrderStatusPage from './pages/OrderStatusPage'
 import CheckoutPage from './pages/CheckoutPage'
 import NotFoundPage from './pages/NotFoundPage'
+import LegalPage from './pages/LegalPage'
 
 function Layout({ children }) {
   return (
@@ -51,6 +52,11 @@ export default function App() {
       <Route path="/blog/:slug" element={<Layout><BlogArticlePage /></Layout>} />
       <Route path="/documents" element={<Layout><DocumentsPage /></Layout>} />
       <Route path="/documents/:doc" element={<Layout><DocumentsPage /></Layout>} />
+      <Route path="/privacy-policy" element={<Layout><LegalPage /></Layout>} />
+      <Route path="/user-agreement" element={<Layout><LegalPage /></Layout>} />
+      <Route path="/offer" element={<Layout><LegalPage /></Layout>} />
+      <Route path="/personal-data-consent" element={<Layout><LegalPage /></Layout>} />
+      <Route path="/legal/:slug" element={<Layout><LegalPage /></Layout>} />
 
       <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
     </Routes>
