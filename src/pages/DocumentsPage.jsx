@@ -5,23 +5,13 @@ import { img } from '../utils/assetUrl'
 import styles from './DocumentsPage.module.css'
 
 const DOCS = [
-  { id: 'sertifikat-sootvetstviya',     label: 'Сертификат соответствия', group: 'Сертификаты' },
-  { id: 'deklaraciya-ee',               label: 'Декларация о соответствии ЕЭС', group: 'Сертификаты' },
-  { id: 'svidetelstvo-gosregistracii',  label: 'Свидетельство о гос. регистрации', group: 'Сертификаты' },
-  { id: 'protokol-ispytaniy',           label: 'Протокол испытаний', group: 'Технические' },
-  { id: 'tehnicheskie-usloviya',        label: 'Технические условия (ТУ)', group: 'Технические' },
-  { id: 'instrukciya-primeneniya',      label: 'Инструкция по применению', group: 'Технические' },
-  { id: 'sterilizaciya',                label: 'Рекомендации по стерилизации', group: 'Технические' },
-  { id: 'kontrol-kachestva',            label: 'Контроль качества продукции', group: 'Технические' },
   { id: 'politika-konfidencialnosti',   label: 'Политика конфиденциальности', group: 'Юридические', to: '/privacy-policy' },
   { id: 'obrabotka-personalnyh-dannyh', label: 'Обработка персональных данных', group: 'Юридические', to: '/personal-data-consent' },
   { id: 'polzovatelskoe-soglashenie',   label: 'Пользовательское соглашение', group: 'Юридические', to: '/user-agreement' },
   { id: 'oferta',                       label: 'Договор-оферта', group: 'Юридические', to: '/offer' },
-  { id: 'vozvrat',                      label: 'Порядок возврата', group: 'Юридические' },
-  { id: 'licenziya',                    label: 'Лицензия на деятельность', group: 'Юридические' },
 ]
 
-const GROUPS = ['Сертификаты', 'Технические', 'Юридические']
+const GROUPS = ['Юридические']
 
 const DOC_CONTENT = {
   'sertifikat-sootvetstviya': {
