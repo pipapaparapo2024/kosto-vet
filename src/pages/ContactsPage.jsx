@@ -160,7 +160,13 @@ export default function ContactsPage() {
             <div className={styles.mapCol}>
               <h2 className={styles.sectionTitle}>Где мы находимся</h2>
               <div className={styles.mapBlock}>
-                <div className={styles.mapPlaceholder}>ТУТ БУДЕТ Яндекс.КАРТА</div>
+                <iframe
+                  className={styles.mapPlaceholder}
+                  src="https://yandex.ru/map-widget/v1/?text=%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%B5%D0%B6%2C+%D1%83%D0%BB.+%D0%94%D0%B8%D0%BC%D0%B8%D1%82%D1%80%D0%BE%D0%B2%D0%B0+56%D0%B0&z=16&l=map"
+                  frameBorder="0"
+                  allowFullScreen
+                  title="Kosto-Vet на карте"
+                />
                 <div className={styles.mapDivider} />
                 <div className={styles.mapInfo}>
                   <div className={styles.mapInfoItem}>
@@ -194,7 +200,7 @@ export default function ContactsPage() {
                       </p>
                     </div>
                   </div>
-                  <a href="#" className={styles.mapRouteBtn}>
+                  <a href="https://yandex.ru/maps/?text=%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%B5%D0%B6%2C+%D1%83%D0%BB.+%D0%94%D0%B8%D0%BC%D0%B8%D1%82%D1%80%D0%BE%D0%B2%D0%B0+56%D0%B0" target="_blank" rel="noopener noreferrer" className={styles.mapRouteBtn}>
                     Открыть в Яндекс.Картах
                     <SquareArrowOutUpRight size={16} strokeWidth={1.8} />
                   </a>
