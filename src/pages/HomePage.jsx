@@ -6,27 +6,28 @@ import { img } from '../utils/assetUrl'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './HomePage.module.css'
 
-const FALLBACK_CATEGORIES = [
-  { slug: 'plastiny', title: 'Пластины', description: 'Для фиксации переломов длинных и плоских костей', subtree_product_count: null },
-  { slug: 'vinty', title: 'Винты', description: 'Для остеосинтеза и фиксации пластин', subtree_product_count: null },
-  { slug: 'instrumenty', title: 'Инструменты', description: 'Специализированные инструменты для операций', subtree_product_count: null },
-  { slug: 'shvovny', title: 'Шовный материал', description: 'Для мягкотканых и кожных швов', subtree_product_count: null },
-  { slug: 'nabory', title: 'Наборы', description: 'Готовые наборы для остеосинтеза', subtree_product_count: null },
+const CATEGORY_STUBS = [
+  { slug: 'plastiny', title: 'Пластины', description: 'Для фиксации переломов длинных и плоских костей' },
+  { slug: 'vinty', title: 'Винты', description: 'Для остеосинтеза и фиксации пластин' },
+  { slug: 'instrumenty', title: 'Инструменты', description: 'Специализированные инструменты для операций' },
+  { slug: 'shvovny', title: 'Шовный материал', description: 'Для мягкотканых и кожных швов' },
+  { slug: 'nabory', title: 'Наборы', description: 'Готовые наборы для остеосинтеза' },
 ]
 
 export default function HomePage() {
-  const [categories, setCategories] = useState(FALLBACK_CATEGORIES)
+  const [categories, setCategories] = useState(CATEGORY_STUBS)
   useDocumentTitle('Импланты для остеосинтеза', 'Ветеринарные импланты со склада в Воронеже. Доставка за 2–4 часа.')
 
   useEffect(() => {
     listCategories()
       .then(res => {
-        if (!res.items?.length) return
-        const bySlug = Object.fromEntries(FALLBACK_CATEGORIES.map(c => [c.slug, c]))
+        if (!res?.items?.length) return
+        const apiBySlug = Object.fromEntries(res.items.map(c => [c.slug, c]))
         setCategories(
-          res.items.map(c => ({
-            ...c,
-            description: c.description || bySlug[c.slug]?.description || '',
+          CATEGORY_STUBS.map(stub => ({
+            ...stub,
+            ...(apiBySlug[stub.slug] || {}),
+            description: apiBySlug[stub.slug]?.description || stub.description || '',
           })),
         )
       })

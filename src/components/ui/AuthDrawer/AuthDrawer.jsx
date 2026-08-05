@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 import { listCustomerOrders, listFavorites, removeFavorite, getCustomerOrder } from '../../../lib/api/account'
-import { getCustomerManager, startYandexLogin } from '../../../lib/api/auth'
+import { getCustomerManager, startYandexLogin, linkYandexAccount, unlinkYandexAccount } from '../../../lib/api/auth'
 import { formatMoney } from '../../../lib/money'
 import { orderStatusLabel, paymentStatusLabel } from '../../../lib/labels'
 import { AuthListSkeleton, AuthProfileSkeleton } from '../Skeleton/Skeleton'
@@ -718,7 +718,6 @@ function ProfilePanel({ customer }) {
     const payload = {
       name: form.name.trim(),
       phone: form.phone.trim() || undefined,
-      email: form.email.trim(),
       customer_type: form.customer_type,
       company_name: form.company_name.trim() || undefined,
       inn: form.inn.trim() || undefined,
@@ -765,7 +764,48 @@ function ProfilePanel({ customer }) {
       <button type="submit" className={styles.submitBtn} disabled={saving}>
         {saving ? 'Сохранение…' : 'Сохранить'}
       </button>
+      <YandexLinkBlock providers={customer.auth_providers} />
     </form>
+  )
+}
+
+function YandexLinkBlock({ providers = [] }) {
+  const isLinked = providers.some(p => p.provider === 'yandex')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState(null)
+
+  const handleUnlink = async () => {
+    setBusy(true)
+    setErr(null)
+    try {
+      await unlinkYandexAccount()
+      window.location.reload()
+    } catch (e) {
+      setErr(e.message)
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className={styles.yandexBlock}>
+      <p className={styles.yandexLabel}>Вход через Яндекс ID</p>
+      {isLinked ? (
+        <>
+          <p className={styles.yandexStatus}>Привязан</p>
+          {err && <p className={styles.formError}>{err}</p>}
+          <button type="button" className={styles.outlineBtn} onClick={handleUnlink} disabled={busy}>
+            {busy ? 'Отвязываем…' : 'Отвязать Яндекс ID'}
+          </button>
+        </>
+      ) : (
+        <>
+          <p className={styles.yandexStatus}>Не привязан</p>
+          <button type="button" className={styles.outlineBtn} onClick={() => startYandexLogin(window.location.pathname)}>
+            Привязать Яндекс ID
+          </button>
+        </>
+      )}
+    </div>
   )
 }
 
@@ -773,11 +813,10 @@ function AddressPanel() {
   return (
     <div className={styles.profileFields}>
       <p className={styles.panelMuted}>
-        Сохранённые адреса пока недоступны.
-        Адрес указывается при оформлении заказа или в заявке для клиник.
+        Сохранённые адреса пока недоступны. Адрес указывается при оформлении заказа или в заявке для клиник.
       </p>
-      <Link to="/checkout" className={styles.submitBtn} style={{ display: 'inline-flex', textDecoration: 'none', marginTop: 12 }}>
-        Перейти к оформлению
+      <Link to="/contacts" className={styles.outlineBtn}>
+        Связаться с менеджером
       </Link>
     </div>
   )

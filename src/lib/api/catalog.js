@@ -1,11 +1,4 @@
 import { apiRequest } from '../apiClient'
-import {
-  localCategories,
-  localCategoryDetail,
-  localGetProduct,
-  localListProducts,
-  localSearchSuggestions,
-} from '../localCatalog'
 
 function toQuery(params) {
   const q = new URLSearchParams()
@@ -17,39 +10,12 @@ function toQuery(params) {
   return s ? `?${s}` : ''
 }
 
-async function withLocalFallback(apiCall, localResult, { preferLocalIfEmpty = false } = {}) {
-  try {
-    const data = await apiCall()
-    if (data == null) return typeof localResult === 'function' ? localResult() : localResult
-    if (preferLocalIfEmpty && Array.isArray(data.items) && data.items.length === 0) {
-      return typeof localResult === 'function' ? localResult() : localResult
-    }
-    if (preferLocalIfEmpty && typeof data.total === 'number' && data.total === 0 && Array.isArray(data.items)) {
-      return typeof localResult === 'function' ? localResult() : localResult
-    }
-    return data
-  } catch {
-    return typeof localResult === 'function' ? localResult() : localResult
-  }
-}
-
 export function listCategories() {
-  return withLocalFallback(
-    () => apiRequest('/api/v1/catalog/categories'),
-    () => ({ items: localCategories() }),
-    { preferLocalIfEmpty: true },
-  )
+  return apiRequest('/api/v1/catalog/categories')
 }
 
 export function getCategory(slug) {
-  return withLocalFallback(
-    () => apiRequest(`/api/v1/catalog/categories/${encodeURIComponent(slug)}`),
-    () => {
-      const detail = localCategoryDetail(slug)
-      if (!detail) throw new Error('Категория не найдена')
-      return detail
-    },
-  )
+  return apiRequest(`/api/v1/catalog/categories/${encodeURIComponent(slug)}`)
 }
 
 export function listProducts({
@@ -62,38 +28,24 @@ export function listProducts({
   page = 1,
   limit = 24,
 } = {}) {
-  return withLocalFallback(
-    () => apiRequest(`/api/v1/catalog/products${toQuery({
-      category,
-      include_descendants: includeDescendants,
-      q,
-      in_stock: inStock,
-      stock_state: stockState,
-      sort,
-      page,
-      limit,
-    })}`),
-    () => localListProducts({ category, q, inStock, stockState, sort, page, limit }),
-  )
+  return apiRequest(`/api/v1/catalog/products${toQuery({
+    category,
+    include_descendants: includeDescendants,
+    q,
+    in_stock: inStock,
+    stock_state: stockState,
+    sort,
+    page,
+    limit,
+  })}`)
 }
 
 export function getProduct(slug) {
-  return withLocalFallback(
-    () => apiRequest(`/api/v1/catalog/products/${encodeURIComponent(slug)}`),
-    () => {
-      const product = localGetProduct(slug)
-      if (!product) throw new Error('Товар не найден')
-      return product
-    },
-  )
+  return apiRequest(`/api/v1/catalog/products/${encodeURIComponent(slug)}`)
 }
 
 export function getSearchSuggestions(q) {
-  return withLocalFallback(
-    () => apiRequest(`/api/v1/catalog/search-suggestions${toQuery({ q })}`),
-    () => localSearchSuggestions(q),
-    { preferLocalIfEmpty: true },
-  ).then((data) => {
+  return apiRequest(`/api/v1/catalog/search-suggestions${toQuery({ q })}`).then((data) => {
     const items = (data?.items || [])
       .map((item) => ({
         ...item,
@@ -103,7 +55,6 @@ export function getSearchSuggestions(q) {
           : '/catalog'),
       }))
       .filter((item) => item.label)
-    if (items.length === 0) return localSearchSuggestions(q)
     return { ...data, items }
   })
 }

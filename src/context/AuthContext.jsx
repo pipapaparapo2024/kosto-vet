@@ -6,8 +6,9 @@ import {
   logoutCustomer,
   refreshCustomerSession,
   updateCustomerMe,
+  fetchAndStoreCsrf,
 } from '../lib/api/auth'
-import { ApiError } from '../lib/apiClient'
+import { ApiError, clearCsrfToken } from '../lib/apiClient'
 import { formatFieldErrors } from '../lib/payment'
 
 const AuthContext = createContext(null)
@@ -31,10 +32,12 @@ export function AuthProvider({ children }) {
   const refreshSession = useCallback(async () => {
     try {
       const data = await getCustomerMe()
+      await fetchAndStoreCsrf()
       return applySession(data)
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         try {
+          await fetchAndStoreCsrf()
           const refreshed = await refreshCustomerSession()
           return applySession(refreshed)
         } catch {
@@ -66,6 +69,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await loginCustomer({ email, password })
       applySession(data)
+      await fetchAndStoreCsrf()
       return { ok: true }
     } catch (e) {
       const message = toAuthError(e, 'Ошибка входа')
@@ -82,6 +86,7 @@ export function AuthProvider({ children }) {
     try {
       const data = await registerCustomer(payload)
       applySession(data)
+      await fetchAndStoreCsrf()
       return { ok: true }
     } catch (e) {
       const message = toAuthError(e, 'Ошибка регистрации')
@@ -99,6 +104,7 @@ export function AuthProvider({ children }) {
     } catch {
       // clear local session anyway
     }
+    clearCsrfToken()
     setCustomer(null)
   }, [])
 

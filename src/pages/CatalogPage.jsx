@@ -21,13 +21,13 @@ const PER_PAGE = 24
 
 /** Верхний ряд карточек формы пластин (макет: 7 шт). */
 export const PLATE_SUBCATS = [
-  { slug: 'parnye', title: 'Парные', count: 46, match: /парн/i },
-  { slug: 't-obraznye', title: 'Т-образные', count: 13, match: /т[\s-]?образ/i },
-  { slug: 'l-obraznye', title: 'L-образные', count: 59, match: /l[\s-]?образ|л[\s-]?образ/i },
-  { slug: 'rekonstruktivnye', title: 'Реконструктивные', count: 46, match: /реконструкт/i },
-  { slug: 'bedrennaya', title: 'Для бедренной кости', count: 46, match: /бедрен/i },
-  { slug: 'taz', title: 'Для таза', count: 46, match: /таз|тазов/i },
-  { slug: 'all-plastiny', title: 'Все пластины', count: 134, isAll: true },
+  { slug: 'parnye', title: 'Парные', match: /парн/i },
+  { slug: 't-obraznye', title: 'Т-образные', match: /т[\s-]?образ/i },
+  { slug: 'l-obraznye', title: 'L-образные', match: /l[\s-]?образ|л[\s-]?образ/i },
+  { slug: 'rekonstruktivnye', title: 'Реконструктивные', match: /реконструкт/i },
+  { slug: 'bedrennaya', title: 'Для бедренной кости', match: /бедрен/i },
+  { slug: 'taz', title: 'Для таза', match: /таз|тазов/i },
+  { slug: 'all-plastiny', title: 'Все пластины', isAll: true },
 ]
 
 function formatProductCount(n) {
@@ -301,10 +301,10 @@ export default function CatalogPage() {
               <div className={styles.filterGroup}>
                 <button type="button" className={styles.filterGroupBtn} onClick={() => toggleGroup('nalichie')}>
                   Наличие
-                  <ChevronDown size={14} strokeWidth={2.5} style={{ transform: openGroups.nalichie ? 'rotate(180deg)' : 'none', transition: '150ms', flexShrink: 0 }} />
+                  <ChevronDown size={14} strokeWidth={2.5} style={{ transform: openGroups.nalichie !== false ? 'rotate(180deg)' : 'none', transition: 'transform 240ms ease', flexShrink: 0 }} />
                 </button>
-                {openGroups.nalichie !== false && (
-                  <div className={styles.filterGroupBody}>
+                <div className={`${styles.filterGroupBodyWrap} ${openGroups.nalichie !== false ? styles.filterGroupBodyWrapOpen : ''}`}>
+                  <div className={`${styles.filterGroupBody} ${openGroups.nalichie !== false ? styles.filterGroupBodyOpen : ''}`}>
                     <label className={styles.filterOption}>
                       <input
                         type="checkbox"
@@ -323,10 +323,9 @@ export default function CatalogPage() {
                         className={styles.filterCheckbox}
                       />
                       <span className={styles.filterOptionLabel}>Под заказ</span>
-                      <span className={styles.filterCount}>14</span>
                     </label>
                   </div>
-                )}
+                </div>
               </div>
 
               {[
@@ -376,10 +375,10 @@ export default function CatalogPage() {
                 <div key={group.key} className={styles.filterGroup}>
                   <button type="button" className={styles.filterGroupBtn} onClick={() => toggleGroup(group.key)}>
                     {group.title}
-                    <ChevronDown size={14} strokeWidth={2.5} style={{ transform: openGroups[group.key] ? 'rotate(180deg)' : 'none', transition: '150ms', flexShrink: 0 }} />
+                    <ChevronDown size={14} strokeWidth={2.5} style={{ transform: openGroups[group.key] ? 'rotate(180deg)' : 'none', transition: 'transform 240ms ease', flexShrink: 0 }} />
                   </button>
-                  {openGroups[group.key] && (
-                    <div className={styles.filterGroupBody}>
+                  <div className={`${styles.filterGroupBodyWrap} ${openGroups[group.key] ? styles.filterGroupBodyWrapOpen : ''}`}>
+                    <div className={`${styles.filterGroupBody} ${openGroups[group.key] ? styles.filterGroupBodyOpen : ''}`}>
                       {group.options.map(opt => (
                         <label key={opt.value} className={styles.filterOption}>
                           <input
@@ -392,7 +391,7 @@ export default function CatalogPage() {
                         </label>
                       ))}
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>

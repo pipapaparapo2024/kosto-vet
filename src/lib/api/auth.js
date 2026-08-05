@@ -1,4 +1,13 @@
-import { apiRequest } from '../apiClient'
+import { apiRequest, setCsrfToken } from '../apiClient'
+
+export async function fetchAndStoreCsrf() {
+  try {
+    const data = await apiRequest('/api/v1/customer/auth/csrf')
+    setCsrfToken(data?.csrf_token)
+  } catch {
+    // not authenticated — CSRF not needed yet
+  }
+}
 
 export function registerCustomer(payload) {
   return apiRequest('/api/v1/customer/auth/register', {

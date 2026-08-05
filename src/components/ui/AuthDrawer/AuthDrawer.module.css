@@ -237,6 +237,48 @@
   cursor: default;
 }
 
+.outlineBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 24px;
+  border: 1.5px solid #111111;
+  border-radius: 10px;
+  background: transparent;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 8px;
+  transition: background 200ms ease-out;
+}
+.outlineBtn:hover {
+  background: #F5F5F5;
+}
+
+.yandexBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid #E8E8E8;
+  margin-top: 4px;
+}
+.yandexLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.yandexStatus {
+  font-size: 14px;
+  color: #6F6F6F;
+  margin: 0;
+}
+
 .orRow {
   display: flex;
   align-items: center;
@@ -415,7 +457,7 @@
 
 /* ── Profile ──────────────────────── */
 .profileHead {
-  padding: 40px 28px 0 32px;
+  padding: 40px 24px 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -428,7 +470,7 @@
 }
 
 .profileCard {
-  margin: 0 28px 16px 32px;
+  margin: 0 24px 16px 24px;
   display: flex;
   align-items: flex-start;
   gap: 14px;
@@ -487,7 +529,7 @@
 }
 
 .quickBlock {
-  margin: 0 28px 14px 32px;
+  margin: 0 24px 14px 24px;
   padding: 14px;
   border: 1.5px solid #111111;
   border-radius: 12px;
@@ -534,7 +576,7 @@
 }
 
 .menuBlock {
-  margin: 0 28px 14px 32px;
+  margin: 0 24px 14px 24px;
   border: 1.5px solid #111111;
   border-radius: 12px;
   overflow: hidden;

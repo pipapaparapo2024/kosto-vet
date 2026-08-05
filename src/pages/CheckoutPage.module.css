@@ -27,6 +27,28 @@
   margin-bottom: 8px;
 }
 
+.modeToggle {
+  display: inline-flex;
+  border: 1.5px solid #111111;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.modeBtn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background: transparent;
+  color: #6F6F6F;
+  cursor: pointer;
+  border: none;
+  transition: background 150ms, color 150ms;
+}
+.modeBtnActive {
+  background: #111111;
+  color: #fff;
+}
+
 .sub {
   color: var(--color-text-secondary);
   margin-bottom: 32px;

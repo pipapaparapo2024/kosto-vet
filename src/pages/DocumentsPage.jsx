@@ -140,7 +140,7 @@ export default function DocumentsPage() {
 
   const [activeDoc, setActiveDoc] = useState(() => {
     if (docParam && DOCS.some(d => d.id === docParam && !d.to)) return docParam
-    return DOCS.find(d => !d.to)?.id || DOCS[0].id
+    return DOCS.find(d => !d.to)?.id || null
   })
 
   if (isAgreement) {
@@ -256,43 +256,51 @@ export default function DocumentsPage() {
           </nav>
 
           <div className={styles.docView}>
-            <div className={styles.docHeader}>
-              <div>
-                <h2 className={styles.docTitle}>{content.title}</h2>
-                <p className={styles.docUpdated}>Обновлено: {content.updated}</p>
-              </div>
-              <button type="button" className={styles.downloadBtn}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                Скачать PDF
-              </button>
-            </div>
-
-            <div className={styles.docPreview}>
-              <div className={styles.docPreviewInner}>
-                <div className={styles.docPreviewHeader}>
-                  <div className={styles.docPreviewLogo}>KOSTO-VET</div>
-                  <p className={styles.docPreviewSubtitle}>Официальный документ</p>
+            {activeDoc && content ? (
+              <>
+                <div className={styles.docHeader}>
+                  <div>
+                    <h2 className={styles.docTitle}>{content.title}</h2>
+                    <p className={styles.docUpdated}>Обновлено: {content.updated}</p>
+                  </div>
+                  <button type="button" className={styles.downloadBtn}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Скачать PDF
+                  </button>
                 </div>
-                <h3 className={styles.docPreviewTitle}>{content.title}</h3>
-                {content.body.split('\n\n').map((para, i) => (
-                  <p key={i} className={styles.docPreviewBody}>{para}</p>
-                ))}
+                <div className={styles.docPreview}>
+                  <div className={styles.docPreviewInner}>
+                    <div className={styles.docPreviewHeader}>
+                      <div className={styles.docPreviewLogo}>KOSTO-VET</div>
+                      <p className={styles.docPreviewSubtitle}>Официальный документ</p>
+                    </div>
+                    <h3 className={styles.docPreviewTitle}>{content.title}</h3>
+                    {content.body.split('\n\n').map((para, i) => (
+                      <p key={i} className={styles.docPreviewBody}>{para}</p>
+                    ))}
+                  </div>
+                </div>
+                <div className={styles.docActions}>
+                  <p className={styles.docActionsNote}>Нужен оригинал или нотариально заверенная копия?</p>
+                  <Link to="/contacts" className={styles.docContactBtn}>
+                    Связаться с нами
+                    <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className={styles.docEmpty}>
+                <p className={styles.docEmptyText}>Выберите документ из списка слева, чтобы открыть его.</p>
+                <Link to="/contacts" className={styles.docContactBtn}>
+                  Связаться с нами
+                  <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+                </Link>
               </div>
-            </div>
-
-            <div className={styles.docActions}>
-              <p className={styles.docActionsNote}>
-                Нужен оригинал или нотариально заверенная копия?
-              </p>
-              <Link to="/contacts" className={styles.docContactBtn}>
-                Связаться с нами
-                <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
-              </Link>
-            </div>
+            )}
           </div>
         </div>
       </div>

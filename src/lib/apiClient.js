@@ -1,5 +1,15 @@
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
+let _csrfToken = null
+
+export function setCsrfToken(token) {
+  _csrfToken = token || null
+}
+
+export function clearCsrfToken() {
+  _csrfToken = null
+}
+
 export class ApiError extends Error {
   constructor({ code, message, request_id, retryable, field_errors, status, meta }) {
     super(message || 'Запрос не выполнен')
@@ -56,6 +66,9 @@ export async function apiRequest(path, {
   }
   if (ifMatch) {
     finalHeaders['If-Match'] = ifMatch
+  }
+  if (method !== 'GET' && _csrfToken) {
+    finalHeaders['X-CSRF-Token'] = _csrfToken
   }
 
   let res
