@@ -232,6 +232,14 @@
   margin-bottom: 27px;
 }
 
+.vkladNote {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 16px;
+  font-style: italic;
+}
+
 .warehousePhotos {
   display: flex;
   gap: 14px;

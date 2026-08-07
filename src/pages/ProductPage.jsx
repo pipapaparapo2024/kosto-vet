@@ -5,6 +5,7 @@ import { getProduct } from '../lib/api/catalog'
 import { createLead, createStockSubscription } from '../lib/api/leads'
 import { addFavorite, removeFavorite, listFavorites } from '../lib/api/account'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import { useSettings } from '../context/SettingsContext'
 import { formatMoney, isInStock, stockLabel, productImageUrl } from '../lib/money'
 import { categoryTitleFromProduct } from '../lib/labels'
@@ -25,7 +26,9 @@ function parseDim(dim) {
 export default function ProductPage() {
   const { id } = useParams()
   const { isAuth } = useAuth()
+  const { addItem: addToCart } = useCart()
   const [product, setProduct] = useState(null)
+  const [addingToCart, setAddingToCart] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [orderOpen, setOrderOpen] = useState(false)
@@ -67,9 +70,6 @@ export default function ProductPage() {
       if (width) widths.add(width)
       if (v.holes != null) holes.add(String(v.holes))
     })
-    if (!lengths.size) ['33', '47', '58', '70', '85'].forEach(v => lengths.add(v))
-    if (!holes.size) ['4', '6', '8', '10'].forEach(v => holes.add(v))
-    if (!widths.size) ['4.5', '6', '10'].forEach(v => widths.add(v))
     return {
       lengths: [...lengths],
       holes: [...holes],
@@ -155,20 +155,16 @@ export default function ProductPage() {
     : product.price
 
   const specs = [
-    { name: 'Длина', value: selectedLength || '58', unit: 'мм' },
-    { name: 'Кол-во отверстий', value: selectedHoles || '6', unit: '' },
-    { name: 'Ширина', value: selectedWidth || '10', unit: 'мм' },
-    {
-      name: 'Толщина',
-      value: activeVariant?.thickness || thicknessFromProduct?.value || '2,5',
-      unit: 'мм',
-    },
-    {
-      name: 'Материал',
-      value: materialFromProduct?.value || product.material || 'Сплав титана',
-      unit: '',
-    },
-  ]
+    selectedLength && { name: 'Длина', value: selectedLength, unit: 'мм' },
+    selectedHoles && { name: 'Кол-во отверстий', value: selectedHoles, unit: '' },
+    selectedWidth && { name: 'Ширина', value: selectedWidth, unit: 'мм' },
+    activeVariant?.thickness || thicknessFromProduct?.value
+      ? { name: 'Толщина', value: activeVariant?.thickness || thicknessFromProduct?.value, unit: 'мм' }
+      : null,
+    materialFromProduct?.value || product.material
+      ? { name: 'Материал', value: materialFromProduct?.value || product.material, unit: '' }
+      : null,
+  ].filter(Boolean)
 
   return (
     <>
@@ -228,6 +224,20 @@ export default function ProductPage() {
               </p>
 
               <div className={styles.actions}>
+                {inStock && (
+                  <button
+                    type="button"
+                    className={styles.cartBtn}
+                    disabled={addingToCart}
+                    onClick={() => {
+                      if (addingToCart) return
+                      setAddingToCart(true)
+                      addToCart(product, 1).catch(() => {}).finally(() => setAddingToCart(false))
+                    }}
+                  >
+                    {addingToCart ? 'Добавляем…' : 'В корзину'}
+                  </button>
+                )}
                 <button
                   type="button"
                   className={styles.orderBtn}
@@ -327,8 +337,8 @@ export default function ProductPage() {
             {accessories.length > 0 && (
               <div className={styles.related}>
                 <div className={styles.relatedHead}>
-                  <p className={styles.relatedTitle}>Для установки этой пластины</p>
-                  <Link to="/catalog/vinty" className={styles.relatedLink}>Смотреть всё <ArrowRight size={16} strokeWidth={1.8} /></Link>
+                  <p className={styles.relatedTitle}>Для установки: {product.name}</p>
+                  <Link to={`/catalog/${product.accessories?.[0]?.category_slug || 'screws'}`} className={styles.relatedLink}>Смотреть всё <ArrowRight size={16} strokeWidth={1.8} /></Link>
                 </div>
                 <div className={styles.relatedScroll}>
                   {accessories.slice(0, 3).map(p => <SmallCard key={p.id} product={p} />)}
@@ -339,7 +349,7 @@ export default function ProductPage() {
             {similar.length > 0 && (
               <div className={styles.related}>
                 <div className={styles.relatedHead}>
-                  <p className={styles.relatedTitle}>Похожие пластины</p>
+                  <p className={styles.relatedTitle}>Похожие товары</p>
                   <Link to={`/catalog/${product.category_slug}`} className={styles.relatedLink}>Смотреть всё <ArrowRight size={16} strokeWidth={1.8} /></Link>
                 </div>
                 <div className={styles.relatedScroll}>
@@ -393,7 +403,6 @@ function SmallCard({ product }) {
             onError={e => { e.currentTarget.style.display = 'none' }}
           />
         ) : null}
-        <span className={styles.smallCardImgLabel}>Фото товара</span>
       </div>
       <div className={styles.smallCardBody}>
         <p className={styles.smallCardName}>{product.subtitle || product.name}</p>

@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { Clock, Box, ChevronDown, ArrowRight, LayoutGrid, X, SlidersHorizontal } from 'lucide-react'
+import { Clock, Box, ChevronDown, ArrowRight, LayoutGrid, X, SlidersHorizontal, Package } from 'lucide-react'
 import { listCategories, listProducts, getCategory } from '../lib/api/catalog'
 import { formatMoney, isInStock, stockLabel, productImageUrl, productSpecsLine } from '../lib/money'
+import { useCart } from '../context/CartContext'
 import { categoryTitle } from '../lib/labels'
 import { img } from '../utils/assetUrl'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -24,10 +25,11 @@ export const PLATE_SUBCATS = [
   { slug: 'parnye', title: 'Парные', match: /парн/i },
   { slug: 't-obraznye', title: 'Т-образные', match: /т[\s-]?образ/i },
   { slug: 'l-obraznye', title: 'L-образные', match: /l[\s-]?образ|л[\s-]?образ/i },
+  { slug: 'pryamye', title: 'Прямые', match: /прям/i },
   { slug: 'rekonstruktivnye', title: 'Реконструктивные', match: /реконструкт/i },
   { slug: 'bedrennaya', title: 'Для бедренной кости', match: /бедрен/i },
   { slug: 'taz', title: 'Для таза', match: /таз|тазов/i },
-  { slug: 'all-plastiny', title: 'Все пластины', isAll: true },
+  { slug: 'all-plates', title: 'Все пластины', isAll: true },
 ]
 
 function formatProductCount(n) {
@@ -52,6 +54,8 @@ export default function CatalogPage() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [plateCounts, setPlateCounts] = useState({})
+  const [platesTotal, setPlatesTotal] = useState(null)
 
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const [sort, setSort] = useState(searchParams.get('sort') || 'popular')
@@ -86,6 +90,24 @@ export default function CatalogPage() {
   }, [])
 
   useEffect(() => {
+    if (category && category !== 'plates') return
+    listProducts({ category: 'plates', includeDescendants: true, limit: 100 })
+      .then(res => {
+        const all = res.items || []
+        setPlatesTotal(res.total ?? all.length)
+        const counts = {}
+        PLATE_SUBCATS.forEach(s => {
+          if (s.isAll) return
+          counts[s.slug] = all.filter(p =>
+            s.match.test(p.name || '') || s.match.test(p.subtitle || '')
+          ).length
+        })
+        setPlateCounts(counts)
+      })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
     if (!category) {
       setCategoryDetail(null)
       return
@@ -100,31 +122,63 @@ export default function CatalogPage() {
     if (shape !== plateShape) setPlateShape(shape)
   }, [searchParams])
 
+  const needsClientFilter = !!(plateShape || lengthMm || widthMm || holes || priceRange)
+
   const loadProducts = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const shapeMeta = PLATE_SUBCATS.find(s => s.slug === plateShape && !s.isAll)
       const res = await listProducts({
-        category: category || (plateShape ? 'plastiny' : undefined),
+        category: category || (plateShape ? 'plates' : undefined),
         includeDescendants: true,
         q: search.trim() || undefined,
         inStock: onlyInStock || undefined,
         stockState: stockState || undefined,
         sort,
-        page: shapeMeta ? 1 : page,
-        limit: shapeMeta ? 200 : PER_PAGE,
+        page: needsClientFilter ? 1 : page,
+        limit: needsClientFilter ? 100 : PER_PAGE,
       })
       let nextItems = res.items || []
       let nextTotal = res.total || 0
-      if (shapeMeta?.match) {
-        nextItems = nextItems.filter(p =>
-          shapeMeta.match.test(p.name || '') || shapeMeta.match.test(p.subtitle || ''),
-        )
+
+      // Client-side filters (backend doesn't support these)
+      if (needsClientFilter) {
+        if (shapeMeta?.match) {
+          nextItems = nextItems.filter(p =>
+            shapeMeta.match.test(p.name || '') || shapeMeta.match.test(p.subtitle || ''),
+          )
+        }
+        if (lengthMm) {
+          nextItems = nextItems.filter(p =>
+            (p.specs_preview || []).some(s => /длин/i.test(s.name) && String(s.value).includes(lengthMm))
+          )
+        }
+        if (widthMm) {
+          nextItems = nextItems.filter(p =>
+            (p.specs_preview || []).some(s => /ширин/i.test(s.name) && String(s.value).includes(widthMm))
+          )
+        }
+        if (holes) {
+          nextItems = nextItems.filter(p =>
+            (p.specs_preview || []).some(s => /отверст/i.test(s.name) && String(s.value) === holes)
+          )
+        }
+        if (priceRange) {
+          nextItems = nextItems.filter(p => {
+            const amount = p.price?.amount ?? 0
+            const rub = amount / 100
+            if (priceRange === 'до 1500') return rub <= 1500
+            if (priceRange === '1500–3000') return rub > 1500 && rub <= 3000
+            if (priceRange === 'от 3000') return rub > 3000
+            return true
+          })
+        }
         nextTotal = nextItems.length
         const start = (page - 1) * PER_PAGE
         nextItems = nextItems.slice(start, start + PER_PAGE)
       }
+
       setItems(nextItems)
       setTotal(nextTotal)
     } catch (e) {
@@ -134,7 +188,7 @@ export default function CatalogPage() {
     } finally {
       setLoading(false)
     }
-  }, [category, search, onlyInStock, stockState, sort, page, plateShape])
+  }, [category, search, onlyInStock, stockState, sort, page, plateShape, lengthMm, widthMm, holes, priceRange, needsClientFilter])
 
   useEffect(() => {
     const t = setTimeout(loadProducts, search ? 300 : 0)
@@ -198,9 +252,11 @@ export default function CatalogPage() {
   }
 
   const rootCats = categories
-  const showPlateSubcats = !category || category === 'plastiny'
+  const showPlateSubcats = !category || category === 'plates'
   const subcats = showPlateSubcats
-    ? PLATE_SUBCATS
+    ? PLATE_SUBCATS.map(s => s.isAll
+        ? { ...s, count: platesTotal }
+        : { ...s, count: plateCounts[s.slug] })
     : (categoryDetail?.children?.length
       ? categoryDetail.children
       : (currentCat?.children?.length ? currentCat.children : rootCats))
@@ -264,7 +320,7 @@ export default function CatalogPage() {
                 ? (isAll ? !plateShape : plateShape === s.slug)
                 : category === s.slug
               const to = isPlateCard
-                ? (isAll ? '/catalog/plastiny' : `/catalog/plastiny?shape=${encodeURIComponent(s.slug)}`)
+                ? (isAll ? '/catalog/plates' : `/catalog/plates?shape=${encodeURIComponent(s.slug)}`)
                 : `/catalog/${s.slug}`
 
               return (
@@ -279,12 +335,14 @@ export default function CatalogPage() {
                   <div className={styles.subcatPhoto}>
                     {isAll
                       ? <LayoutGrid size={60} strokeWidth={1.4} className={styles.subcatAllIcon} aria-hidden="true" />
-                      : 'Фото товара'}
+                      : <Package size={40} strokeWidth={1.2} className={styles.subcatAllIcon} aria-hidden="true" />}
                   </div>
                   <p className={styles.subcatName}>{s.title || categoryTitle(s)}</p>
-                  <p className={styles.subcatCount}>
-                    {formatProductCount(s.count ?? s.subtree_product_count ?? s.direct_product_count)}
-                  </p>
+                  {(s.count ?? s.subtree_product_count ?? s.direct_product_count) != null && (
+                    <p className={styles.subcatCount}>
+                      {formatProductCount(s.count ?? s.subtree_product_count ?? s.direct_product_count)}
+                    </p>
+                  )}
                 </Link>
               )
             })}
@@ -569,21 +627,27 @@ function SortSelect({ value, onChange, options }) {
 }
 
 function ProductCard({ product }) {
+  const { addItem } = useCart()
+  const [adding, setAdding] = useState(false)
   const image = productImageUrl(product.image, 'card')
   const inStock = isInStock(product.stock)
   const specs = productSpecsLine(product)
 
+  const handleAddToCart = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (adding) return
+    setAdding(true)
+    addItem(product, 1).catch(() => {}).finally(() => setAdding(false))
+  }
+
   return (
     <Link to={`/catalog/${product.category_slug}/${product.slug}`} className={styles.card}>
       <div className={styles.cardImg}>
-        {image && (
-          <img
-            src={image}
-            alt={product.image?.alt || product.name}
-            loading="lazy"
-            onError={e => { e.currentTarget.style.opacity = '0.3' }}
-          />
-        )}
+        {image
+          ? <img src={image} alt={product.image?.alt || product.name} loading="lazy" onError={e => { e.currentTarget.style.opacity = '0.3' }} />
+          : <Package size={52} strokeWidth={1.1} className={styles.cardImgPlaceholder} aria-hidden="true" />
+        }
       </div>
       <div className={styles.cardBody}>
         <p className={styles.cardName}>{product.subtitle || product.name}</p>
@@ -596,9 +660,22 @@ function ProductCard({ product }) {
             {stockLabel(product.stock)}
           </span>
         </div>
-        <div className={styles.cardBtn}>
-          <span>Подробнее</span>
-          <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+        <div className={styles.cardActions}>
+          <div className={styles.cardBtn}>
+            <span>Подробнее</span>
+            <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+          </div>
+          {inStock && (
+            <button
+              type="button"
+              className={styles.cardCartBtn}
+              onClick={handleAddToCart}
+              disabled={adding}
+              aria-label="В корзину"
+            >
+              {adding ? '…' : 'В корзину'}
+            </button>
+          )}
         </div>
       </div>
     </Link>

@@ -16,6 +16,7 @@ import OrderStatusPage from './pages/OrderStatusPage'
 import CheckoutPage from './pages/CheckoutPage'
 import NotFoundPage from './pages/NotFoundPage'
 import LegalPage from './pages/LegalPage'
+import AccountPage from './pages/AccountPage'
 
 function Layout({ children }) {
   return (
@@ -43,6 +44,7 @@ export default function App() {
       <Route path="/catalog" element={<Layout><CatalogPage /></Layout>} />
       <Route path="/catalog/:category" element={<Layout><CatalogPage /></Layout>} />
       <Route path="/catalog/:category/:id" element={<Layout><ProductPage /></Layout>} />
+      <Route path="/account" element={<Layout><AccountPage /></Layout>} />
       <Route path="/orders/:publicId" element={<Layout><OrderStatusPage /></Layout>} />
       <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
       <Route path="/delivery" element={<Layout><DeliveryPage /></Layout>} />

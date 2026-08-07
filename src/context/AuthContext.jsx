@@ -25,8 +25,9 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null)
 
   const applySession = (data) => {
-    setCustomer(data?.customer ?? null)
-    return data?.customer ?? null
+    const c = data?.customer ?? (data?.id ? data : null)
+    setCustomer(c)
+    return c
   }
 
   const refreshSession = useCallback(async () => {
@@ -112,8 +113,8 @@ export function AuthProvider({ children }) {
     setError(null)
     try {
       const data = await updateCustomerMe(payload)
-      applySession(data)
-      return { ok: true, customer: data?.customer }
+      const c = applySession(data)
+      return { ok: true, customer: c }
     } catch (e) {
       const message = toAuthError(e, 'Не удалось обновить профиль')
       setError(message)

@@ -265,17 +265,17 @@
 
 .faqGrid {
   display: grid;
-  grid-template-columns: repeat(4, 335px);
+  grid-template-columns: repeat(5, 1fr);
   gap: 13px;
-  justify-content: start;
 }
 
 .faqCard {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  width: 335px;
-  height: 190px;
+  width: 100%;
+  height: auto;
+  min-height: 160px;
   padding: 18px 18px 18px 16px;
   border: 2px solid #111111;
   border-radius: 10px;
@@ -412,7 +412,7 @@
 
 /* ── Responsive ─────────────────────────── */
 @media (max-width: 1280px) {
-  .faqGrid { grid-template-columns: repeat(2, 335px); }
+  .faqGrid { grid-template-columns: repeat(3, 1fr); }
   .heroLeft { width: 100%; max-width: 100%; }
   .heroTitle { max-width: 100%; }
 }

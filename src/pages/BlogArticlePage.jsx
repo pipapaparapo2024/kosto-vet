@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, Navigate } from 'react-router-dom'
 import { Calendar, Clock, FileText, ArrowRight } from 'lucide-react'
 import { listProducts } from '../lib/api/catalog'
+import { getArticle, normalizeApiArticle } from '../lib/api/articles'
 import { formatMoney, productImageUrl, isInStock, stockLabel } from '../lib/money'
 import { getArticleBySlug, getRelatedArticles, ARTICLES } from '../data/blogArticles'
 import { img } from '../utils/assetUrl'
@@ -10,17 +11,32 @@ import styles from './BlogArticlePage.module.css'
 
 export default function BlogArticlePage() {
   const { slug } = useParams()
-  const article = getArticleBySlug(slug) || ARTICLES[0]
-  const otherArticles = getRelatedArticles(article.slug, 3)
+  const mockArticle = getArticleBySlug(slug) || null
+  const [article, setArticle] = useState(mockArticle)
+  const [otherArticles, setOtherArticles] = useState(() => mockArticle ? getRelatedArticles(mockArticle, 3) : [])
   const [featuredProduct, setFeaturedProduct] = useState(null)
 
-  useDocumentTitle(article.title, article.desc)
+  useDocumentTitle(article?.title, article?.desc)
+
+  useEffect(() => {
+    getArticle(slug)
+      .then(data => {
+        const normalized = normalizeApiArticle(data)
+        if (normalized?.title) {
+          setArticle(normalized)
+          setOtherArticles(ARTICLES.filter(a => a.slug !== normalized.slug).slice(0, 3))
+        }
+      })
+      .catch(() => {})
+  }, [slug])
 
   useEffect(() => {
     listProducts({ sort: 'popular', limit: 1 })
       .then(res => setFeaturedProduct(res.items?.[0] || null))
       .catch(() => setFeaturedProduct(null))
   }, [])
+
+  if (!article) return <Navigate to="/blog" replace />
 
   const inStock = featuredProduct ? isInStock(featuredProduct.stock) : false
   const productImg = featuredProduct
@@ -36,7 +52,7 @@ export default function BlogArticlePage() {
           <span>{article.title}</span>
         </nav>
 
-        <div className={styles.articleHeader}>
+        <div className={styles.articleHeader} key={article.slug}>
           <div className={styles.articleHeaderLeft}>
             <h1 className={styles.articleTitle}>{article.title}</h1>
             <p className={styles.articleDesc}>{article.desc}</p>
@@ -55,13 +71,11 @@ export default function BlogArticlePage() {
               </span>
             </div>
           </div>
-          <div className={styles.articleCover}>
-            {article.coverImage ? (
+          {article.coverImage && (
+            <div className={styles.articleCover}>
               <img src={img(article.coverImage)} alt="" />
-            ) : (
-              'Обложка статьи'
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.layout}>
@@ -110,14 +124,12 @@ export default function BlogArticlePage() {
               {featuredProduct && (
                 <div className={styles.widgetProduct}>
                   <div className={styles.widgetPhoto}>
-                    {productImg ? (
+                    {productImg && (
                       <img
                         src={productImg}
                         alt={featuredProduct.name}
                         onError={e => { e.currentTarget.style.opacity = '0.3' }}
                       />
-                    ) : (
-                      <span>Фото пластины</span>
                     )}
                   </div>
                   <div className={styles.widgetProductInfo}>
@@ -156,11 +168,7 @@ export default function BlogArticlePage() {
               {otherArticles.map(a => (
                 <Link key={a.slug} to={`/blog/${a.slug}`} className={styles.otherCard}>
                   <div className={styles.otherPhoto}>
-                    {a.coverImage ? (
-                      <img src={img(a.coverImage)} alt="" />
-                    ) : (
-                      'Обложка'
-                    )}
+                    {a.coverImage && <img src={img(a.coverImage)} alt="" />}
                   </div>
                   <div className={styles.otherBody}>
                     <p className={styles.otherCardTitle}>{a.title}</p>

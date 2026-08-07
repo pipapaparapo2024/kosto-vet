@@ -56,7 +56,9 @@ export function productSpecsLine(product) {
   const mmSpec = width || length
   if (mmSpec?.value != null && mmSpec.value !== '') {
     const unit = mmSpec.unit || 'мм'
-    parts.push(`${mmSpec.value}${unit ? ` ${unit}` : ''}`)
+    const valStr = String(mmSpec.value)
+    const alreadyHasUnit = unit && valStr.toLowerCase().includes(unit.toLowerCase())
+    parts.push(alreadyHasUnit ? valStr : `${valStr}${unit ? ` ${unit}` : ''}`)
   }
   if (holes?.value != null && holes.value !== '') {
     parts.push(`${holes.value} отв.`)

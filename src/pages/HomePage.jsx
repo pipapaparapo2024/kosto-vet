@@ -7,11 +7,11 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import styles from './HomePage.module.css'
 
 const CATEGORY_STUBS = [
-  { slug: 'plastiny', title: 'Пластины', description: 'Для фиксации переломов длинных и плоских костей' },
-  { slug: 'vinty', title: 'Винты', description: 'Для остеосинтеза и фиксации пластин' },
-  { slug: 'instrumenty', title: 'Инструменты', description: 'Специализированные инструменты для операций' },
-  { slug: 'shvovny', title: 'Шовный материал', description: 'Для мягкотканых и кожных швов' },
-  { slug: 'nabory', title: 'Наборы', description: 'Готовые наборы для остеосинтеза' },
+  { slug: 'plates', title: 'Пластины', description: 'Для фиксации переломов длинных и плоских костей' },
+  { slug: 'screws', title: 'Винты', description: 'Для остеосинтеза и фиксации пластин' },
+  { slug: 'tools', title: 'Инструменты', description: 'Специализированные инструменты для операций' },
+  { slug: 'sutures', title: 'Шовный материал', description: 'Для мягкотканых и кожных швов' },
+  { slug: 'sets', title: 'Наборы', description: 'Готовые наборы для остеосинтеза' },
 ]
 
 export default function HomePage() {

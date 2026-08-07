@@ -101,7 +101,7 @@ export default function AboutPage() {
           <div className={styles.warehousePhotos}>
             {[1,2,3,4,5].map(n => (
               <div key={n} className={styles.warehousePhoto}>
-                <span>Фото склада {n}</span>
+                <Box size={40} strokeWidth={1.2} style={{ color: '#ccc' }} aria-hidden="true" />
               </div>
             ))}
           </div>

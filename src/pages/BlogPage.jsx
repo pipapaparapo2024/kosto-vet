@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
 import { img } from '../utils/assetUrl'
 import { ARTICLES, BLOG_TAGS } from '../data/blogArticles'
+import { listArticles, normalizeApiArticle } from '../lib/api/articles'
 import styles from './BlogPage.module.css'
 
 const PER_PAGE = 9
@@ -10,8 +11,23 @@ const PER_PAGE = 9
 export default function BlogPage() {
   const [activeTag, setActiveTag] = useState('Все статьи')
   const [page, setPage] = useState(1)
+  const [articles, setArticles] = useState(ARTICLES)
+  const [tags, setTags] = useState(BLOG_TAGS)
 
-  const filtered = activeTag === 'Все статьи' ? ARTICLES : ARTICLES.filter(a => a.tag === activeTag)
+  useEffect(() => {
+    listArticles()
+      .then(res => {
+        const items = (res?.items || []).map(normalizeApiArticle).filter(Boolean)
+        if (items.length > 0) {
+          setArticles(items)
+          const allTags = ['Все статьи', ...new Set(items.map(a => a.tag).filter(Boolean))]
+          setTags(allTags)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const filtered = activeTag === 'Все статьи' ? articles : articles.filter(a => a.tag === activeTag)
   const totalPages = Math.ceil(filtered.length / PER_PAGE)
   const visible = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
@@ -40,7 +56,7 @@ export default function BlogPage() {
 
       <div className={styles.container}>
         <div className={styles.tags}>
-          {BLOG_TAGS.map(t => (
+          {tags.map(t => (
             <button
               key={t}
               className={`${styles.tag} ${activeTag === t ? styles.tagActive : ''}`}

@@ -718,6 +718,7 @@ function ProfilePanel({ customer }) {
     const payload = {
       name: form.name.trim(),
       phone: form.phone.trim() || undefined,
+      email: form.email.trim() || undefined,
       customer_type: form.customer_type,
       company_name: form.company_name.trim() || undefined,
       inn: form.inn.trim() || undefined,

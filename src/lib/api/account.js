@@ -44,6 +44,24 @@ export function mergeCustomerCart(items, ifMatch) {
   })
 }
 
+export function listDeliveryAddresses() {
+  return apiRequest('/api/v1/account/delivery-addresses')
+}
+
+export function createDeliveryAddress(payload) {
+  return apiRequest('/api/v1/account/delivery-addresses', {
+    method: 'POST',
+    body: payload,
+  })
+}
+
+export function deleteDeliveryAddress(id, ifMatch) {
+  return apiRequest(`/api/v1/account/delivery-addresses/${id}`, {
+    method: 'DELETE',
+    ifMatch,
+  })
+}
+
 export function listFavorites() {
   return apiRequest('/api/v1/account/favorites')
 }

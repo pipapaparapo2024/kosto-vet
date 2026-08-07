@@ -23,11 +23,10 @@ export default function Footer() {
               <div className={styles.col}>
                 <p className={styles.colTitle}>Каталог</p>
                 <nav className={styles.colLinks}>
-                  <Link to="/catalog/plastiny">Пластины</Link>
-                  <Link to="/catalog/vinty">Винты</Link>
-                  <Link to="/catalog/instrumenty">Инструменты</Link>
-                  <Link to="/catalog/shvovny">Шовный материал</Link>
-                  <Link to="/catalog/nabory">Наборы</Link>
+                  <Link to="/catalog/plates">Пластины</Link>
+                  <Link to="/catalog/screws">Винты</Link>
+                  <Link to="/catalog/tools">Инструменты</Link>
+                  <Link to="/catalog/sutures">Шовный материал</Link>
                 </nav>
               </div>
 

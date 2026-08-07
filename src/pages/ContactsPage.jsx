@@ -89,7 +89,7 @@ export default function ContactsPage() {
               Icon={MessageCircle}
               method="ВКонтакте"
               value="Быстрые ответы"
-              href="#"
+              href="https://vk.com/kostovet"
               btnLabel="Написать"
             />
             <ContactCard
