@@ -427,7 +427,7 @@
   font-weight: 700;
   color: var(--color-text-secondary);
   line-height: 1.5;
-  margin-bottom: 29px;
+  margin-bottom: 20px;
 }
 
 .ctaBtns {
@@ -439,14 +439,14 @@
 .ctaBtnPrimary {
   display: inline-flex;
   align-items: center;
-  gap: 90px;
-  height: 60px;
-  padding-left: 31px;
-  padding-right: 29px;
+  gap: 40px;
+  height: 48px;
+  padding-left: 24px;
+  padding-right: 22px;
   background: var(--color-btn);
   color: var(--color-btn-text);
-  border-radius: 14px;
-  font-size: 22px;
+  border-radius: 12px;
+  font-size: 17px;
   font-weight: 600;
   text-decoration: none;
   transition: background var(--duration);
@@ -458,14 +458,14 @@
 .ctaBtnSecondary {
   display: inline-flex;
   align-items: center;
-  gap: 40px;
-  height: 60px;
-  padding: 0 31px;
+  gap: 20px;
+  height: 48px;
+  padding: 0 24px;
   background: #fff;
   color: var(--color-text);
   border: 2px solid #111111;
-  border-radius: 14px;
-  font-size: 22px;
+  border-radius: 12px;
+  font-size: 17px;
   font-weight: 600;
   text-decoration: none;
   transition: background var(--duration), color var(--duration);
