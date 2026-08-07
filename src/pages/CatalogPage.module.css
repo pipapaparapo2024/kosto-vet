@@ -118,6 +118,7 @@
   display: flex;
   gap: 10px;
   padding-bottom: 48px;
+  padding-right: 10px;
   flex-wrap: nowrap;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -167,8 +168,8 @@
 .subcatName {
   font-size: 15px;
   font-weight: 700;
-  padding: 6px 8px 2px 20px;
-  text-align: left;
+  padding: 8px 8px 4px;
+  text-align: center;
   line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -180,8 +181,8 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  padding: 0 8px 20px 20px;
-  text-align: left;
+  padding: 0 8px 14px;
+  text-align: center;
 }
 
 /* ── Основной layout ──────────────────── */
@@ -918,8 +919,8 @@
     padding-right: var(--space-x);
   }
   .subcat { flex: 0 0 140px; width: 140px; min-width: 140px; max-width: 140px; height: 148px; border-radius: 10px; }
-  .subcatName { font-size: 14px; padding: 6px 8px 2px 12px; }
-  .subcatCount { font-size: 13px; padding: 0 8px 14px 12px; }
+  .subcatName { font-size: 14px; padding: 6px 8px 2px; text-align: center; }
+  .subcatCount { font-size: 13px; padding: 0 8px 12px; text-align: center; }
   .toolbar {
     flex-direction: column;
     align-items: flex-start;
